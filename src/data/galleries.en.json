@@ -1,0 +1,1127 @@
+{
+  "generatedAt": "2026-02-16T23:39:05.377Z",
+  "galleries": [
+    {
+      "id": "portraits",
+      "name": "Portraits",
+      "description": "A series of intimate black-and-white portraits from Frédéric Bénard's early photography, capturing friends and personal moments.",
+      "era": "Film",
+      "images": [
+        {
+          "id": "1",
+          "url": "/images/analog/galleries/portraits/full/r008_f024.jpg",
+          "caption": "Heather and Mieke, Toronto, Ontario, 1991"
+        },
+        {
+          "id": "2",
+          "url": "/images/analog/galleries/portraits/full/r008_f036.jpg",
+          "caption": "Heather and Mieke, Toronto, Ontario, 1991"
+        },
+        {
+          "id": "3",
+          "url": "/images/analog/galleries/portraits/full/r010_f035.jpg",
+          "caption": "Bruce, Toronto, Ontario, 1991"
+        },
+        {
+          "id": "4",
+          "url": "/images/analog/galleries/portraits/full/r010_f012.jpg",
+          "caption": "Bruce, Toronto, Ontario, 1991",
+          "sensitive": {
+            "type": "artistic_nudity"
+          }
+        },
+        {
+          "id": "5",
+          "url": "/images/analog/galleries/portraits/full/r012_f031.jpg",
+          "caption": "JV, Toronto, Ontario, 1991"
+        },
+        {
+          "id": "6",
+          "url": "/images/analog/galleries/portraits/full/r013_f022.jpg",
+          "caption": "Robert, Toronto, Ontario, 1991",
+          "sensitive": {
+            "type": "artistic_nudity"
+          }
+        },
+        {
+          "id": "7",
+          "url": "/images/analog/galleries/portraits/full/r015_f029.jpg",
+          "caption": "Michael, Duisburg, Germany, 1991"
+        },
+        {
+          "id": "8",
+          "url": "/images/analog/galleries/portraits/full/r019_f001.jpg",
+          "caption": "Thomas, Hamburg, Germany, 1992"
+        },
+        {
+          "id": "9",
+          "url": "/images/analog/galleries/portraits/full/r022_f011.jpg",
+          "caption": "Self-portrait, Hamburg, Germany, 1993"
+        },
+        {
+          "id": "10",
+          "url": "/images/analog/galleries/portraits/full/r024_f026.jpg",
+          "caption": "Jon, Hamburg, Germany, 1993"
+        },
+        {
+          "id": "11",
+          "url": "/images/analog/galleries/portraits/full/r032_f028.jpg",
+          "caption": "Erick, Toronto, Ontario, 1994",
+          "sensitive": {
+            "type": "artistic_nudity"
+          }
+        },
+        {
+          "id": "12",
+          "url": "/images/analog/galleries/portraits/full/r032_f032.jpg",
+          "caption": "Erick, Toronto, Ontario, 1994"
+        },
+        {
+          "id": "13",
+          "url": "/images/analog/galleries/portraits/full/r033_f021.jpg",
+          "caption": "Isabelle, Saint-Sauveur, Quebec, 1994"
+        },
+        {
+          "id": "14",
+          "url": "/images/analog/galleries/portraits/full/r037_f017.jpg",
+          "caption": "Robert, Toronto, Ontario, 1994"
+        }
+      ]
+    },
+    {
+      "id": "parties",
+      "name": "Parties",
+      "description": "Candid photographs of social gatherings, house parties, and celebrations, reflecting Frédéric Bénard's early explorations of connection and community.",
+      "era": "Film",
+      "images": [
+        {
+          "id": "1",
+          "url": "/images/analog/galleries/parties/full/r014_f013.jpg",
+          "caption": "Heather and Steve, Toronto, Ontario, 1991"
+        },
+        {
+          "id": "2",
+          "url": "/images/analog/galleries/parties/full/r014_f015.jpg",
+          "caption": "JV and Mieke, Toronto, Ontario, 1991"
+        },
+        {
+          "id": "3",
+          "url": "/images/analog/galleries/parties/full/r018_f027.jpg",
+          "caption": "Laurel and Pat, Hamburg, Germany, 1992"
+        },
+        {
+          "id": "4",
+          "url": "/images/analog/galleries/parties/full/r021_f018.jpg",
+          "caption": "Auction night, Hamburg, Germany, 1992 &mdash; organized by my then-boyfriend Thomas to fund a planned bar"
+        },
+        {
+          "id": "5",
+          "url": "/images/analog/galleries/parties/full/r032_f004.jpg",
+          "caption": "Heather and Robert, Toronto, Ontario, 1994"
+        },
+        {
+          "id": "6",
+          "url": "/images/analog/galleries/parties/full/r033_f011.jpg",
+          "caption": "Thel, Toronto, Ontario, 1994 &mdash; burned cork and wine-fueled laughter, a joyful moment shared with care given how it might be misread today"
+        },
+        {
+          "id": "7",
+          "url": "/images/analog/galleries/parties/full/r039_f019.jpg",
+          "caption": "Heather and friend, Toronto, Ontario, 1994"
+        },
+        {
+          "id": "8",
+          "url": "/images/analog/galleries/parties/full/r053_f030.jpg",
+          "caption": "Divers/Cité's Pride Parade, Montreal, Quebec, 2000"
+        },
+        {
+          "id": "9",
+          "url": "/images/analog/galleries/parties/full/r054_f005.jpg",
+          "caption": "Divers/Cité's Pride Parade, Montreal, Quebec, 2000"
+        },
+        {
+          "id": "10",
+          "url": "/images/analog/galleries/parties/full/r054_f010.jpg",
+          "caption": "Divers/Cité's Pride Parade, Montreal, Quebec, 2000"
+        },
+        {
+          "id": "11",
+          "url": "/images/analog/galleries/parties/full/r054_f028.jpg",
+          "caption": "Divers/Cité's Pride Parade, Montreal, Quebec, 2000"
+        },
+        {
+          "id": "12",
+          "url": "/images/analog/galleries/parties/full/r054_f031.jpg",
+          "caption": "Divers/Cité's Pride Parade, Montreal, Quebec, 2000"
+        }
+      ]
+    },
+    {
+      "id": "experiments",
+      "name": "Experiments",
+      "description": "Experimental photographs by Frédéric Bénard, exploring architecture, art, and travel moments across Europe and North America in the 1990s.",
+      "era": "Film",
+      "images": [
+        {
+          "id": "1",
+          "url": "/images/analog/galleries/experiments/full/r015_f021.jpg",
+          "caption": "Dupont Circle Metro, Washington, D.C., 1991"
+        },
+        {
+          "id": "2",
+          "url": "/images/analog/galleries/experiments/full/r015_f022.jpg",
+          "caption": "Dupont Circle Metro, Washington, D.C., 1991"
+        },
+        {
+          "id": "3",
+          "url": "/images/analog/galleries/experiments/full/r016_f012.jpg",
+          "caption": "Street art, Berlin, Germany, 1991"
+        },
+        {
+          "id": "4",
+          "url": "/images/analog/galleries/experiments/full/r016_f018.jpg",
+          "caption": "The Meleager statue, Pergamon Museum, Berlin, Germany, 1991"
+        },
+        {
+          "id": "5",
+          "url": "/images/analog/galleries/experiments/full/r016_f019.jpg",
+          "caption": "The Meleager statue, Pergamon Museum, Berlin, Germany, 1991"
+        },
+        {
+          "id": "6",
+          "url": "/images/analog/galleries/experiments/full/r016_f022.jpg",
+          "caption": "Michelangelo's David, Galleria dell'Accademia, Florence, Italy, 1991"
+        },
+        {
+          "id": "7",
+          "url": "/images/analog/galleries/experiments/full/r042_f018.jpg",
+          "caption": "The Antikythera Ephebe, National Archaeological Museum, Athens, Greece, 1995"
+        },
+        {
+          "id": "8",
+          "url": "/images/analog/galleries/experiments/full/r050_f004.jpg",
+          "caption": "Heather and Dave's wedding, Gravenhurst, Ontario, 1997"
+        },
+        {
+          "id": "9",
+          "url": "/images/analog/galleries/experiments/full/r050_f020.jpg",
+          "caption": "Heather and Dave's wedding, Gravenhurst, Ontario, 1997"
+        },
+        {
+          "id": "10",
+          "url": "/images/analog/galleries/experiments/full/r055_f036_v2.jpg",
+          "caption": "Jon, Quebec City, Quebec, 2000"
+        }
+      ]
+    },
+    {
+      "id": "colour",
+      "name": "Colour",
+      "description": "A vibrant collection of colours film photography by Frédéric Bénard, capturing urban scenes, portraits, and landscapes from 1990 to 2001.",
+      "era": "Film",
+      "images": [
+        {
+          "id": "1",
+          "url": "/images/analog/galleries/colour/full/r004_f008.jpg",
+          "caption": "Charles De Gaulle Airport, Roissy, France, 1990"
+        },
+        {
+          "id": "2",
+          "url": "/images/analog/galleries/colour/full/r007_f027.jpg",
+          "caption": "Barry, Paris, France, 1990"
+        },
+        {
+          "id": "3",
+          "url": "/images/analog/galleries/colour/full/r007_f033.jpg",
+          "caption": "Mieke, Toronto, Ontario, 1990"
+        },
+        {
+          "id": "4",
+          "url": "/images/analog/galleries/colour/full/r007_f035.jpg",
+          "caption": "Kensington Kitchen, Toronto, Ontario, 1990"
+        },
+        {
+          "id": "5",
+          "url": "/images/analog/galleries/colour/full/r020_f004.jpg",
+          "caption": "Family, St-Hippolyte, Quebec, 1994"
+        },
+        {
+          "id": "6",
+          "url": "/images/analog/galleries/colour/full/r035_f007.jpg",
+          "caption": "Getting ready for the parade,  Pride Day, Toronto, Ontario, 1994"
+        },
+        {
+          "id": "7",
+          "url": "/images/analog/galleries/colour/full/r035_f008.jpg",
+          "caption": "Getting ready for the parade,  Pride Day, Toronto, Ontario, 1994"
+        },
+        {
+          "id": "8",
+          "url": "/images/analog/galleries/colour/full/r046_f006.jpg",
+          "caption": "Tadoussac, Quebec, 1996"
+        },
+        {
+          "id": "9",
+          "url": "/images/analog/galleries/colour/full/r057_f031.jpg",
+          "caption": "Haleakalā National Park, Maui, Hawaii, 2001"
+        },
+        {
+          "id": "10",
+          "url": "/images/analog/galleries/colour/full/r057_f033.jpg",
+          "caption": "Haleakalā National Park, Maui, Hawaii, 2001"
+        },
+        {
+          "id": "11",
+          "url": "/images/analog/galleries/colour/full/r058_f013.jpg",
+          "caption": "Haleakalā National Park, Maui, Hawaii, 2001"
+        },
+        {
+          "id": "12",
+          "url": "/images/analog/galleries/colour/full/r058_f015.jpg",
+          "caption": "Haleakalā National Park, Maui, Hawaii, 2001"
+        },
+        {
+          "id": "13",
+          "url": "/images/analog/galleries/colour/full/r062_f023_v2.jpg",
+          "caption": "Sophie and Yves's wedding, Gatineau, Quebec, 2001"
+        }
+      ]
+    },
+    {
+      "id": "traces_of_industry",
+      "name": "Traces of Industry",
+      "description": "Frédéric Bénard's Traces of Industry explores the slow transformation of industrial spaces — rusted surfaces, aging structures, and the quiet beauty of decay.",
+      "era": "Digital",
+      "images": [
+        {
+          "id": "1",
+          "url": "/images/digital/galleries/traces_of_industry/full/2007_09__dsc_0096.jpg",
+          "caption": "Detail from Canada Malting Silos, Toronto, Ontario, 2007"
+        },
+        {
+          "id": "2",
+          "url": "/images/digital/galleries/traces_of_industry/full/2007_10__dsc_0105.jpg",
+          "caption": "Rusting wall surface, back alley, Montreal, Quebec, 2007"
+        },
+        {
+          "id": "3",
+          "url": "/images/digital/galleries/traces_of_industry/full/2008_07__dsc_0263.jpg",
+          "caption": "Parking structure with metal staircase, Old Port of Montreal, Quebec, 2008"
+        },
+        {
+          "id": "4",
+          "url": "/images/digital/galleries/traces_of_industry/full/2008_07__dsc_0155.jpg",
+          "caption": "Detail from Conveyor Tower, Old Port of Montreal, Quebec, 2008"
+        },
+        {
+          "id": "5",
+          "url": "/images/digital/galleries/traces_of_industry/full/2009_03__dsc_0209.jpg",
+          "caption": "Detail from Silo No. 5, Old Port of Montreal, Quebec, 2009"
+        },
+        {
+          "id": "6",
+          "url": "/images/digital/galleries/traces_of_industry/full/2009_03__dsc_0214.jpg",
+          "caption": "Detail from Silo No. 5, Old Port of Montreal, Quebec, 2009"
+        },
+        {
+          "id": "7",
+          "url": "/images/digital/galleries/traces_of_industry/full/2009_08__img_0652.jpg",
+          "caption": "Beehive burner, Scierie Grand Remous, Grand-Remous, Quebec, 2009"
+        },
+        {
+          "id": "8",
+          "url": "/images/digital/galleries/traces_of_industry/full/2015_03__dscf0159.jpg",
+          "caption": "Detrás está el mar, Panama City, Panama, 2015"
+        },
+        {
+          "id": "9",
+          "url": "/images/digital/galleries/traces_of_industry/full/2015_09___scf1545.jpg",
+          "caption": "Abandoned house, Kayaköy, Turkey, 2015"
+        },
+        {
+          "id": "10",
+          "url": "/images/digital/galleries/traces_of_industry/full/2016_08__DSCF2294.jpg",
+          "caption": "Clothesline behind stone wall, Tavira, Portugal, 2016"
+        },
+        {
+          "id": "11",
+          "url": "/images/digital/galleries/traces_of_industry/full/2018_03__IMG_2354.jpg",
+          "caption": "Construction of Le Duke Apartments, William St at Prince St, Montreal, Quebec, 2018"
+        },
+        {
+          "id": "12",
+          "url": "/images/digital/galleries/traces_of_industry/full/2020_06__dscf1661.jpg",
+          "caption": "Stairwell detail, Old Port of Montreal, Quebec, 2020"
+        },
+        {
+          "id": "13",
+          "url": "/images/digital/galleries/traces_of_industry/full/2021_11__dscf4292.jpg",
+          "caption": "White container, Santa Cruz, Aruba, 2021"
+        },
+        {
+          "id": "14",
+          "url": "/images/digital/galleries/traces_of_industry/full/2023_09__img_9328e.jpg",
+          "caption": "Via Vittorio Emanuele, Palermo, Sicily, 2023"
+        },
+        {
+          "id": "15",
+          "url": "/images/digital/galleries/traces_of_industry/full/2024_03__img_9969.jpg",
+          "caption": "Detail from Église du Sacré-Cœur de Balata, Fort-de-France, Martinique, 2024"
+        }
+      ]
+    },
+    {
+      "id": "red_cities",
+      "name": "Red Cities",
+      "description": "Frédéric Bénard's Red Cities traces the colour red across urban spaces — as signal, surface, and surprise — revealing rhythm and tension in the everyday built world.",
+      "era": "Digital",
+      "images": [
+        {
+          "id": "1",
+          "url": "/images/digital/galleries/red_cities/full/2008_07__dsc_0134.jpg",
+          "caption": "Red container, Old Port of Montreal, Quebec, 2008"
+        },
+        {
+          "id": "2",
+          "url": "/images/digital/galleries/red_cities/full/2010_03__img_1199.jpg",
+          "caption": "Detail from MAPLEGLEN (IMO 7910163), Old Port of Montreal, Quebec, 2010"
+        },
+        {
+          "id": "3",
+          "url": "/images/digital/galleries/red_cities/full/2015_09___scf1589.jpg",
+          "caption": "Lifeguard tower, Patara Beach, Turkey, 2015"
+        },
+        {
+          "id": "4",
+          "url": "/images/digital/galleries/red_cities/full/2016_08__dscf2156.jpg",
+          "caption": "Detail from Gerhard Richter's Abstract Painting (1987), Museu Coleção Berardo, Lisbon, Portugal, 2016"
+        },
+        {
+          "id": "5",
+          "url": "/images/digital/galleries/red_cities/full/2019_07__img_5826.jpg",
+          "caption": "Tacos Frida, 4350 Notre-Dame St W, Montreal, Quebec, 2019"
+        },
+        {
+          "id": "6",
+          "url": "/images/digital/galleries/red_cities/full/2021_12__dscf2491.jpg",
+          "caption": "Graffiti on door, back alley, Montreal, Quebec, 2021"
+        },
+        {
+          "id": "7",
+          "url": "/images/digital/galleries/red_cities/full/2021_12__dscf2589.jpg",
+          "caption": "Aux Verres Stérilisés, 1800 Rachel St E, Montreal, Quebec, 2021"
+        },
+        {
+          "id": "8",
+          "url": "/images/digital/galleries/red_cities/full/2023_03__img_8608.jpg",
+          "caption": "Museo Casa Vilamajó, Montevideo, Uruguay, 2023"
+        },
+        {
+          "id": "9",
+          "url": "/images/digital/galleries/red_cities/full/2023_08__img_8922.jpg",
+          "caption": "Men's bathroom, San Francisco Museum of Modern Art, San Francisco, California, 2023"
+        },
+        {
+          "id": "10",
+          "url": "/images/digital/galleries/red_cities/full/2024_04__img_0192.jpg",
+          "caption": "Bar Darling, 4328 St Laurent Blvd, Montreal, Quebec, 2024"
+        },
+        {
+          "id": "11",
+          "url": "/images/digital/galleries/red_cities/full/2024_04__img_0261.jpg",
+          "caption": "Welcome sign, Harry Reid International Airport, Las Vegas, Nevada, 2024"
+        },
+        {
+          "id": "12",
+          "url": "/images/digital/galleries/red_cities/full/2025_02__img_1957.jpg",
+          "caption": "Métro Langelier, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "13",
+          "url": "/images/digital/galleries/red_cities/full/2025_03__img_2165.jpg",
+          "caption": "Centro Cultural Recoleta, Buenos Aires, Argentina, 2025"
+        }
+      ]
+    },
+    {
+      "id": "vivid_spaces",
+      "name": "Vivid Spaces",
+      "description": "Frédéric Bénard's Vivid Spaces explores how colour and surface shape perception — from painted walls and murals to bark, branches, and digitally altered reflections.",
+      "era": "Digital",
+      "images": [
+        {
+          "id": "1",
+          "url": "/images/digital/galleries/vivid_spaces/full/2008_08__img_2301.jpg",
+          "caption": "Detail of red pine bark, Algonquin Park, Ontario, 2008"
+        },
+        {
+          "id": "2",
+          "url": "/images/digital/galleries/vivid_spaces/full/2016_08__dscf2560.jpg",
+          "caption": "Farol do Cabo de São Vicente, Sagres, Portugal, 2016"
+        },
+        {
+          "id": "3",
+          "url": "/images/digital/galleries/vivid_spaces/full/2016_08__dscf2620.jpg",
+          "caption": "Palm trees, Lagos marina, Portugal, 2016"
+        },
+        {
+          "id": "4",
+          "url": "/images/digital/galleries/vivid_spaces/full/2020_05__dscf1304.jpg",
+          "caption": "Side wall, 4478 De Bullion St, Montreal, Quebec, 2020"
+        },
+        {
+          "id": "5",
+          "url": "/images/digital/galleries/vivid_spaces/full/2020_06__dscf1745.jpg",
+          "caption": "St Christophe St at Napoléon St, Montreal, Quebec, 2020"
+        },
+        {
+          "id": "6",
+          "url": "/images/digital/galleries/vivid_spaces/full/2020_06__dscf1865.jpg",
+          "caption": "Back wall, Généreux St at Brébeuf St, Montreal, Quebec, 2020"
+        },
+        {
+          "id": "7",
+          "url": "/images/digital/galleries/vivid_spaces/full/2021_11__img_7586.jpg",
+          "caption": "Cactus landscape, Santa Cruz, Aruba, 2021"
+        },
+        {
+          "id": "8",
+          "url": "/images/digital/galleries/vivid_spaces/full/2022_04__img_7938.jpg",
+          "caption": "4537 Boyer St, Montreal, Quebec, 2022"
+        },
+        {
+          "id": "9",
+          "url": "/images/digital/galleries/vivid_spaces/full/2022_07__img_8167.jpg",
+          "caption": "Side wall, 4725 Berri St, Montreal, Quebec, 2022"
+        },
+        {
+          "id": "10",
+          "url": "/images/digital/galleries/vivid_spaces/full/2022_07__img_8180.jpg",
+          "caption": "Side wall, 4057 Coloniale Ave, Montreal, Quebec, 2022"
+        },
+        {
+          "id": "11",
+          "url": "/images/digital/galleries/vivid_spaces/full/2023_09__img_9333.jpg",
+          "caption": "Piazza Ruggero Settimo, Palermo, Sicily, 2023"
+        },
+        {
+          "id": "12",
+          "url": "/images/digital/galleries/vivid_spaces/full/2024_09__dscf2895.jpg",
+          "caption": "Lily pads and reeds, Lac Hélène, Wentworth North, Quebec, 2024"
+        },
+        {
+          "id": "13",
+          "url": "/images/digital/galleries/vivid_spaces/full/2024_09__dscf2959e.jpg",
+          "caption": "Leaves of grass in lake, Lac Hélène, Wentworth North, Quebec, 2024 &mdash; digitally altered"
+        },
+        {
+          "id": "14",
+          "url": "/images/digital/galleries/vivid_spaces/full/2024_09__dscf2969e.jpg",
+          "caption": "Tree branches, Lac Hélène, Wentworth North, Quebec, 2024 &mdash; digitally altered"
+        }
+      ]
+    },
+    {
+      "id": "urban_patterns",
+      "name": "Urban Patterns",
+      "description": "Frédéric Bénard's Urban Patterns explores rhythm, repetition, and structure in city spaces — tiled façades, stacked windows, and quiet alignments in the everyday built world.",
+      "era": "Digital",
+      "images": [
+        {
+          "id": "1",
+          "url": "/images/digital/galleries/urban_patterns/full/2015_03__dscf0429.jpg",
+          "caption": "Librería Más Puro Verso, Montevideo, Uruguay, 2015"
+        },
+        {
+          "id": "2",
+          "url": "/images/digital/galleries/urban_patterns/full/2015_08___scf1308.jpg",
+          "caption": "Detail from Topkapı Palace, Istanbul, Turkey, 2015"
+        },
+        {
+          "id": "3",
+          "url": "/images/digital/galleries/urban_patterns/full/2016_08__dscf2091.jpg",
+          "caption": "Detail from Jerónimos Monastery, Lisbon, Portugal, 2016"
+        },
+        {
+          "id": "4",
+          "url": "/images/digital/galleries/urban_patterns/full/2016_08__dscf2422.jpg",
+          "caption": "Tiled façades, Faro, Portugal, 2016"
+        },
+        {
+          "id": "5",
+          "url": "/images/digital/galleries/urban_patterns/full/2017_06__img_0728.jpg",
+          "caption": "Anwai Ave Building No. 6, Beijing, China, 2017"
+        },
+        {
+          "id": "6",
+          "url": "/images/digital/galleries/urban_patterns/full/2019_02__img_e4468.jpg",
+          "caption": "Detail from Edificio Ciudadela, Montevideo, Uruguay, 2019"
+        },
+        {
+          "id": "7",
+          "url": "/images/digital/galleries/urban_patterns/full/2019_05__img_5299.jpg",
+          "caption": "Gay Village, Montreal, Quebec, 2019"
+        },
+        {
+          "id": "8",
+          "url": "/images/digital/galleries/urban_patterns/full/2019_10__img_6370.jpg",
+          "caption": "Backpocket Brewing, 903 Quarry Rd, Coralville, Iowa, 2019"
+        },
+        {
+          "id": "9",
+          "url": "/images/digital/galleries/urban_patterns/full/2020_06__dscf1697.jpg",
+          "caption": "Montreal Courthouse, Montreal, Quebec, 2020 (post processed 2025)"
+        },
+        {
+          "id": "10",
+          "url": "/images/digital/galleries/urban_patterns/full/2021_10__img_0584.jpg",
+          "caption": "Pub Bishop & Bagg, 52 St-Viateur St W, Montreal, Quebec, 2021"
+        },
+        {
+          "id": "11",
+          "url": "/images/digital/galleries/urban_patterns/full/2023_03__img_8588.jpg",
+          "caption": "Cultural Alfabeta, Montevideo, Uruguay, 2023"
+        },
+        {
+          "id": "12",
+          "url": "/images/digital/galleries/urban_patterns/full/2023_03__img_8596.jpg",
+          "caption": "La Bicicleta Café, Montevideo, Uruguay, 2023"
+        },
+        {
+          "id": "13",
+          "url": "/images/digital/galleries/urban_patterns/full/2023_09__img_8998.jpg",
+          "caption": "Chiesa di San Domenico viewed from Via Antonio Gagini, Palermo, Sicily, 2023"
+        },
+        {
+          "id": "14",
+          "url": "/images/digital/galleries/urban_patterns/full/2024_04__img_0264.jpg",
+          "caption": "Departure lounge, Harry Reid International Airport, Las Vegas, Nevada, 2024"
+        }
+      ]
+    },
+    {
+      "id": "minimal_structures",
+      "name": "Minimal Structures",
+      "description": "Frédéric Bénard's Minimal Structures captures quiet architectural forms and pared-down urban spaces — moments of light, geometry, and stillness across museums, courtyards, and back alleys.",
+      "era": "Digital",
+      "images": [
+        {
+          "id": "1",
+          "url": "/images/digital/galleries/minimal_structures/full/2009_03__dsc_0106.jpg",
+          "caption": "Interior view, DHC/ART Foundation for Contemporary Art, 451 St Jean St, Montreal, Quebec, 2009"
+        },
+        {
+          "id": "2",
+          "url": "/images/digital/galleries/minimal_structures/full/2016_08__dscf2142.jpg",
+          "caption": "Museum employee, Museu Coleção Berardo, Lisbon, Portugal, 2016"
+        },
+        {
+          "id": "3",
+          "url": "/images/digital/galleries/minimal_structures/full/2016_09__dscf2711.jpg",
+          "caption": "R. Dr. Mendonça 18, Lagos, Portugal, 2016"
+        },
+        {
+          "id": "4",
+          "url": "/images/digital/galleries/minimal_structures/full/2019_02__img_4168.jpg",
+          "caption": "Museo Histórico Cabildo, Montevideo, Uruguay, 2019"
+        },
+        {
+          "id": "5",
+          "url": "/images/digital/galleries/minimal_structures/full/2019_02__img_4287.jpg",
+          "caption": "Detail from Faro Cabo Santa María, La Paloma, Uruguay, 2019"
+        },
+        {
+          "id": "6",
+          "url": "/images/digital/galleries/minimal_structures/full/2019_07__img_5803.jpg",
+          "caption": "Distillerie et brasserie Menaud, Clermont, Quebec, 2019"
+        },
+        {
+          "id": "7",
+          "url": "/images/digital/galleries/minimal_structures/full/2022_06__img_8054.jpg",
+          "caption": "Montreal Museum of Fine Arts, Montreal, Quebec, 2022"
+        },
+        {
+          "id": "8",
+          "url": "/images/digital/galleries/minimal_structures/full/2023_03__img_8456.jpg",
+          "caption": "Museo Nacional de Artes Visuales, Montevideo, Uruguay, 2023"
+        },
+        {
+          "id": "9",
+          "url": "/images/digital/galleries/minimal_structures/full/2023_03__img_8584.jpg",
+          "caption": "New Parking, José Benito Lamas 2730, Montevideo, Uruguay, 2023"
+        },
+        {
+          "id": "10",
+          "url": "/images/digital/galleries/minimal_structures/full/2023_06__img_8763.jpg",
+          "caption": "Bay View Suites, Mountain View, California, 2023"
+        },
+        {
+          "id": "11",
+          "url": "/images/digital/galleries/minimal_structures/full/2023_09__img_9174.jpg",
+          "caption": "Lungomare Alfeo, Syracuse, Sicily, 2023"
+        },
+        {
+          "id": "12",
+          "url": "/images/digital/galleries/minimal_structures/full/2025_03__img_2029.jpg",
+          "caption": "Statue of General Artigas, Museo Histórico Cabildo, Montevideo, Uruguay, 2025"
+        },
+        {
+          "id": "13",
+          "url": "/images/digital/galleries/minimal_structures/full/2025_03__img_2110.jpg",
+          "caption": "Sculpture and paintings on display, MACBA, Buenos Aires, Argentina, 2025"
+        },
+        {
+          "id": "14",
+          "url": "/images/digital/galleries/minimal_structures/full/2025_03__img_2122.jpg",
+          "caption": "Interior corridor, MACBA, Buenos Aires, Argentina, 2025"
+        }
+      ]
+    },
+    {
+      "id": "vacant_geometries",
+      "name": "Vacant Geometries",
+      "description": "Frédéric Bénard's Vacant Geometries captures the atmosphere of 2020 — dimly lit streets, empty storefronts, and quiet city corners marked by absence and unease.",
+      "era": "Digital",
+      "images": [
+        {
+          "id": "1",
+          "url": "/images/digital/galleries/vacant_geometries/full/2020_04__img_6767.jpg",
+          "caption": "Back alley, Montreal, Quebec, April 29, 2020 &mdash; as COVID-19 deaths in Quebec topped 1,000"
+        },
+        {
+          "id": "2",
+          "url": "/images/digital/galleries/vacant_geometries/full/2020_05__dscf0394.jpg",
+          "caption": "Parc Lafontaine, Montreal, Quebec, 2020"
+        },
+        {
+          "id": "3",
+          "url": "/images/digital/galleries/vacant_geometries/full/2020_05__dscf0545.jpg",
+          "caption": "4243 Garnier St, Montreal, Quebec, 2020"
+        },
+        {
+          "id": "4",
+          "url": "/images/digital/galleries/vacant_geometries/full/2020_05__dscf0610.jpg",
+          "caption": "Parc Lafontaine, Montreal, Quebec, May 23, 2020 &mdash; the day after COVID-19 restrictions were eased for small outdoor gatherings"
+        },
+        {
+          "id": "5",
+          "url": "/images/digital/galleries/vacant_geometries/full/2020_05__dscf0690.jpg",
+          "caption": "Bureau Ave at Garnier St, Montreal, Quebec, 2020"
+        },
+        {
+          "id": "6",
+          "url": "/images/digital/galleries/vacant_geometries/full/2020_05__dscf0799.jpg",
+          "caption": "4599 De Lanaudière St, Montreal, Quebec, 2020"
+        },
+        {
+          "id": "7",
+          "url": "/images/digital/galleries/vacant_geometries/full/2020_05__dscf0816.jpg",
+          "caption": "Back alley behind 1350 Gilford St, Montreal, Quebec, 2020"
+        },
+        {
+          "id": "8",
+          "url": "/images/digital/galleries/vacant_geometries/full/2020_05__dscf0839.jpg",
+          "caption": "Habitations De Lanaudière, 1315 Gilford St, Montreal, Quebec, 2020"
+        },
+        {
+          "id": "9",
+          "url": "/images/digital/galleries/vacant_geometries/full/2020_05__dscf0854.jpg",
+          "caption": "Dépanneur Gilford Plus, 1280 Gilford St, Montreal, Quebec, 2020"
+        },
+        {
+          "id": "10",
+          "url": "/images/digital/galleries/vacant_geometries/full/2020_05__dscf1059.jpg",
+          "caption": "Chassé Toyota, 819 Rachel St E, Montreal, Quebec, 2020"
+        },
+        {
+          "id": "11",
+          "url": "/images/digital/galleries/vacant_geometries/full/2020_05__dscf1160.jpg",
+          "caption": "Métro Mont-Royal, Montreal, Quebec, 2020"
+        },
+        {
+          "id": "12",
+          "url": "/images/digital/galleries/vacant_geometries/full/2020_05__dscf1295.jpg",
+          "caption": "Yoga Sangha, 4412 St Laurent Blvd, Montreal, Quebec, 2020"
+        },
+        {
+          "id": "13",
+          "url": "/images/digital/galleries/vacant_geometries/full/2020_06__dscf1737.jpg",
+          "caption": "Café Martin, 2016 St Laurent Blvd, Montreal, Quebec, 2020"
+        },
+        {
+          "id": "14",
+          "url": "/images/digital/galleries/vacant_geometries/full/2020_06__dscf2092.jpg",
+          "caption": "Side wall, 1351 Rachel St E, Montreal, Quebec, 2020"
+        }
+      ]
+    },
+    {
+      "id": "building_portraits",
+      "name": "Building Portraits",
+      "description": "Buildings at rest — their façades, entrances, and back doors — each image a portrait of urban identity. Calm and composed, these exteriors invite us to pause and notice the character revealed in stillness.",
+      "era": "Current Work",
+      "images": [
+        {
+          "id": "1",
+          "url": "/images/analog/galleries/new_work/full/r064_f022.jpg",
+          "caption": "Montreal Pool Room, 1217 St Laurent Blvd, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "2",
+          "url": "/images/analog/galleries/new_work/full/r064_f026.jpg",
+          "caption": "Crèmerie Sweet Dreams and La Tóxica, 1055 & 1059 St Laurent Blvd, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "3",
+          "url": "/images/digital/galleries/new_work/full/2025_06__dscf3493.jpg",
+          "caption": "Rear view, 15 Bernard St E and 2 & 4 Cloutier St, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "4",
+          "url": "/images/analog/galleries/new_work/full/r072_f034.jpg",
+          "caption": "Espace Costume, 2155 Moreau St, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "5",
+          "url": "/images/digital/galleries/new_work/full/2025_07__dscf3894.jpg",
+          "caption": "Rear view, 4320 Marquette St, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "6",
+          "url": "/images/digital/galleries/new_work/full/2025_07__dscf3856.jpg",
+          "caption": "Rear view, 1217 Rachel St, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "7",
+          "url": "/images/analog/galleries/new_work/full/r066_f010.jpg",
+          "caption": "Rear view, Centre de transport Mont-Royal, 2321 Mont-Royal Ave E, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "8",
+          "url": "/images/analog/galleries/new_work/full/r069_f003.jpg",
+          "caption": "Rear entrance, Sir Mortimer B. Davis Memorial Building, 265 Mont-Royal Ave W, Montreal, Quebec, 2025"
+        }
+      ]
+    },
+    {
+      "id": "rhythm",
+      "name": "Rhythm",
+      "description": "Glimpses of the city — people in motion, shifting shadows, and geometric patterns shaping everyday moments.",
+      "era": "Current Work",
+      "images": [
+        {
+          "id": "1",
+          "url": "/images/digital/galleries/new_work/full/2025_06__dscf3428.jpg",
+          "caption": "Van Horne Skatepark, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "2",
+          "url": "/images/analog/galleries/new_work/full/r066_f017.jpg",
+          "caption": "Parc du Père-Marquette Skatepark, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "3",
+          "url": "/images/analog/galleries/new_work/full/r065_f007.jpg",
+          "caption": "Bike path, Berri St at St Antoine St E, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "4",
+          "url": "/images/analog/galleries/new_work/full/r071_f032_v2.jpg",
+          "caption": "Park Ave at Beaumont Ave, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "5",
+          "url": "/images/digital/galleries/new_work/full/2025_06__dscf3618.jpg",
+          "caption": "Cooling mist ring, St Hubert St at Mont-Royal Ave E, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "6",
+          "url": "/images/digital/galleries/new_work/full/2025_06__dscf3710.jpg",
+          "caption": "Cooling mist ring, St Hubert St at Mont-Royal Ave E, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "7",
+          "url": "/images/digital/galleries/new_work/full/2025_06__dscf3757.jpg",
+          "caption": "Boulangerie Première Moisson, 860 Mont-Royal Ave E, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "8",
+          "url": "/images/analog/galleries/new_work/full/r068_f029.jpg",
+          "caption": "Rear view, Martlet House, 1430 Peel St, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "9",
+          "url": "/images/digital/galleries/new_work/full/2025_06__dscf3594.jpg",
+          "caption": "Place des Fleurs-de-Macadam, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "10",
+          "url": "/images/analog/galleries/new_work/full/r068_f012.jpg",
+          "caption": "Montreal Museum of Fine Arts, 1380 Sherbrooke St W, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "11",
+          "url": "/images/analog/galleries/new_work/full/r068_f030.jpg",
+          "caption": "Rear view, La Maison Simons, 977 St Catherine St W, Montreal, Quebec, 2025"
+        }
+      ]
+    },
+    {
+      "id": "minimalism",
+      "name": "Minimalism",
+      "description": "Minimalist photography gallery featuring spare compositions of space, light, and form. Drawing from minimalism and brutalist architecture, these images explore structure and restraint in urban environments.",
+      "era": "Current Work",
+      "images": [
+        {
+          "id": "1",
+          "url": "/images/analog/galleries/new_work/full/r063_f014.jpg",
+          "caption": "Side wall, 1901 de Champlain St, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "2",
+          "url": "/images/analog/galleries/new_work/full/r066_f027.jpg",
+          "caption": "Parking lot, O-I Glass, 2376 Wellington St, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "3",
+          "url": "/images/analog/galleries/new_work/full/r066_f012.jpg",
+          "caption": "Façade and street, Mini Entrepôt Iberville, 4375 D'Iberville St, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "4",
+          "url": "/images/analog/galleries/new_work/full/r063_f016.jpg",
+          "caption": "1600 De Maisonneuve Blvd E, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "5",
+          "url": "/images/analog/galleries/new_work/full/r063_f029.jpg",
+          "caption": "2093 Visitation St, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "6",
+          "url": "/images/analog/galleries/new_work/full/r065_f027.jpg",
+          "caption": "Westmount Square, Westmount, Quebec, 2025"
+        },
+        {
+          "id": "7",
+          "url": "/images/analog/galleries/new_work/full/r065_f026.jpg",
+          "caption": "Westmount Square, Westmount, Quebec, 2025"
+        },
+        {
+          "id": "8",
+          "url": "/images/analog/galleries/new_work/full/r065_f002.jpg",
+          "caption": "Viger Square, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "9",
+          "url": "/images/analog/galleries/new_work/full/r068_f020.jpg",
+          "caption": "Rear view, Le Mount Stephen, 1440 Drummond St, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "10",
+          "url": "/images/analog/galleries/new_work/full/r071_f001_v2.jpg",
+          "caption": "Campus MIL, 1375 Thérèse-Lavoie-Roux Ave, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "11",
+          "url": "/images/analog/galleries/new_work/full/r068_f036.jpg",
+          "caption": "McGill College Ave, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "12",
+          "url": "/images/analog/galleries/new_work/full/r070_f007_v2.jpg",
+          "caption": "6559 Esplanade Ave, Montreal, Quebec, 2025"
+        }
+      ]
+    },
+    {
+      "id": "night",
+      "name": "Night",
+      "description": "Familiar storefronts, sidewalks, and facades after dark — emptied of people, illuminated by artificial glow, and imbued with a quieter, more contemplative presence.",
+      "era": "Current Work",
+      "images": [
+        {
+          "id": "1",
+          "url": "/images/digital/galleries/new_work/full/2025_06__dscf3541.jpg",
+          "caption": "4308 Garnier St, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "2",
+          "url": "/images/digital/galleries/new_work/full/2025_06__dscf3582.jpg",
+          "caption": "4521 Christophe Colomb Ave, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "3",
+          "url": "/images/digital/galleries/new_work/full/2025_07__dscf3935.jpg",
+          "caption": "Le Roi du Smoked Meat, 6705 St Hubert St, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "4",
+          "url": "/images/digital/galleries/new_work/full/2025_07__dscf3796.jpg",
+          "caption": "Interior view, 4283 Garnier St, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "5",
+          "url": "/images/digital/galleries/new_work/full/2025_07__dscf3939.jpg",
+          "caption": "La Noce de Star, 6720 St Hubert St, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "6",
+          "url": "/images/digital/galleries/new_work/full/2025_06__dscf3550.jpg",
+          "caption": "Piano shelter, Parc Lafontaine, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "7",
+          "url": "/images/digital/galleries/new_work/full/2025_06__dscf3561.jpg",
+          "caption": "Rear view, 4219 Garnier St, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "8",
+          "url": "/images/digital/galleries/new_work/full/2025_06__dscf3578.jpg",
+          "caption": "4835 Christophe Colomb Ave, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "9",
+          "url": "/images/digital/galleries/new_work/full/2025_07__dscf3954.jpg",
+          "caption": "Top Discount, 6715 St Hubert St, Montreal, Quebec, 2025"
+        }
+      ]
+    },
+    {
+      "id": "backlot_geometry",
+      "name": "Backlot Geometry",
+      "description": "These photographs explore the unnoticed backlots of industry — loading docks, storage yards, and discarded remnants. Stripped of people, these spaces reveal a hidden order in their geometry, patterns, and residues, transforming the ordinary into something striking.",
+      "era": "Current Work",
+      "images": [
+        {
+          "id": "1",
+          "url": "/images/digital/galleries/new_work/full/2025_06__dscf3326.jpg",
+          "caption": "Centre de transport Bellechasse, 7000 Bellechasse St, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "2",
+          "url": "/images/analog/galleries/new_work/full/r066_f033_v2.jpg",
+          "caption": "Door, 2376 Wellington St, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "3",
+          "url": "/images/digital/galleries/new_work/full/2025_07__dscf3825.jpg",
+          "caption": "Rear view, 4354 Brébeuf St, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "4",
+          "url": "/images/analog/galleries/new_work/full/r072_f003.jpg",
+          "caption": "Stair and shadow, 4216 Frontenac St, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "5",
+          "url": "/images/analog/galleries/new_work/full/r068_f034.jpg",
+          "caption": "Rear loading docks, 1500 McGill College Ave, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "6",
+          "url": "/images/digital/galleries/new_work/full/2025_08__dscf4080.jpg",
+          "caption": "Excellent Garage Beaubien Inc, 99 Beaubien St W, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "7",
+          "url": "/images/digital/galleries/new_work/full/2025_08__dscf4028.jpg",
+          "caption": "Papier Rebut Central Inc, 4270 Hogan St, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "8",
+          "url": "/images/analog/galleries/new_work/full/r070_f009_v2.jpg",
+          "caption": "Truck in parking lot, 6559 Esplanade Ave, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "9",
+          "url": "/images/analog/galleries/new_work/full/r070_f014_v2.jpg",
+          "caption": "Rear view, 6964 Marconi St, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "10",
+          "url": "/images/analog/galleries/new_work/full/r066_f029.jpg",
+          "caption": "Trailers, 2376 Wellington St, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "11",
+          "url": "/images/analog/galleries/new_work/full/r066_f034.jpg",
+          "caption": "Trailers, 2376 Wellington St, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "12",
+          "url": "/images/analog/galleries/new_work/full/r071_f022_v2.jpg",
+          "caption": "Electrical substation, 800 Beaumont Ave, Montreal, Quebec, 2025"
+        }
+      ]
+    },
+    {
+      "id": "walls",
+      "name": "Walls",
+      "description": "Walls, seen up close, become canvases — from bold graffiti to subtle traces of time. These images explore abstraction through color, texture, and the marks left on urban surfaces.",
+      "era": "Current Work",
+      "images": [
+        {
+          "id": "1",
+          "url": "/images/analog/galleries/new_work/full/r069_f019.jpg",
+          "caption": "Side wall, 80 Bernard St W, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "2",
+          "url": "/images/digital/galleries/new_work/full/2025_05__dscf3208.jpg",
+          "caption": "Side wall, 4211 De La Roche St, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "3",
+          "url": "/images/digital/galleries/new_work/full/2025_05__dscf3242.jpg",
+          "caption": "Side wall, 318 Marie-Anne St E, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "4",
+          "url": "/images/digital/galleries/new_work/full/2025_07__dscf3908.jpg",
+          "caption": "Rear wall, 4235 Marquette St, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "5",
+          "url": "/images/analog/galleries/new_work/full/r069_f011.jpg",
+          "caption": "Patterned metal double doors, 5739 Park Ave, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "6",
+          "url": "/images/digital/galleries/new_work/full/2025_08__dscf4091.jpg",
+          "caption": "Rear wall, 6550 Park Ave, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "7",
+          "url": "/images/digital/galleries/new_work/full/2025_08__dscf4019.jpg",
+          "caption": "Side wall, 2175 Mont-Royal Ave E, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "8",
+          "url": "/images/analog/galleries/new_work/full/r067_f026.jpg",
+          "caption": "Side wall and fire escape, 590 Fortune St, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "9",
+          "url": "/images/digital/galleries/new_work/full/2025_06__dscf3778.jpg",
+          "caption": "Façade detail with graffiti and bench, 4505 Garnier St, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "10",
+          "url": "/images/analog/galleries/new_work/full/r072_f004.jpg",
+          "caption": "Side wall, 4205 D'Iberville St, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "11",
+          "url": "/images/analog/galleries/new_work/full/r072_f021.jpg",
+          "caption": "Tunnel de Rouen, Montreal, Quebec, 2025"
+        },
+        {
+          "id": "12",
+          "url": "/images/analog/galleries/new_work/full/r069_f016.jpg",
+          "caption": "Dépanneur Vilamar, 140 Bernard St W, Montreal, Quebec, 2025"
+        }
+      ]
+    }
+  ]
+}

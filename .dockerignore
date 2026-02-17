@@ -1,0 +1,13 @@
+node_modules
+dist
+.git
+.env
+.env.*
+*.md
+docs
+data
+# Include public profiles so they are available in the Docker image (e.g. HF)
+!data/profiles/public
+!data/profiles/public/**
+.huggingface
+.cursor

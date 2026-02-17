@@ -1,0 +1,135 @@
+export const en = {
+  app: {
+    title: "Stateful Viewers",
+    subtitle: "A viewer whose perception evolves with each image.",
+  },
+  onboarding: {
+    nextStepAddApiKey: "Next step: add your {provider} API key in API keys.",
+    nextStepGenerateOrLoadProfile: "Next step: generate or load a profile.",
+    nextStepSelectGallery: "Next step: select a gallery.",
+  },
+  status: {
+    generatingProfile: "Generating profile",
+    generatingPersonalizedProfile: "Generating personalized profile",
+    generatingReflectionStyle: "Generating reflection style",
+    generatingLabel: "Generating label",
+    saving: "Saving",
+    firstUseHint: "First use or after sleep can take up to a minute.",
+  },
+  errors: {
+    apiKeyRequired:
+      "Add an API key first: open API keys in the sidebar (below Models).",
+    serverNotResponding:
+      "The app server isn't responding. If you're on Hugging Face Spaces, wait for the Space to finish loading, then try again.",
+    failedGenerateProfile: "Failed to generate profile: {error}",
+    failedGenerateReflectionStyle: "Failed to generate reflection style: {error}",
+    unexpectedError: "Unexpected error: {error}",
+  },
+  apiErrors: {
+    requestTimedOut: "Request timed out ({seconds}s). Try again.",
+    networkCouldNotReachServer:
+      "Network error: the request could not reach the server. If you're on Hugging Face Spaces, the app may be starting—try again in a moment.",
+    httpStatusError: "{provider} error: {status} — {message}{hint}",
+    retriesExhaustedHint:
+      " Retries exhausted—please try again. This is usually a temporary server issue.",
+    noContentReturned:
+      "{provider} returned no content{hint}. See browser console for details.",
+  },
+  common: {
+    save: "Save",
+    cancel: "Cancel",
+    close: "Close",
+  },
+  sidebar: {
+    language: "Language",
+    aboutProject: "About this project",
+    models: "Models",
+    apiKeys: "API keys",
+    expandSidebar: "Expand sidebar",
+    collapseSidebar: "Collapse sidebar",
+    viewer: "Viewer",
+    generateProfile: "Generate profile",
+    generating: "Generating…",
+    random: "Random",
+    personalized: "Personalized",
+    loadProfile: "Load profile",
+    hideProfiles: "Hide profiles",
+    loadingProfiles: "Loading profiles…",
+    noProfilesForProvider: "No profiles found for this provider",
+    showOtherLanguages: "Show other languages",
+    untitledProfile: "Untitled profile",
+    galleries: "Galleries",
+    stopWalkthroughToSwitchGalleries: "Stop walk-through to switch galleries",
+    imagesCopyright: "Images ©",
+    allRightsReserved: "All rights reserved.",
+  },
+  apiKeysModal: {
+    title: "API keys",
+    intro:
+      "Paste your API keys below to use cloud models. Keys are stored only in your browser and sent with each request; the server does not store them. Leave blank to use server-configured keys (if any).",
+  },
+  personalizedModal: {
+    title: "Personalized viewer profile",
+    intro:
+      "Answer a few questions; we'll generate a profile and reflection style tailored to you. You can add your name to the profile label (e.g. “Patient observer (Maria)”).",
+    yourName: "Your name",
+    optionalForLabel: "(optional, for the profile label)",
+    namePlaceholder: "e.g. Maria",
+    generate: "Generate personalized profile",
+  },
+  reflection: {
+    title: "Reflection",
+    reflecting: "Reflecting…",
+    reflectOnThisImage: "Reflect on this image",
+    startWalkthrough: "Start walk-through",
+    stopWalkthrough: "Stop walk-through",
+    walkthroughInProgress: "Walk-through in progress.",
+    autoAdvanceOn: "Auto-advance is on: progression is fully automated.",
+    autoAdvanceOff: "Auto-advance is off: use Next to move forward.",
+    stopWalkthroughHint:
+      "Stop walk-through to switch galleries, jump images, or select a reflection.",
+    selectImageHint:
+      "Select an image and click “Reflect on this image,” or start a gallery walk-through.",
+    autoAdvance: "Auto-advance",
+    autoVoiceOver: "Auto voice-over",
+    voice: "Voice",
+    loadingVoices: "Loading voices…",
+    next: "Next →",
+    listen: "Listen",
+    stopListening: "Stop",
+    myCurrentState: "My current state:",
+  },
+  trajectorySummary: {
+    title: "Trajectory summary",
+  },
+  image: {
+    previous: "← Previous",
+    thumbnailAlt: "Image {n}",
+    stopWalkthroughToJump: "Stop walk-through to jump to another image",
+    sensitiveChip: "Sensitive",
+    containsArtisticNudity: "This image contains artistic nudity.",
+    revealImage: "Reveal image",
+    hideImageAgain: "Hide image again",
+  },
+  history: {
+    title: "Reflection history",
+    show: "Show history",
+    hide: "Hide history",
+    export: "Export",
+    exportMarkdown: "Export Markdown (.md)",
+    exportJson: "Export JSON (.json)",
+    summarizing: "Summarizing…",
+    summarize: "Summarize trajectory",
+    reflectionsOne: "{count} reflection",
+    reflectionsMany: "{count} reflections",
+    stopWalkthroughToSelect: "Stop walk-through to select a reflection",
+    imageNumber: "Image {n}",
+  },
+  viewerProfile: {
+    show: "Show",
+    hide: "Hide",
+    profileHeading: "Profile",
+    reflectionStyleHeading: "Reflection style",
+  },
+} as const;
+

@@ -1,0 +1,39 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Environment
+.env
+
+# Data (generated profiles, etc.) — use data/* not data/ so negations can un-ignore public profiles
+data/*
+!data/profiles/
+data/profiles/*
+!data/profiles/public/
+!data/profiles/public/**
+
+# Binary assets (HF Spaces rejects binaries in Git; host elsewhere if needed)
+public/app-icon-orig.png
+public/app-icon.png
+public/app-icon_OLD.png
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
