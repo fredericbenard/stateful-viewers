@@ -27,6 +27,13 @@ public/app-icon-orig.png
 public/app-icon.png
 public/app-icon_OLD.png
 
+# Research pipeline
+research/output/
+research/.env
+research/.venv/
+__pycache__/
+*.pyc
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
