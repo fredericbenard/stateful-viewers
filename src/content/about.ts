@@ -40,9 +40,10 @@ export const ABOUT_CONTENT: Record<UiLocale, AboutContent> = {
     researchPositioning: {
       heading: "Research positioning",
       paragraphs: [
-        "Stateful Viewers draws on reception theory, phenomenology, and aesthetic psychology. It explicitly models a viewer's perceptual stance prior to viewing, constrains expressive voice independently of image content, and treats emotional response as a cumulative component of perception rather than a series of isolated reactions.",
+        "Stateful Viewers draws on reception theory, phenomenology, and aesthetic psychology. It models a viewer's perceptual stance prior to viewing, maintains a stable expressive voice across images, and treats emotional response as something that unfolds over time.",
         "The system operationalizes qualitative theories of aesthetic experience within a structured generative framework, without reducing experience to numerical scores or fixed emotion labels.",
         "Current GenAI systems are very good at remembering content, but are not typically designed to preserve interpretive posture. They retrieve facts or prior statements, but do not maintain a structured, evolving internal state that carries stance, attention, and affect forward over time. Stateful Viewers introduces that missing layer.",
+        "A similar reduction appears in affective computing approaches. Where affective computing often asks what emotion is present, Stateful Viewers asks <em>what it is like to encounter this image, having already encountered the previous ones.</em>",
       ],
       bullets: [
         { term: "Viewer profile", refs: "Jauss, Merleau-Ponty, Gombrich" },
@@ -134,9 +135,10 @@ export const ABOUT_CONTENT: Record<UiLocale, AboutContent> = {
     researchPositioning: {
       heading: "Positionnement de recherche",
       paragraphs: [
-        "Stateful Viewers s’appuie sur la théorie de la réception, la phénoménologie et la psychologie esthétique. Il modélise explicitement la posture perceptive du regardeur avant la rencontre avec les images, contraint la voix expressive indépendamment du contenu des images et considère la réponse émotionnelle comme une composante cumulative de la perception plutôt qu’une série de réactions isolées.",
+        "Stateful Viewers s’appuie sur la théorie de la réception, la phénoménologie et la psychologie esthétique. Il modélise la posture perceptive du regardeur avant la rencontre avec l’image, maintient une voix expressive stable d’une image à l’autre, et considère la réponse émotionnelle comme un processus qui se déploie dans le temps.",
         "Le système opérationnalise des théories qualitatives de l’expérience esthétique dans un cadre génératif structuré, sans réduire l’expérience à des scores numériques ni à des catégories émotionnelles fixes.",
         "Les systèmes actuels d’IA générative sont très bons pour retenir le contenu, mais ne sont généralement pas conçus pour préserver une posture interprétative. Ils récupèrent des faits ou des énoncés antérieurs, mais ne maintiennent pas un état interne structuré et évolutif qui porte dans le temps posture, attention et affect. Stateful Viewers introduit cette couche manquante.",
+        "On observe une réduction similaire dans les approches d’informatique affective. Là où l’informatique affective demande souvent quelle émotion est présente, Stateful Viewers s’interroge sur <em>ce que signifie faire l’expérience de cette image, après avoir déjà fait l’expérience des précédentes.</em>",
       ],
       bullets: [
         { term: "Profil du regardeur", refs: "Jauss, Merleau-Ponty, Gombrich" },

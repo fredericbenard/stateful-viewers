@@ -67,6 +67,28 @@ function truncateAtWord(text: string, maxLength: number): string {
   return truncated + "…";
 }
 
+function renderInlineItalics(text: string) {
+  const pattern = /<(em|it|italic)>([\s\S]*?)<\/\1>/g;
+  const parts: Array<string | JSX.Element> = [];
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+
+  while ((match = pattern.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push(text.slice(lastIndex, match.index));
+    }
+
+    parts.push(<em key={`em-${match.index}`}>{match[2]}</em>);
+    lastIndex = pattern.lastIndex;
+  }
+
+  if (lastIndex < text.length) {
+    parts.push(text.slice(lastIndex));
+  }
+
+  return parts;
+}
+
 function isAppleMobileBrowser(): boolean {
   if (typeof navigator === "undefined") return false;
   const ua = navigator.userAgent || "";
@@ -2004,7 +2026,9 @@ function App() {
                   const renderSection = (section: AboutSection) => (
                     <>
                       <h3>{section.heading}</h3>
-                      {section.paragraphs?.map((p, idx) => <p key={`${section.heading}-p-${idx}`}>{p}</p>)}
+                      {section.paragraphs?.map((p, idx) => (
+                        <p key={`${section.heading}-p-${idx}`}>{renderInlineItalics(p)}</p>
+                      ))}
                       {section.bullets && section.bullets.length > 0 && (
                         <ul>
                           {section.bullets.map((b, idx) => (
