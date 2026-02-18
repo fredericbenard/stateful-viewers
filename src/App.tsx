@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, type ReactNode } from "react";
 import { getGalleries } from "./data/galleries";
 import type { Gallery, GalleryImage } from "./data/galleries";
 import { reflectOnImage } from "./api/vision";
@@ -69,7 +69,7 @@ function truncateAtWord(text: string, maxLength: number): string {
 
 function renderInlineItalics(text: string) {
   const pattern = /<(em|it|italic)>([\s\S]*?)<\/\1>/g;
-  const parts: Array<string | JSX.Element> = [];
+  const parts: ReactNode[] = [];
   let lastIndex = 0;
   let match: RegExpExecArray | null;
 
