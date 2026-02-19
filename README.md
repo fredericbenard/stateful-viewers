@@ -27,7 +27,7 @@ Rather than treating images as independent inputs, the system models viewing as 
 - **Auto Voice-Over** — Automatically play reflections during walk-through mode
 - **Walk-Through Mode** — Automated guided tour with sequential image viewing
 - **Reflection History** — Timeline of all reflections with quick navigation
-- **Summarize trajectory** — Generate a short narrative summary of how the experience moved through the gallery (phenomenological, non-reductive)
+- **Summarize Trajectory** — Generate a short narrative summary of how the experience moved through the gallery (phenomenological, non-reductive)
 
 ## Images & Copyright
 
@@ -82,7 +82,8 @@ In dev, `npm run dev` starts:
 - **Vite** (frontend)
 - **Node/Express** on `http://localhost:8787` (the app API server). Vite proxies `/api/*` to it.
 
-Language:
+**Language:**
+
 - The app detects locale from the browser and persists your choice in localStorage.
 - You can switch **EN/FR** via the footer toggle.
 
@@ -128,7 +129,7 @@ Choose from the scraped galleries. Gallery sections and names follow the selecte
 
 The **Reflection History** panel shows all reflections in sequence. Click any entry to jump directly to that image.
 
-### 6. Summarize trajectory
+### 6. Summarize Trajectory
 
 After reflecting on at least one image, use **"Summarize trajectory"** to get a short narrative summary of how the experience moved (e.g. gradual settling, oscillation, depletion). This uses the same text LLM as profile generation; the summary appears below the buttons.
 
@@ -174,10 +175,11 @@ Each reflection:
 When you reflect on images with a profile that was successfully saved **and** the dev server is running, each reflection auto-saves the full session to `data/reflections/<profileId>_<galleryId>_<sessionStartedAt>.json`. One file per (profile, gallery) run is updated in place after every new reflection. The file embeds gallery metadata, profile and reflection style text, all reflections so far, and last internal state. Sessions are only saved when the app has a real `profileId` (i.e. profile save to the dev server succeeded). The saved JSON matches the structure used by the export utilities in code (`src/lib/exportSession.ts`) if you re-enable export in the UI.
 
 Locale notes:
+
 - Each reflection includes `generatedAt` (ISO) and may include `locale` (EN/FR).
 - Trajectory summaries include `trajectorySummaryLocale` and `trajectorySummaryGeneratedAt`.
 
-### Experiential trajectory analysis
+### Experiential Trajectory Analysis
 
 Reflection sessions can be treated as **experiential trajectories**: ordered paths of internal state and reflection through a gallery, shaped by profile and reflection style. Analysis stays qualitative and phenomenological — no valence/arousal or sentiment scores.
 
@@ -185,24 +187,26 @@ Reflection sessions can be treated as **experiential trajectories**: ordered pat
 Use **"Summarize trajectory"** in the Reflection history section (after reflecting on at least one image) to get a narrative summary of the current run. It uses the same text LLM as profile generation.
 
 **Data model**  
+
 - `src/lib/trajectory.ts` — Defines `ExperientialTrajectory` and `trajectoryFromSession(session)`. A trajectory is an ordered sequence of steps (reflection text + internal state per image), plus gallery and viewer context.
 
 **Implemented**  
+
 - **Narrative summarization** (`src/lib/analyzeTrajectory.ts`) — `generateNarrativeSummary(trajectory, provider, locale)` produces a short reflective summary of how the experience moved (e.g. gradual settling, oscillation, depletion, drift). In the UI this is triggered by the button in the Reflection history section; programmatically, load a session from `data/reflections/*.json`, convert with `trajectoryFromSession()`, then call `generateNarrativeSummary()` with your chosen LLM provider and target locale. See `docs/trajectory-summary-prompt-example.md` for the exact prompt sent to the LLM.
 
 ## Research Positioning
 
-Stateful Viewers draws on reception theory, phenomenology, and aesthetic psychology. It explicitly models a viewer's perceptual stance prior to viewing, constrains expressive voice independently of image content, and treats emotional response as a cumulative component of perception rather than a series of isolated reactions.
+Stateful Viewers draws on reception theory, phenomenology, and aesthetic psychology. It models a viewer's perceptual stance prior to viewing, maintains a stable expressive voice across images, and treats emotional response as something that unfolds over time.
 
-This approach operationalizes qualitative theories of aesthetic experience into a structured generative framework without reducing experience to numerical affect scores or categorical emotion labels.
+The system operationalizes qualitative theories of aesthetic experience within a structured generative framework, without reducing experience to numerical scores or fixed emotion labels.
 
 ### Prompt-to-Research Mapping
 
-| Prompt | Research Anchor | Core Thinkers |
-|--------|-----------------|---------------|
-| Viewer Profile | Reception theory, phenomenology of perception | Jauss, Merleau-Ponty, Gombrich |
-| Reflection Style | Inner speech, narrative psychology, phenomenological reduction | Vygotsky, Bruner, Husserl |
-| Stateful Reflection | Aesthetic experience as process, affect dynamics | Dewey, Tomkins |
+| Prompt              | Research Anchor                                                | Core Thinkers                  |
+| ------------------- | -------------------------------------------------------------- | ------------------------------ |
+| Viewer Profile      | Reception theory, phenomenology of perception                  | Jauss, Merleau-Ponty, Gombrich |
+| Reflection Style    | Inner speech, narrative psychology, phenomenological reduction | Vygotsky, Bruner, Husserl      |
+| Stateful Reflection | Aesthetic experience as process, affect dynamics               | Dewey, Tomkins                 |
 
 ### Relation to Affective Computing
 
@@ -210,17 +214,17 @@ While the system tracks internal state over time, it differs fundamentally from 
 
 Emotional state is treated as one component of lived experience, expressed through a stable reflective voice and shaped by prior orientation, attention style, and aesthetic conditioning.
 
-*Affective computing asks what emotion is present; this system asks what it is like to experience something, having already experienced something else.*
+Where affective computing often asks what emotion is present, Stateful Viewers asks *what it is like to encounter this image, having already encountered the previous ones.*
 
-| Dimension | Affective Computing | Stateful Viewers |
-|-----------|---------------------|------------------|
-| Goal | Detect / classify emotion | Simulate lived experience |
-| View of the human | Signal source | Situated subject |
-| Emotion | Target variable | Embedded component |
-| Representation | Numeric / categorical | Qualitative / narrative |
-| Time | Discrete steps | Continuous accumulation |
-| Ambiguity | Minimized | Preserved |
-| Outcome | Prediction / adaptation | Reflection / articulation |
+| Dimension         | Affective Computing       | Stateful Viewers          |
+| ----------------- | ------------------------- | ------------------------- |
+| Goal              | Detect / classify emotion | Simulate lived experience |
+| View of the human | Signal source             | Situated subject          |
+| Emotion           | Target variable           | Embedded component        |
+| Representation    | Numeric / categorical     | Qualitative / narrative   |
+| Time              | Discrete steps            | Continuous accumulation   |
+| Ambiguity         | Minimized                 | Preserved                 |
+| Outcome           | Prediction / adaptation   | Reflection / articulation |
 
 ## Project Structure
 
@@ -265,6 +269,7 @@ npm run add-labels
 The script reads API keys from environment variables, detects which providers are available, and only processes profiles for those providers. Profiles that already have a label are skipped. See `scripts/add-profile-labels.ts`.
 
 Common variables:
+
 - `OPENAI_API_KEY`
 - `GOOGLE_API_KEY`
 - `ANTHROPIC_API_KEY`
@@ -285,21 +290,27 @@ For production deployment to a static host, a backend is required to proxy cloud
 ## References
 
 **Phenomenology & Perception**
+
 - Merleau-Ponty, M. (2012). *Phenomenology of perception* (D. A. Landes, Trans.). Routledge. (Original work published 1945)
 - Husserl, E. (1982). *Ideas pertaining to a pure phenomenology and to a phenomenological philosophy, First Book* (F. Kersten, Trans.). Springer. (Original work published 1913)
 
 **Reception Theory & Viewer Orientation**
+
 - Jauss, H. R. (1982). *Toward an aesthetic of reception* (T. Bahti, Trans.). University of Minnesota Press.
 - Gombrich, E. H. (1960). *Art and illusion: A study in the psychology of pictorial representation*. Princeton University Press.
 
 **Aesthetic Experience as Process**
+
 - Dewey, J. (2005). *Art as experience*. Perigee Books. (Original work published 1934)
 
 **Inner Speech, Narrative, and Expression**
+
 - Vygotsky, L. S. (1986). *Thought and language* (A. Kozulin, Trans.). MIT Press. (Original work published 1934)
 - Bruner, J. (1990). *Acts of meaning*. Harvard University Press.
 
 **Affect Theory & Affective Computing (for contrast)**
+
 - Picard, R. W. (1997). *Affective computing*. MIT Press.
 - Russell, J. A. (1980). A circumplex model of affect. *Journal of Personality and Social Psychology*, 39(6), 1161–1178.
 - Tomkins, S. S. (1962). *Affect, imagery, consciousness: Vol. 1. The positive affects*. Springer.
+
