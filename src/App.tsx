@@ -211,17 +211,6 @@ function detectBrowserLocale(): UiLocale {
   return normalizeUiLocale(candidate);
 }
 
-function isMobileViewport(): boolean {
-  if (typeof window === "undefined" || typeof navigator === "undefined") return false;
-  const hasCoarsePointer = window.matchMedia?.("(pointer: coarse)")?.matches ?? false;
-  const isNarrowViewport = window.matchMedia?.("(max-width: 768px)")?.matches ?? false;
-  const userAgent = navigator.userAgent || "";
-  const isMobileUserAgent = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-    userAgent
-  );
-  return hasCoarsePointer || isNarrowViewport || isMobileUserAgent;
-}
-
 function App() {
   // Initialize state from localStorage on mount
   const [locale, setLocale] = useState<UiLocale>(() => {
