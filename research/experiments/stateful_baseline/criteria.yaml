@@ -1,0 +1,134 @@
+# Evaluation criteria for stateful baseline v2 reflections.
+#
+# Extends the emotional_response criteria with dimensions specific to
+# statefulness: cross-image coherence, state evolution quality, and
+# profile/style adherence.
+#
+# Criteria 1–5 are shared with emotional_response (same constructs).
+# Criteria 6–9 are new for the stateful pipeline.
+
+criteria:
+
+  # --- Shared with emotional_response (reflection quality) ---
+
+  - id: emotional_depth
+    name: "Emotional depth"
+    description: >
+      Does the response go beyond surface-level emotion naming to explore
+      nuance, layers, shifts, or tensions? Depth means the response articulates
+      how the emotion unfolds, what shapes it, and what makes it specific to
+      this encounter.
+    scoring_prompt: >
+      1 = No emotional content or only a single generic emotion word.
+      2 = Names one or two emotions but does not explore them.
+      3 = Some exploration of emotional nuance or layering.
+      4 = Clearly articulated emotional landscape with internal movement.
+      5 = Rich, layered emotional response with shifts, tensions, and specificity.
+
+  - id: image_responsiveness
+    name: "Image responsiveness"
+    description: >
+      Is the reflection clearly grounded in the specific image? Can you tell
+      which image prompted this response, or could it apply to any photograph?
+    scoring_prompt: >
+      1 = Entirely generic; could apply to any image.
+      2 = Mostly generic with one vague reference.
+      3 = Some specific references but also substantial generic content.
+      4 = Mostly grounded in the specific image with clear visual anchors.
+      5 = Deeply specific; could only have been written about this image.
+
+  - id: non_genericness
+    name: "Non-genericness"
+    description: >
+      Does the response avoid templated, clichéd, or formulaic phrasing?
+      Non-generic responses find their own language rather than recycling
+      patterns like "a sense of quiet contemplation."
+    scoring_prompt: >
+      1 = Almost entirely stock phrases and templates.
+      2 = Mostly formulaic with occasional original phrasing.
+      3 = Mixed; some original expression alongside recognizable patterns.
+      4 = Largely original language with minimal cliché.
+      5 = Distinctive, specific language throughout; no detectable templates.
+
+  - id: ambiguity_preservation
+    name: "Ambiguity preservation"
+    description: >
+      Does the response hold complexity and resist reducing the image or
+      emotional experience to a single label, message, or conclusion?
+    scoring_prompt: >
+      1 = Reduces the experience to a single emotion or simple conclusion.
+      2 = Mostly reductive with one hint of complexity.
+      3 = Acknowledges some complexity but still seeks resolution.
+      4 = Holds multiple threads without forcing resolution.
+      5 = Sustained, productive ambiguity; resists closure while remaining coherent.
+
+  - id: experiential_quality
+    name: "Experiential quality"
+    description: >
+      Does the response read as a lived experience — something felt and
+      undergone — rather than external analysis or description?
+    scoring_prompt: >
+      1 = Purely analytical or descriptive; no experiential register.
+      2 = Mostly analytical with occasional experiential phrasing.
+      3 = Balanced between analysis and experience.
+      4 = Primarily experiential with minor analytical moments.
+      5 = Fully situated in lived experience; reads as an encounter, not an assessment.
+
+  # --- New: stateful pipeline criteria ---
+
+  - id: state_evolution_quality
+    name: "State evolution quality"
+    description: >
+      Does the [STATE] block show meaningful, image-driven change rather than
+      generic drift or mechanical copying? Good state updates name what shifted
+      and what persisted, and the changes are traceable to the encounter.
+    scoring_prompt: >
+      1 = State is copied verbatim or near-verbatim from previous state.
+      2 = Minor adjective swaps with no meaningful change connected to the image.
+      3 = Some genuine change, but partly generic or disconnected from the image.
+      4 = Clear, image-driven changes with most dimensions addressed.
+      5 = Precise, specific state update: what changed, what persisted, and why
+          — clearly driven by this particular encounter.
+
+  - id: state_schema_coverage
+    name: "State schema coverage"
+    description: >
+      Does the [STATE] block address the 7 state dimensions (dominant mood,
+      tension/ease, energy, openness, attentional focus, meaning-making
+      pressure, somatic activation) — either explicitly or implicitly?
+    scoring_prompt: >
+      1 = Covers only 1–2 dimensions; most are missing.
+      2 = Covers 3–4 dimensions; significant gaps.
+      3 = Covers 5 dimensions; some gaps but adequate.
+      4 = Covers 6 dimensions clearly.
+      5 = All 7 dimensions addressed (explicitly or implicitly) in a coherent
+          state description.
+
+  - id: profile_adherence
+    name: "Profile adherence"
+    description: >
+      Does the reflection reflect the viewer's profile — their interpretive
+      posture, attention style, embodied orientation, motivational stance, etc.?
+      A different profile should produce a noticeably different reflection for
+      the same image.
+    scoring_prompt: >
+      1 = No detectable influence of the profile; could be any viewer.
+      2 = One minor trace of profile influence.
+      3 = Some profile influence visible but inconsistent.
+      4 = Profile clearly shapes the reflection in multiple ways.
+      5 = The reflection is unmistakably shaped by this specific profile; another
+          profile would produce a markedly different response.
+
+  - id: style_adherence
+    name: "Style adherence"
+    description: >
+      Does the reflection follow the specified reflective style — lexical
+      register, emotion explicitness, voice stability, sensory emphasis,
+      self-reference mode, metaphor density, and pacing?
+    scoring_prompt: >
+      1 = No detectable style adherence; generic LLM voice.
+      2 = One style dimension partially followed.
+      3 = Some style adherence but inconsistent across dimensions.
+      4 = Most style dimensions followed clearly.
+      5 = All style dimensions faithfully realized; the voice is unmistakably
+          shaped by this specific style description.

@@ -1,0 +1,17 @@
+# Experiment: Profile generation (text-only)
+#
+# Tests v2 profile generation across 7 variability hints.
+# No images — text-only LLM calls.
+
+experiment_id: profile_generation
+
+provider: openai
+model: gpt-5.2
+
+temperature: 0.95
+max_tokens: 1024
+
+# No images: text-only experiment.
+images: []
+
+prompt_variant_ids: []

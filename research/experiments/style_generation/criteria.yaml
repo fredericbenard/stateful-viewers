@@ -1,0 +1,77 @@
+# Evaluation criteria for generated reflective styles.
+
+criteria:
+
+  - id: dimension_coverage
+    name: "Dimension coverage"
+    description: >
+      Does the style explicitly address all 7 required dimensions: lexical
+      register, explicitness of emotion, voice stability, sensory modality
+      emphasis, self-reference mode, metaphor density, and pacing?
+    scoring_prompt: >
+      1 = Covers 1–2 dimensions; most are missing.
+      2 = Covers 3–4 dimensions; significant gaps.
+      3 = Covers 5 dimensions; some gaps but adequate.
+      4 = Covers 6 dimensions clearly.
+      5 = All 7 dimensions addressed with substantive, identifiable statements.
+
+  - id: pure_expressiveness
+    name: "Pure expressiveness"
+    description: >
+      Does the style control only how the voice speaks, without leaking into
+      stance territory (what is perceived, believed, or attended to)? Stance
+      leakage means the style description changes interpretive habits, not
+      just expression.
+    scoring_prompt: >
+      1 = The style is mostly stance — it describes what the viewer notices,
+          believes, or values rather than how the voice speaks.
+      2 = Significant stance leakage; multiple sentences prescribe perception
+          or interpretation rather than expression.
+      3 = Some stance leakage; one or two sentences blur the line between
+          how the voice speaks and what it attends to.
+      4 = Mostly pure expression with minor, incidental stance traces.
+      5 = Entirely controls voice texture, rhythm, and language habits without
+          prescribing what is perceived, believed, or attended to.
+
+  - id: internal_coherence
+    name: "Internal coherence"
+    description: >
+      Do the dimensions form a plausible, consistent voice? The combination
+      should feel like it could describe a real inner speech pattern, even if
+      unusual. Contradictions should be intentional tensions, not errors.
+    scoring_prompt: >
+      1 = Dimensions actively contradict each other in implausible ways.
+      2 = Several dimensions feel disconnected or arbitrarily combined.
+      3 = Mostly coherent with some awkward combinations.
+      4 = Coherent and plausible; dimensions work together.
+      5 = Deeply coherent; dimensions reinforce and illuminate each other.
+
+  - id: non_genericness
+    name: "Non-genericness"
+    description: >
+      Does the style avoid templated, formulaic phrasing? A non-generic
+      style uses specific, vivid language rather than recycling patterns like
+      "moderate lexical register" or "balanced pacing."
+    scoring_prompt: >
+      1 = Almost entirely stock phrases; could be any generic style.
+      2 = Mostly formulaic with occasional specific detail.
+      3 = Mixed; some original expression alongside recognizable templates.
+      4 = Largely original and specific language.
+      5 = Distinctive and vivid throughout; no detectable templates.
+
+  - id: specificity
+    name: "Specificity"
+    description: >
+      Is the style specific enough to actually constrain how a reflection
+      would be written? Could you distinguish reflections written in this
+      style from reflections written in a different style?
+    scoring_prompt: >
+      1 = So vague that any reflection could match; provides no real constraint.
+      2 = Mostly vague; only one or two dimensions are specific enough to
+          constrain output.
+      3 = Moderately specific; several dimensions provide real constraint but
+          others remain too loose.
+      4 = Specific enough that most reflections written in this style would
+          be recognizably different from other styles.
+      5 = Highly specific across all dimensions; a reflection written in this
+          style would be immediately distinguishable from other styles.

@@ -1,0 +1,72 @@
+# Evaluation criteria for generated initial internal states.
+
+criteria:
+
+  - id: dimension_coverage
+    name: "Dimension coverage"
+    description: >
+      Does the state explicitly address all 7 required dimensions: dominant
+      mood, underlying tension or ease, energy and engagement, emotional
+      openness, attentional focus, meaning-making pressure, and somatic
+      activation?
+    scoring_prompt: >
+      1 = Covers 1–2 dimensions; most are missing.
+      2 = Covers 3–4 dimensions; significant gaps.
+      3 = Covers 5 dimensions; some gaps but adequate.
+      4 = Covers 6 dimensions clearly.
+      5 = All 7 dimensions addressed with substantive, identifiable statements.
+
+  - id: snapshot_quality
+    name: "Snapshot quality"
+    description: >
+      Does the state read as a momentary snapshot — how the viewer arrives
+      today — rather than a stable personality description? It should feel
+      transient and situational, not like an enduring trait profile.
+    scoring_prompt: >
+      1 = Reads as a personality description or stable trait profile.
+      2 = Mostly trait-like; only hints of situational specificity.
+      3 = Mixed; some dimensions feel momentary, others feel dispositional.
+      4 = Mostly transient and situational with minor trait-like phrasing.
+      5 = Clearly a momentary snapshot; every dimension feels like today's
+          arrival condition, not a permanent characteristic.
+
+  - id: internal_coherence
+    name: "Internal coherence"
+    description: >
+      Do the dimensions form a plausible momentary state? The combination
+      should feel like it could describe a real person at a real moment —
+      dimensions should hang together as a believable inner condition.
+    scoring_prompt: >
+      1 = Dimensions actively contradict each other in implausible ways.
+      2 = Several dimensions feel disconnected or arbitrarily combined.
+      3 = Mostly coherent with some awkward combinations.
+      4 = Coherent and plausible; dimensions work together as a moment.
+      5 = Deeply coherent; dimensions reinforce each other and feel like a
+          single lived moment.
+
+  - id: non_genericness
+    name: "Non-genericness"
+    description: >
+      Does the state avoid templated, formulaic phrasing? A non-generic state
+      uses specific, vivid language rather than recycling patterns like
+      "moderate energy" or "somewhat open."
+    scoring_prompt: >
+      1 = Almost entirely stock phrases; could describe any generic state.
+      2 = Mostly formulaic with occasional specific detail.
+      3 = Mixed; some original expression alongside recognizable templates.
+      4 = Largely original and specific language.
+      5 = Distinctive and vivid throughout; no detectable templates.
+
+  - id: conciseness
+    name: "Conciseness"
+    description: >
+      Is the state description appropriately brief (3–5 sentences) while still
+      covering all dimensions? States should be compact snapshots, not extended
+      prose.
+    scoring_prompt: >
+      1 = Far too long (8+ sentences) or so short it omits most dimensions.
+      2 = Noticeably too long (6–7 sentences) or too compressed to be clear.
+      3 = Slightly outside the target range but still functional.
+      4 = Within 3–5 sentences and covers dimensions adequately.
+      5 = Exactly 3–5 well-crafted sentences that cover all dimensions with
+          no wasted words.

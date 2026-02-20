@@ -1,0 +1,17 @@
+# Experiment: Initial state generation (text-only)
+#
+# Tests v2 initial state generation across 7 variability hints.
+# No images — text-only LLM calls.
+
+experiment_id: initial_state_generation
+
+provider: openai
+model: gpt-5.2
+
+temperature: 0.95
+max_tokens: 1024
+
+# No images: text-only experiment.
+images: []
+
+prompt_variant_ids: []

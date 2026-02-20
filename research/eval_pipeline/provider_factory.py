@@ -8,8 +8,8 @@ from eval_pipeline.providers.gemini_provider import GeminiVisionProvider
 from eval_pipeline.providers.openai_provider import OpenAIVisionProvider
 
 DEFAULT_MODELS: dict[str, str] = {
-    "openai": "gpt-4o",
-    "anthropic": "claude-sonnet-4-5-20250514",
+    "openai": "gpt-5.2",
+    "anthropic": "claude-opus-4-6",
     "gemini": "gemini-2.5-pro-preview-05-06",
 }
 

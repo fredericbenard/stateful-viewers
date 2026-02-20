@@ -29,7 +29,11 @@ def run_experiment(
     images: Sequence[ImageInput],
     provider: VisionProvider,
 ) -> list[RunResult]:
-    """Execute all (prompt_variant x image) combinations and return results."""
+    """Execute all (prompt_variant x image) combinations and return results.
+
+    If no images are configured, runs in text-only mode: each variant is
+    called once via ``provider.generate_text()`` with no image.
+    """
 
     prompt_map = {p.id: p for p in prompts}
     variant_ids = config.prompt_variant_ids or list(prompt_map.keys())
@@ -38,9 +42,73 @@ def run_experiment(
     if not variants:
         console.print("[red]No matching prompt variants found.[/red]")
         return []
-    if not images:
-        console.print("[red]No images configured.[/red]")
-        return []
+
+    text_only = not images
+    if text_only:
+        return _run_text_only(config, variants, provider)
+    return _run_with_images(config, variants, images, provider)
+
+
+def _run_text_only(
+    config: ExperimentConfig,
+    variants: list[PromptVariant],
+    provider: VisionProvider,
+) -> list[RunResult]:
+    """Run each variant as a text-only call (no image)."""
+
+    total = len(variants)
+    results: list[RunResult] = []
+
+    console.print(
+        f"\nRunning [bold]{config.experiment_id}[/bold] (text-only): "
+        f"{total} prompt variant(s)\n"
+        f"Provider: [cyan]{config.provider}[/cyan]  Model: [cyan]{config.model}[/cyan]\n"
+    )
+
+    with Progress(
+        SpinnerColumn(),
+        TextColumn("[progress.description]{task.description}"),
+        TimeElapsedColumn(),
+        console=console,
+    ) as progress:
+        task = progress.add_task("Running...", total=total)
+
+        for variant in variants:
+            progress.update(task, description=f"[{variant.id}]")
+
+            resp = provider.generate_text(
+                system_prompt=variant.system_prompt,
+                user_prompt=variant.user_prompt,
+                temperature=config.temperature,
+                max_tokens=config.max_tokens,
+            )
+
+            result = RunResult(
+                prompt_variant_id=variant.id,
+                image_id="",
+                provider=config.provider,
+                model=config.model,
+                raw_response=resp.content,
+                latency_ms=resp.latency_ms,
+                token_usage=TokenUsage(
+                    prompt_tokens=resp.prompt_tokens,
+                    completion_tokens=resp.completion_tokens,
+                ),
+            )
+            results.append(result)
+            progress.advance(task)
+
+    console.print(f"\n[green]Completed {len(results)} run(s).[/green]\n")
+    return results
+
+
+def _run_with_images(
+    config: ExperimentConfig,
+    variants: list[PromptVariant],
+    images: Sequence[ImageInput],
+    provider: VisionProvider,
+) -> list[RunResult]:
+    """Run each (variant x image) combination with the vision model."""
 
     total = len(variants) * len(images)
     results: list[RunResult] = []

@@ -1,0 +1,470 @@
+# Prompt variants for initial state generation.
+#
+# Each variant uses the same base prompt with a different variability hint
+# to produce diverse initial states. See docs/dimensions.md for
+# the theoretical grounding of the 7 state dimensions.
+
+_system_prompt: &system_prompt >
+  You generate initial internal states for a gallery simulation. Follow the
+  user's instructions exactly. Output only the state description: no
+  preamble, no "Here is the state", no markdown.
+
+_base_spec: &base_spec >
+  Generate an initial internal state that describes a gallery visitor's inner
+  condition at the moment they enter the gallery, before encountering any
+  images.
+
+  This state uses the same schema that will evolve throughout the visit. It
+  represents a snapshot — how the viewer arrives today, not who they are in
+  general.
+
+  You MUST explicitly address each of the following 7 dimensions. All are
+  qualitative, not numerical:
+
+  1. Dominant mood — What is the prevailing affective tone? (e.g., calm,
+  restless, melancholic, alert, apprehensive, buoyant, numb, wistful...)
+
+  2. Underlying tension or ease — Beneath the surface mood, is there
+  tightness, anticipation, resistance, or settled calm? What is the deeper
+  felt texture?
+
+  3. Energy and engagement (absorbed/energized ↔ depleted/fatigued) — What
+  are the viewer's attentional and emotional reserves? Are they arriving
+  fresh or already spent?
+
+  4. Emotional openness (guarded/defended ↔ receptive/permeable) — How
+  willing is the viewer to be affected by what comes next? Are their defenses
+  up, or are they arriving porous?
+
+  5. Attentional focus (narrow/concentrated ↔ diffuse/peripheral) — Is
+  attention tightly directed and ready to lock in, or loose, drifting, and
+  open to whatever enters?
+
+  6. Meaning-making pressure (need-to-resolve ↔ letting-be) — Is there
+  urgency to understand, categorize, or make sense of things? Or a capacity
+  to let meaning remain suspended?
+
+  7. Somatic activation (numb/quiet ↔ vivid/activated) — How present is
+  the body in the experience? Are physical sensations faint and distant, or
+  vivid and close?
+
+  Write 3–5 sentences that cover all 7 dimensions. The description should
+  feel like a momentary snapshot — how this person arrives today — not a
+  stable personality description.
+
+  Avoid:
+  - references to any images
+  - psychological theory or jargon
+  - introductory phrases ("Here is the initial state:", "The state is:")
+  - markdown formatting (no bold, no headers, no bullet points)
+
+  Output ONLY the state description itself, starting directly with the
+  content.
+
+variants:
+
+  - id: hint_depleted_guarded
+    name: "Depleted and defended"
+    system_prompt: *system_prompt
+    user_prompt: >
+      Generate an initial internal state that describes a gallery visitor's inner
+      condition at the moment they enter the gallery, before encountering any
+      images.
+
+      This state uses the same schema that will evolve throughout the visit. It
+      represents a snapshot — how the viewer arrives today, not who they are in
+      general.
+
+      You MUST explicitly address each of the following 7 dimensions. All are
+      qualitative, not numerical:
+
+      1. Dominant mood — What is the prevailing affective tone? (e.g., calm,
+      restless, melancholic, alert, apprehensive, buoyant, numb, wistful...)
+
+      2. Underlying tension or ease — Beneath the surface mood, is there
+      tightness, anticipation, resistance, or settled calm? What is the deeper
+      felt texture?
+
+      3. Energy and engagement (absorbed/energized ↔ depleted/fatigued) — What
+      are the viewer's attentional and emotional reserves? Are they arriving
+      fresh or already spent?
+
+      4. Emotional openness (guarded/defended ↔ receptive/permeable) — How
+      willing is the viewer to be affected by what comes next? Are their defenses
+      up, or are they arriving porous?
+
+      5. Attentional focus (narrow/concentrated ↔ diffuse/peripheral) — Is
+      attention tightly directed and ready to lock in, or loose, drifting, and
+      open to whatever enters?
+
+      6. Meaning-making pressure (need-to-resolve ↔ letting-be) — Is there
+      urgency to understand, categorize, or make sense of things? Or a capacity
+      to let meaning remain suspended?
+
+      7. Somatic activation (numb/quiet ↔ vivid/activated) — How present is
+      the body in the experience? Are physical sensations faint and distant, or
+      vivid and close?
+
+      Write 3–5 sentences that cover all 7 dimensions. The description should
+      feel like a momentary snapshot — how this person arrives today — not a
+      stable personality description.
+
+      Avoid:
+      - references to any images
+      - psychological theory or jargon
+      - introductory phrases ("Here is the initial state:", "The state is:")
+      - markdown formatting (no bold, no headers, no bullet points)
+
+      Output ONLY the state description itself, starting directly with the
+      content.
+
+      This time, the viewer arrives in a state of low energy and high
+      guardedness — depleted and defended.
+
+  - id: hint_alert_activated
+    name: "Alert, activated, resolving"
+    system_prompt: *system_prompt
+    user_prompt: >
+      Generate an initial internal state that describes a gallery visitor's inner
+      condition at the moment they enter the gallery, before encountering any
+      images.
+
+      This state uses the same schema that will evolve throughout the visit. It
+      represents a snapshot — how the viewer arrives today, not who they are in
+      general.
+
+      You MUST explicitly address each of the following 7 dimensions. All are
+      qualitative, not numerical:
+
+      1. Dominant mood — What is the prevailing affective tone? (e.g., calm,
+      restless, melancholic, alert, apprehensive, buoyant, numb, wistful...)
+
+      2. Underlying tension or ease — Beneath the surface mood, is there
+      tightness, anticipation, resistance, or settled calm? What is the deeper
+      felt texture?
+
+      3. Energy and engagement (absorbed/energized ↔ depleted/fatigued) — What
+      are the viewer's attentional and emotional reserves? Are they arriving
+      fresh or already spent?
+
+      4. Emotional openness (guarded/defended ↔ receptive/permeable) — How
+      willing is the viewer to be affected by what comes next? Are their defenses
+      up, or are they arriving porous?
+
+      5. Attentional focus (narrow/concentrated ↔ diffuse/peripheral) — Is
+      attention tightly directed and ready to lock in, or loose, drifting, and
+      open to whatever enters?
+
+      6. Meaning-making pressure (need-to-resolve ↔ letting-be) — Is there
+      urgency to understand, categorize, or make sense of things? Or a capacity
+      to let meaning remain suspended?
+
+      7. Somatic activation (numb/quiet ↔ vivid/activated) — How present is
+      the body in the experience? Are physical sensations faint and distant, or
+      vivid and close?
+
+      Write 3–5 sentences that cover all 7 dimensions. The description should
+      feel like a momentary snapshot — how this person arrives today — not a
+      stable personality description.
+
+      Avoid:
+      - references to any images
+      - psychological theory or jargon
+      - introductory phrases ("Here is the initial state:", "The state is:")
+      - markdown formatting (no bold, no headers, no bullet points)
+
+      Output ONLY the state description itself, starting directly with the
+      content.
+
+      This time, the viewer arrives alert, bodily activated, and with high
+      meaning-making pressure — ready to engage and make sense.
+
+  - id: hint_melancholic_open
+    name: "Melancholic but open"
+    system_prompt: *system_prompt
+    user_prompt: >
+      Generate an initial internal state that describes a gallery visitor's inner
+      condition at the moment they enter the gallery, before encountering any
+      images.
+
+      This state uses the same schema that will evolve throughout the visit. It
+      represents a snapshot — how the viewer arrives today, not who they are in
+      general.
+
+      You MUST explicitly address each of the following 7 dimensions. All are
+      qualitative, not numerical:
+
+      1. Dominant mood — What is the prevailing affective tone? (e.g., calm,
+      restless, melancholic, alert, apprehensive, buoyant, numb, wistful...)
+
+      2. Underlying tension or ease — Beneath the surface mood, is there
+      tightness, anticipation, resistance, or settled calm? What is the deeper
+      felt texture?
+
+      3. Energy and engagement (absorbed/energized ↔ depleted/fatigued) — What
+      are the viewer's attentional and emotional reserves? Are they arriving
+      fresh or already spent?
+
+      4. Emotional openness (guarded/defended ↔ receptive/permeable) — How
+      willing is the viewer to be affected by what comes next? Are their defenses
+      up, or are they arriving porous?
+
+      5. Attentional focus (narrow/concentrated ↔ diffuse/peripheral) — Is
+      attention tightly directed and ready to lock in, or loose, drifting, and
+      open to whatever enters?
+
+      6. Meaning-making pressure (need-to-resolve ↔ letting-be) — Is there
+      urgency to understand, categorize, or make sense of things? Or a capacity
+      to let meaning remain suspended?
+
+      7. Somatic activation (numb/quiet ↔ vivid/activated) — How present is
+      the body in the experience? Are physical sensations faint and distant, or
+      vivid and close?
+
+      Write 3–5 sentences that cover all 7 dimensions. The description should
+      feel like a momentary snapshot — how this person arrives today — not a
+      stable personality description.
+
+      Avoid:
+      - references to any images
+      - psychological theory or jargon
+      - introductory phrases ("Here is the initial state:", "The state is:")
+      - markdown formatting (no bold, no headers, no bullet points)
+
+      Output ONLY the state description itself, starting directly with the
+      content.
+
+      This time, the viewer arrives melancholic but open — sad mood paired
+      with receptive emotional openness.
+
+  - id: hint_restless_diffuse
+    name: "Restless and diffuse"
+    system_prompt: *system_prompt
+    user_prompt: >
+      Generate an initial internal state that describes a gallery visitor's inner
+      condition at the moment they enter the gallery, before encountering any
+      images.
+
+      This state uses the same schema that will evolve throughout the visit. It
+      represents a snapshot — how the viewer arrives today, not who they are in
+      general.
+
+      You MUST explicitly address each of the following 7 dimensions. All are
+      qualitative, not numerical:
+
+      1. Dominant mood — What is the prevailing affective tone? (e.g., calm,
+      restless, melancholic, alert, apprehensive, buoyant, numb, wistful...)
+
+      2. Underlying tension or ease — Beneath the surface mood, is there
+      tightness, anticipation, resistance, or settled calm? What is the deeper
+      felt texture?
+
+      3. Energy and engagement (absorbed/energized ↔ depleted/fatigued) — What
+      are the viewer's attentional and emotional reserves? Are they arriving
+      fresh or already spent?
+
+      4. Emotional openness (guarded/defended ↔ receptive/permeable) — How
+      willing is the viewer to be affected by what comes next? Are their defenses
+      up, or are they arriving porous?
+
+      5. Attentional focus (narrow/concentrated ↔ diffuse/peripheral) — Is
+      attention tightly directed and ready to lock in, or loose, drifting, and
+      open to whatever enters?
+
+      6. Meaning-making pressure (need-to-resolve ↔ letting-be) — Is there
+      urgency to understand, categorize, or make sense of things? Or a capacity
+      to let meaning remain suspended?
+
+      7. Somatic activation (numb/quiet ↔ vivid/activated) — How present is
+      the body in the experience? Are physical sensations faint and distant, or
+      vivid and close?
+
+      Write 3–5 sentences that cover all 7 dimensions. The description should
+      feel like a momentary snapshot — how this person arrives today — not a
+      stable personality description.
+
+      Avoid:
+      - references to any images
+      - psychological theory or jargon
+      - introductory phrases ("Here is the initial state:", "The state is:")
+      - markdown formatting (no bold, no headers, no bullet points)
+
+      Output ONLY the state description itself, starting directly with the
+      content.
+
+      This time, the viewer arrives restless and diffuse — scattered
+      attention, high energy, low meaning-making pressure.
+
+  - id: hint_calm_quiet
+    name: "Calm and somatically quiet"
+    system_prompt: *system_prompt
+    user_prompt: >
+      Generate an initial internal state that describes a gallery visitor's inner
+      condition at the moment they enter the gallery, before encountering any
+      images.
+
+      This state uses the same schema that will evolve throughout the visit. It
+      represents a snapshot — how the viewer arrives today, not who they are in
+      general.
+
+      You MUST explicitly address each of the following 7 dimensions. All are
+      qualitative, not numerical:
+
+      1. Dominant mood — What is the prevailing affective tone? (e.g., calm,
+      restless, melancholic, alert, apprehensive, buoyant, numb, wistful...)
+
+      2. Underlying tension or ease — Beneath the surface mood, is there
+      tightness, anticipation, resistance, or settled calm? What is the deeper
+      felt texture?
+
+      3. Energy and engagement (absorbed/energized ↔ depleted/fatigued) — What
+      are the viewer's attentional and emotional reserves? Are they arriving
+      fresh or already spent?
+
+      4. Emotional openness (guarded/defended ↔ receptive/permeable) — How
+      willing is the viewer to be affected by what comes next? Are their defenses
+      up, or are they arriving porous?
+
+      5. Attentional focus (narrow/concentrated ↔ diffuse/peripheral) — Is
+      attention tightly directed and ready to lock in, or loose, drifting, and
+      open to whatever enters?
+
+      6. Meaning-making pressure (need-to-resolve ↔ letting-be) — Is there
+      urgency to understand, categorize, or make sense of things? Or a capacity
+      to let meaning remain suspended?
+
+      7. Somatic activation (numb/quiet ↔ vivid/activated) — How present is
+      the body in the experience? Are physical sensations faint and distant, or
+      vivid and close?
+
+      Write 3–5 sentences that cover all 7 dimensions. The description should
+      feel like a momentary snapshot — how this person arrives today — not a
+      stable personality description.
+
+      Avoid:
+      - references to any images
+      - psychological theory or jargon
+      - introductory phrases ("Here is the initial state:", "The state is:")
+      - markdown formatting (no bold, no headers, no bullet points)
+
+      Output ONLY the state description itself, starting directly with the
+      content.
+
+      This time, the viewer arrives calm and somatically quiet — settled,
+      present, with loose attention and no urgency.
+
+  - id: hint_neutral_tense
+    name: "Neutral mood with underlying tension"
+    system_prompt: *system_prompt
+    user_prompt: >
+      Generate an initial internal state that describes a gallery visitor's inner
+      condition at the moment they enter the gallery, before encountering any
+      images.
+
+      This state uses the same schema that will evolve throughout the visit. It
+      represents a snapshot — how the viewer arrives today, not who they are in
+      general.
+
+      You MUST explicitly address each of the following 7 dimensions. All are
+      qualitative, not numerical:
+
+      1. Dominant mood — What is the prevailing affective tone? (e.g., calm,
+      restless, melancholic, alert, apprehensive, buoyant, numb, wistful...)
+
+      2. Underlying tension or ease — Beneath the surface mood, is there
+      tightness, anticipation, resistance, or settled calm? What is the deeper
+      felt texture?
+
+      3. Energy and engagement (absorbed/energized ↔ depleted/fatigued) — What
+      are the viewer's attentional and emotional reserves? Are they arriving
+      fresh or already spent?
+
+      4. Emotional openness (guarded/defended ↔ receptive/permeable) — How
+      willing is the viewer to be affected by what comes next? Are their defenses
+      up, or are they arriving porous?
+
+      5. Attentional focus (narrow/concentrated ↔ diffuse/peripheral) — Is
+      attention tightly directed and ready to lock in, or loose, drifting, and
+      open to whatever enters?
+
+      6. Meaning-making pressure (need-to-resolve ↔ letting-be) — Is there
+      urgency to understand, categorize, or make sense of things? Or a capacity
+      to let meaning remain suspended?
+
+      7. Somatic activation (numb/quiet ↔ vivid/activated) — How present is
+      the body in the experience? Are physical sensations faint and distant, or
+      vivid and close?
+
+      Write 3–5 sentences that cover all 7 dimensions. The description should
+      feel like a momentary snapshot — how this person arrives today — not a
+      stable personality description.
+
+      Avoid:
+      - references to any images
+      - psychological theory or jargon
+      - introductory phrases ("Here is the initial state:", "The state is:")
+      - markdown formatting (no bold, no headers, no bullet points)
+
+      Output ONLY the state description itself, starting directly with the
+      content.
+
+      This time, the viewer arrives with underlying tension despite a neutral
+      mood — something unresolved beneath the surface.
+
+  - id: hint_engaged_narrow
+    name: "High engagement, narrow focus, resolving"
+    system_prompt: *system_prompt
+    user_prompt: >
+      Generate an initial internal state that describes a gallery visitor's inner
+      condition at the moment they enter the gallery, before encountering any
+      images.
+
+      This state uses the same schema that will evolve throughout the visit. It
+      represents a snapshot — how the viewer arrives today, not who they are in
+      general.
+
+      You MUST explicitly address each of the following 7 dimensions. All are
+      qualitative, not numerical:
+
+      1. Dominant mood — What is the prevailing affective tone? (e.g., calm,
+      restless, melancholic, alert, apprehensive, buoyant, numb, wistful...)
+
+      2. Underlying tension or ease — Beneath the surface mood, is there
+      tightness, anticipation, resistance, or settled calm? What is the deeper
+      felt texture?
+
+      3. Energy and engagement (absorbed/energized ↔ depleted/fatigued) — What
+      are the viewer's attentional and emotional reserves? Are they arriving
+      fresh or already spent?
+
+      4. Emotional openness (guarded/defended ↔ receptive/permeable) — How
+      willing is the viewer to be affected by what comes next? Are their defenses
+      up, or are they arriving porous?
+
+      5. Attentional focus (narrow/concentrated ↔ diffuse/peripheral) — Is
+      attention tightly directed and ready to lock in, or loose, drifting, and
+      open to whatever enters?
+
+      6. Meaning-making pressure (need-to-resolve ↔ letting-be) — Is there
+      urgency to understand, categorize, or make sense of things? Or a capacity
+      to let meaning remain suspended?
+
+      7. Somatic activation (numb/quiet ↔ vivid/activated) — How present is
+      the body in the experience? Are physical sensations faint and distant, or
+      vivid and close?
+
+      Write 3–5 sentences that cover all 7 dimensions. The description should
+      feel like a momentary snapshot — how this person arrives today — not a
+      stable personality description.
+
+      Avoid:
+      - references to any images
+      - psychological theory or jargon
+      - introductory phrases ("Here is the initial state:", "The state is:")
+      - markdown formatting (no bold, no headers, no bullet points)
+
+      Output ONLY the state description itself, starting directly with the
+      content.
+
+      This time, the viewer arrives in an unusual combination: high engagement
+      but narrow focus and strong need to resolve.

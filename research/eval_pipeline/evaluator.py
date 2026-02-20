@@ -146,12 +146,30 @@ def _parse_judge_response(text: str) -> tuple[int, str]:
     return score, rationale
 
 
-def save_scores(run_dir: Path, scores: list[EvalScore]) -> None:
-    """Save evaluation scores to the run directory."""
+def save_scores(
+    run_dir: Path,
+    scores: list[EvalScore],
+    *,
+    judge_model_name: str = "",
+) -> None:
+    """Save evaluation scores to the run directory.
+
+    Always writes ``scores.json`` (latest).  When *judge_model_name* is
+    provided, also writes ``scores_<judge_tag>.json`` so multiple judges can
+    coexist without overwriting each other.
+    """
     (run_dir / "scores.json").write_text(
         json.dumps([s.to_dict() for s in scores], indent=2, ensure_ascii=False) + "\n"
     )
     console.print(f"Scores saved to [bold]{run_dir / 'scores.json'}[/bold]")
+
+    if judge_model_name:
+        tag = judge_model_name.replace("/", "_").replace(" ", "_")
+        tagged_path = run_dir / f"scores_{tag}.json"
+        tagged_path.write_text(
+            json.dumps([s.to_dict() for s in scores], indent=2, ensure_ascii=False) + "\n"
+        )
+        console.print(f"Also saved to [bold]{tagged_path}[/bold]")
 
 
 def scaffold_human_ratings(

@@ -1,0 +1,47 @@
+# Experiment: Stateful reflection (sequential VLM pipeline)
+#
+# Takes a pre-generated (profile, style, initial_state) tuple and runs a
+# sequential gallery walk: for each image, the reflection prompt template is
+# assembled with the current state, sent to the VLM with the image, and the
+# [STATE] block from the response becomes the input for the next image.
+#
+# This experiment is run via: python scripts/run_stateful.py
+# (not the standard run_experiment.py, which handles single-stage experiments)
+
+experiment_id: stateful_reflection
+
+provider: openai
+model: gpt-5.2
+
+temperature: 0.7
+max_tokens: 2048
+
+# Images for the gallery walk (processed in order).
+images:
+  - id: bernard_side_wall
+    source: "https://fredericbenard.com/images/analog/galleries/new_work/full/r069_f019.jpg"
+    caption: "Side wall, 80 Bernard St W, Montreal, Quebec, 2025"
+  - id: de_la_roche_side_wall
+    source: "https://fredericbenard.com/images/digital/galleries/new_work/full/2025_05__dscf3208.jpg"
+    caption: "Side wall, 4211 De La Roche St, Montreal, Quebec, 2025"
+  - id: park_ave_doors
+    source: "https://fredericbenard.com/images/analog/galleries/new_work/full/r069_f011.jpg"
+    caption: "Patterned metal double doors, 5739 Park Ave, Montreal, Quebec, 2025"
+  - id: mont_royal_side_wall
+    source: "https://fredericbenard.com/images/digital/galleries/new_work/full/2025_08__dscf4019.jpg"
+    caption: "Side wall, 2175 Mont-Royal Ave E, Montreal, Quebec, 2025"
+  - id: depanneur_vilamar
+    source: "https://fredericbenard.com/images/analog/galleries/new_work/full/r069_f016.jpg"
+    caption: "Dépanneur Vilamar, 140 Bernard St W, Montreal, Quebec, 2025"
+
+# Artifact references: profile, style, and initial state to use.
+# These can be:
+#   - a path to a text file (relative to research/ or absolute)
+#   - inline text (for quick testing)
+#   - "generate" to auto-generate using the corresponding experiment's prompts
+#
+# For factorial experiments, run this config multiple times with different
+# artifact combinations.
+profile: "generate"
+style: "generate"
+initial_state: "generate"
