@@ -22,7 +22,3 @@ To add a new public profile:
 1. Place the profile JSON file in this directory
 2. Ensure it follows the standard profile schema (see `src/lib/saveProfile.ts`)
 3. Commit the file to git
-
-## Current Public Profiles
-
-This folder now includes a curated mix spanning all supported model providers (`openai`, `gemini`, `anthropic`, `ollama`) and diverse viewing stances (scanner, formal analyst, contemplative slow observer, embodied explorer, and boundary-testing/reactive profiles).
