@@ -6,7 +6,7 @@ This document defines the three dimension sets that structure the stateful galle
 - **Internal state** — the viewer's current inner condition, which evolves image-to-image
 - **Reflective style** — how the inner voice speaks (purely expressive, not what is perceived)
 
-The design addresses three issues identified in the project critique (`research/docs/project-critique-research-and-art.md`):
+The design addresses three issues identified in the project critique (`research/docs/design/v1-critique.md`):
 
 1. **Profile ≠ initial state.** The v1 profile did double duty: it contained stable traits *and* "baseline emotional state" (which is really a starting condition). Now, the profile contains only stable dispositions. The initial internal state is generated separately, in the same schema used for the evolving state, giving a clean step 0.
 2. **Style ≠ stance.** The v1 style dimensions ("distance from experience," "restraint/confidence") were partly stance controls in disguise—they could change what is attended to, not just how it is expressed. Now, style dimensions are purely about the texture and habits of inner speech.
@@ -137,7 +137,7 @@ This separation addresses the critique (section 4): "the style schema is at risk
 
 ### Disentanglement test
 
-A key property of these style dimensions: swapping styles between profiles should change *how reflections sound* without changing *what the viewer perceives or how state evolves*. If changing style also changes trajectory shape (not just surface realization), that indicates leakage—the style is doing stance work. This is a testable prediction (see Idea 9 in `research/docs/llm-course-research-avenues.md`).
+A key property of these style dimensions: swapping styles between profiles should change *how reflections sound* without changing *what the viewer perceives or how state evolves*. If changing style also changes trajectory shape (not just surface realization), that indicates leakage—the style is doing stance work. This is a testable prediction (see Idea 9 in `research/docs/planning/llm-course-research-avenues.md`).
 
 ---
 

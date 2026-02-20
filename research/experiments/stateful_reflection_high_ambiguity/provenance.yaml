@@ -1,0 +1,7 @@
+description: High ambiguity tolerance, absorbed/dwelling attention, challenge-seeking
+frozen_from: output/stateful_reflection/2026-02-20T02-20-32/artifacts.json
+generation_sources:
+  profile: profile_generation/2026-02-20T00-41-51:parametric_001_high_stro_more_symb (GPT-5.2)
+  style: style_generation/2026-02-20T00-44-27:parametric_006_mixe_lite (GPT-5.2)
+  initial_state: initial_state_generation/2026-02-20T00-46-27:parametric_004_depl_cont (GPT-5.2)
+frozen_date: '2026-02-20'

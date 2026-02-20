@@ -20,14 +20,18 @@ class PromptVariant:
     name: str
     system_prompt: str
     user_prompt: str
+    judge_context: str = ""
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        d = {
             "id": self.id,
             "name": self.name,
             "system_prompt": self.system_prompt,
             "user_prompt": self.user_prompt,
         }
+        if self.judge_context:
+            d["judge_context"] = self.judge_context
+        return d
 
 
 @dataclass
@@ -59,7 +63,6 @@ class ExperimentConfig:
     temperature: float = 0.7
     max_tokens: int = 2048
     images: list[ImageInput] = field(default_factory=list)
-    prompt_variant_ids: list[str] = field(default_factory=list)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -69,7 +72,6 @@ class ExperimentConfig:
             "temperature": self.temperature,
             "max_tokens": self.max_tokens,
             "images": [img.to_dict() for img in self.images],
-            "prompt_variant_ids": self.prompt_variant_ids,
         }
 
 
@@ -131,14 +133,18 @@ class EvalCriterion:
     name: str
     description: str
     scoring_prompt: str  # instructs the judge LLM how to score this criterion
+    requires_image: bool = False
 
     def to_dict(self) -> dict[str, Any]:
-        return {
+        d = {
             "id": self.id,
             "name": self.name,
             "description": self.description,
             "scoring_prompt": self.scoring_prompt,
         }
+        if self.requires_image:
+            d["requires_image"] = True
+        return d
 
 
 @dataclass

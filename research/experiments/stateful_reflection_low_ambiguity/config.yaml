@@ -1,0 +1,24 @@
+experiment_id: stateful_reflection_low_ambiguity
+provider: openai
+model: gpt-5.2
+temperature: 0.7
+max_tokens: 2048
+images:
+- id: bernard_side_wall
+  source: https://fredericbenard.com/images/analog/galleries/new_work/full/r069_f019.jpg
+  caption: Side wall, 80 Bernard St W, Montreal, Quebec, 2025
+- id: de_la_roche_side_wall
+  source: https://fredericbenard.com/images/digital/galleries/new_work/full/2025_05__dscf3208.jpg
+  caption: Side wall, 4211 De La Roche St, Montreal, Quebec, 2025
+- id: park_ave_doors
+  source: https://fredericbenard.com/images/analog/galleries/new_work/full/r069_f011.jpg
+  caption: Patterned metal double doors, 5739 Park Ave, Montreal, Quebec, 2025
+- id: mont_royal_side_wall
+  source: https://fredericbenard.com/images/digital/galleries/new_work/full/2025_08__dscf4019.jpg
+  caption: Side wall, 2175 Mont-Royal Ave E, Montreal, Quebec, 2025
+- id: depanneur_vilamar
+  source: https://fredericbenard.com/images/analog/galleries/new_work/full/r069_f016.jpg
+  caption: Dépanneur Vilamar, 140 Bernard St W, Montreal, Quebec, 2025
+profile: artifacts/profile.txt
+style: artifacts/style.txt
+initial_state: artifacts/initial_state.txt

@@ -13,5 +13,3 @@ max_tokens: 1024
 
 # No images: text-only experiment.
 images: []
-
-prompt_variant_ids: []

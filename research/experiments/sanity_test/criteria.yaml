@@ -1,0 +1,70 @@
+# Evaluation criteria for generated visitor profiles.
+
+criteria:
+
+  - id: dimension_coverage
+    name: "Dimension coverage"
+    description: >
+      Does the profile explicitly address all 7 required dimensions: tolerance
+      for ambiguity, attention style, embodied orientation, interpretive posture,
+      aesthetic conditioning, motivational stance, and memory integration
+      tendency?
+    scoring_prompt: >
+      1 = Covers 1–2 dimensions; most are missing.
+      2 = Covers 3–4 dimensions; significant gaps.
+      3 = Covers 5 dimensions; some gaps but adequate.
+      4 = Covers 6 dimensions clearly.
+      5 = All 7 dimensions addressed with substantive, identifiable statements.
+
+  - id: internal_coherence
+    name: "Internal coherence"
+    description: >
+      Do the dimensions form a plausible, internally consistent person? The
+      combination should feel like it could describe a real viewer, even if
+      unusual. Contradictions should be intentional tensions, not errors.
+    scoring_prompt: >
+      1 = Dimensions actively contradict each other in implausible ways.
+      2 = Several dimensions feel disconnected or arbitrarily combined.
+      3 = Mostly coherent with some awkward combinations.
+      4 = Coherent and plausible; dimensions work together.
+      5 = Deeply coherent; dimensions reinforce and illuminate each other.
+
+  - id: stability_quality
+    name: "Stability quality"
+    description: >
+      Does the profile read as stable dispositions — habitual orientations that
+      would remain consistent across a gallery visit — rather than as momentary
+      emotional states or moods?
+    scoring_prompt: >
+      1 = Reads as a mood description or emotional snapshot, not a profile.
+      2 = Mostly state-like; dispositions are unclear.
+      3 = Mixed; some dimensions feel stable, others feel momentary.
+      4 = Mostly stable dispositions with minor state-like phrasing.
+      5 = Clearly describes enduring perceptual and interpretive habits.
+
+  - id: non_genericness
+    name: "Non-genericness"
+    description: >
+      Does the profile avoid templated, formulaic phrasing? A non-generic
+      profile uses specific, vivid language rather than recycling patterns like
+      "moderate tolerance for ambiguity" or "balanced attention style."
+    scoring_prompt: >
+      1 = Almost entirely stock phrases; could be any generic profile.
+      2 = Mostly formulaic with occasional specific detail.
+      3 = Mixed; some original expression alongside recognizable templates.
+      4 = Largely original and specific language.
+      5 = Distinctive and vivid throughout; no detectable templates.
+
+  - id: narrative_quality
+    name: "Narrative quality"
+    description: >
+      Is the prose well-written and naturally woven? The profile should read
+      as a coherent description, not a checklist of dimensions. Dimensions
+      should be woven together while remaining identifiable.
+    scoring_prompt: >
+      1 = A bulleted list or rigid checklist with no narrative flow.
+      2 = Attempts narrative but reads as a slightly disguised list.
+      3 = Partially woven; some sections flow, others are list-like.
+      4 = Well-written with natural flow; dimensions are woven but identifiable.
+      5 = Reads as a compelling, coherent character sketch with all dimensions
+          naturally integrated.

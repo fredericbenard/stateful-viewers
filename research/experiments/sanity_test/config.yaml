@@ -1,0 +1,12 @@
+# Sanity test: single-variant profile generation.
+# Quick smoke test — generates one profile and evaluates it.
+
+experiment_id: sanity_test
+
+provider: openai
+model: gpt-5.2
+
+temperature: 0.95
+max_tokens: 1024
+
+images: []

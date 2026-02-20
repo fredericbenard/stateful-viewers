@@ -1,0 +1,349 @@
+_frozen_from: output/profile_generation/2026-02-20T00-41-51/prompts.json
+variants:
+- id: parametric_000_mixe_mode_very_mixe
+  name: 'Parametric #1'
+  system_prompt: 'You generate visitor profiles for a gallery simulation. Follow the user''s instructions exactly. Output
+    only the profile description: no preamble, no "Here is the profile", no markdown.'
+  user_prompt: 'Generate a visitor profile that will be used to simulate how someone experiences a sequence of images in a
+    gallery.
+
+    This profile describes stable perceptual and interpretive dispositions — how this person characteristically attends to,
+    processes, and makes meaning from visual art. These are not momentary states; they are habitual orientations that remain
+    consistent throughout a gallery visit.
+
+    You MUST explicitly address each of the following 7 dimensions. Each dimension requires its own clear, substantive statement:
+
+    1. Tolerance for ambiguity (low ↔ high) — How comfortable is the viewer with uncertainty, open interpretation, and unresolved
+    meaning? Do they seek closure or sit with indeterminacy?
+
+    2. Attention style (absorbed/dwelling ↔ scanning/restless) — How does the viewer habitually attend to images? Do they
+    linger and sink in, or move quickly across surfaces and details?
+
+    3. Embodied orientation (somatic ↔ cognitive) — Does perception route primarily through bodily sensation and felt sense,
+    or through naming, comparing, and conceptual processing?
+
+    4. Interpretive posture (literal/descriptive ↔ symbolic/associative ↔ autobiographical) — How does the viewer construct
+    meaning? Do they stay with what is visually present, seek symbolic or formal structures, or connect images to personal
+    memory and narrative?
+
+    5. Aesthetic conditioning (naïve ↔ highly conditioned) — What is the viewer''s level of exposure to art that withholds
+    explanation — restrained, ambiguous, or non-explanatory work? Include their primary art background if relevant (photography,
+    architecture, cinema, literature, painting, design, none, etc.).
+
+    6. Motivational stance (seeking challenge/novelty ↔ seeking comfort/familiarity) — What does the viewer seek from the
+    experience? Are they drawn to disruption and surprise, or to recognition and reassurance?
+
+    7. Memory integration tendency (integrative/accumulative ↔ discrete/reset) — Does the viewer naturally weave sequential
+    encounters into a continuous thread, or treat each work as a fresh, independent moment?
+
+    Write 8–12 sentences total. You may weave dimensions together narratively, but each of the 7 dimensions must be clearly
+    identifiable in your description.
+
+    Avoid: - references to any images - psychological theory, jargon, or explanation - evaluative language (no "interestingly"
+    or "notably") - introductory phrases ("Here is the viewer profile:", "The profile is:") - markdown formatting (no bold,
+    no headers, no bullet points)
+
+    Output ONLY the profile description itself, starting directly with the content.
+
+
+    This time, create a viewer with memory integration that is mixed — sometimes integrating, sometimes resetting, aesthetic
+    conditioning: moderate, shaped by literature and graphic novels, very high ambiguity tolerance, and motivationally mixed
+    — sometimes seeking disruption, sometimes reassurance. Resolve the remaining dimensions yourself to form a coherent, believable
+    person.'
+- id: parametric_001_high_stro_more_symb
+  name: 'Parametric #2'
+  system_prompt: 'You generate visitor profiles for a gallery simulation. Follow the user''s instructions exactly. Output
+    only the profile description: no preamble, no "Here is the profile", no markdown.'
+  user_prompt: 'Generate a visitor profile that will be used to simulate how someone experiences a sequence of images in a
+    gallery.
+
+    This profile describes stable perceptual and interpretive dispositions — how this person characteristically attends to,
+    processes, and makes meaning from visual art. These are not momentary states; they are habitual orientations that remain
+    consistent throughout a gallery visit.
+
+    You MUST explicitly address each of the following 7 dimensions. Each dimension requires its own clear, substantive statement:
+
+    1. Tolerance for ambiguity (low ↔ high) — How comfortable is the viewer with uncertainty, open interpretation, and unresolved
+    meaning? Do they seek closure or sit with indeterminacy?
+
+    2. Attention style (absorbed/dwelling ↔ scanning/restless) — How does the viewer habitually attend to images? Do they
+    linger and sink in, or move quickly across surfaces and details?
+
+    3. Embodied orientation (somatic ↔ cognitive) — Does perception route primarily through bodily sensation and felt sense,
+    or through naming, comparing, and conceptual processing?
+
+    4. Interpretive posture (literal/descriptive ↔ symbolic/associative ↔ autobiographical) — How does the viewer construct
+    meaning? Do they stay with what is visually present, seek symbolic or formal structures, or connect images to personal
+    memory and narrative?
+
+    5. Aesthetic conditioning (naïve ↔ highly conditioned) — What is the viewer''s level of exposure to art that withholds
+    explanation — restrained, ambiguous, or non-explanatory work? Include their primary art background if relevant (photography,
+    architecture, cinema, literature, painting, design, none, etc.).
+
+    6. Motivational stance (seeking challenge/novelty ↔ seeking comfort/familiarity) — What does the viewer seek from the
+    experience? Are they drawn to disruption and surprise, or to recognition and reassurance?
+
+    7. Memory integration tendency (integrative/accumulative ↔ discrete/reset) — Does the viewer naturally weave sequential
+    encounters into a continuous thread, or treat each work as a fresh, independent moment?
+
+    Write 8–12 sentences total. You may weave dimensions together narratively, but each of the 7 dimensions must be clearly
+    identifiable in your description.
+
+    Avoid: - references to any images - psychological theory, jargon, or explanation - evaluative language (no "interestingly"
+    or "notably") - introductory phrases ("Here is the viewer profile:", "The profile is:") - markdown formatting (no bold,
+    no headers, no bullet points)
+
+    Output ONLY the profile description itself, starting directly with the content.
+
+
+    This time, create a viewer with high ambiguity tolerance, motivationally strongly seeking challenge and novelty, an embodied
+    orientation that is more cognitive than somatic, and an interpretive posture that is symbolic with occasional autobiographical
+    flashes. Resolve the remaining dimensions yourself to form a coherent, believable person.'
+- id: parametric_002_more_very_lean_symb
+  name: 'Parametric #3'
+  system_prompt: 'You generate visitor profiles for a gallery simulation. Follow the user''s instructions exactly. Output
+    only the profile description: no preamble, no "Here is the profile", no markdown.'
+  user_prompt: 'Generate a visitor profile that will be used to simulate how someone experiences a sequence of images in a
+    gallery.
+
+    This profile describes stable perceptual and interpretive dispositions — how this person characteristically attends to,
+    processes, and makes meaning from visual art. These are not momentary states; they are habitual orientations that remain
+    consistent throughout a gallery visit.
+
+    You MUST explicitly address each of the following 7 dimensions. Each dimension requires its own clear, substantive statement:
+
+    1. Tolerance for ambiguity (low ↔ high) — How comfortable is the viewer with uncertainty, open interpretation, and unresolved
+    meaning? Do they seek closure or sit with indeterminacy?
+
+    2. Attention style (absorbed/dwelling ↔ scanning/restless) — How does the viewer habitually attend to images? Do they
+    linger and sink in, or move quickly across surfaces and details?
+
+    3. Embodied orientation (somatic ↔ cognitive) — Does perception route primarily through bodily sensation and felt sense,
+    or through naming, comparing, and conceptual processing?
+
+    4. Interpretive posture (literal/descriptive ↔ symbolic/associative ↔ autobiographical) — How does the viewer construct
+    meaning? Do they stay with what is visually present, seek symbolic or formal structures, or connect images to personal
+    memory and narrative?
+
+    5. Aesthetic conditioning (naïve ↔ highly conditioned) — What is the viewer''s level of exposure to art that withholds
+    explanation — restrained, ambiguous, or non-explanatory work? Include their primary art background if relevant (photography,
+    architecture, cinema, literature, painting, design, none, etc.).
+
+    6. Motivational stance (seeking challenge/novelty ↔ seeking comfort/familiarity) — What does the viewer seek from the
+    experience? Are they drawn to disruption and surprise, or to recognition and reassurance?
+
+    7. Memory integration tendency (integrative/accumulative ↔ discrete/reset) — Does the viewer naturally weave sequential
+    encounters into a continuous thread, or treat each work as a fresh, independent moment?
+
+    Write 8–12 sentences total. You may weave dimensions together narratively, but each of the 7 dimensions must be clearly
+    identifiable in your description.
+
+    Avoid: - references to any images - psychological theory, jargon, or explanation - evaluative language (no "interestingly"
+    or "notably") - introductory phrases ("Here is the viewer profile:", "The profile is:") - markdown formatting (no bold,
+    no headers, no bullet points)
+
+    Output ONLY the profile description itself, starting directly with the content.
+
+
+    This time, create a viewer with an embodied orientation that is more cognitive than somatic, very high ambiguity tolerance,
+    memory integration that is leaning discrete — each work mostly fresh, and an interpretive posture that is symbolic with
+    occasional autobiographical flashes. Resolve the remaining dimensions yourself to form a coherent, believable person.'
+- id: parametric_003_very_mixe_lean_mode
+  name: 'Parametric #4'
+  system_prompt: 'You generate visitor profiles for a gallery simulation. Follow the user''s instructions exactly. Output
+    only the profile description: no preamble, no "Here is the profile", no markdown.'
+  user_prompt: 'Generate a visitor profile that will be used to simulate how someone experiences a sequence of images in a
+    gallery.
+
+    This profile describes stable perceptual and interpretive dispositions — how this person characteristically attends to,
+    processes, and makes meaning from visual art. These are not momentary states; they are habitual orientations that remain
+    consistent throughout a gallery visit.
+
+    You MUST explicitly address each of the following 7 dimensions. Each dimension requires its own clear, substantive statement:
+
+    1. Tolerance for ambiguity (low ↔ high) — How comfortable is the viewer with uncertainty, open interpretation, and unresolved
+    meaning? Do they seek closure or sit with indeterminacy?
+
+    2. Attention style (absorbed/dwelling ↔ scanning/restless) — How does the viewer habitually attend to images? Do they
+    linger and sink in, or move quickly across surfaces and details?
+
+    3. Embodied orientation (somatic ↔ cognitive) — Does perception route primarily through bodily sensation and felt sense,
+    or through naming, comparing, and conceptual processing?
+
+    4. Interpretive posture (literal/descriptive ↔ symbolic/associative ↔ autobiographical) — How does the viewer construct
+    meaning? Do they stay with what is visually present, seek symbolic or formal structures, or connect images to personal
+    memory and narrative?
+
+    5. Aesthetic conditioning (naïve ↔ highly conditioned) — What is the viewer''s level of exposure to art that withholds
+    explanation — restrained, ambiguous, or non-explanatory work? Include their primary art background if relevant (photography,
+    architecture, cinema, literature, painting, design, none, etc.).
+
+    6. Motivational stance (seeking challenge/novelty ↔ seeking comfort/familiarity) — What does the viewer seek from the
+    experience? Are they drawn to disruption and surprise, or to recognition and reassurance?
+
+    7. Memory integration tendency (integrative/accumulative ↔ discrete/reset) — Does the viewer naturally weave sequential
+    encounters into a continuous thread, or treat each work as a fresh, independent moment?
+
+    Write 8–12 sentences total. You may weave dimensions together narratively, but each of the 7 dimensions must be clearly
+    identifiable in your description.
+
+    Avoid: - references to any images - psychological theory, jargon, or explanation - evaluative language (no "interestingly"
+    or "notably") - introductory phrases ("Here is the viewer profile:", "The profile is:") - markdown formatting (no bold,
+    no headers, no bullet points)
+
+    Output ONLY the profile description itself, starting directly with the content.
+
+
+    This time, create a viewer with very high ambiguity tolerance, mixed — lingering on some things, skipping others quickly
+    attention, memory integration that is leaning discrete — each work mostly fresh, and aesthetic conditioning: moderate,
+    shaped by photography and architecture. Resolve the remaining dimensions yourself to form a coherent, believable person.'
+- id: parametric_004_mixe_symb_lean_naïv
+  name: 'Parametric #5'
+  system_prompt: 'You generate visitor profiles for a gallery simulation. Follow the user''s instructions exactly. Output
+    only the profile description: no preamble, no "Here is the profile", no markdown.'
+  user_prompt: 'Generate a visitor profile that will be used to simulate how someone experiences a sequence of images in a
+    gallery.
+
+    This profile describes stable perceptual and interpretive dispositions — how this person characteristically attends to,
+    processes, and makes meaning from visual art. These are not momentary states; they are habitual orientations that remain
+    consistent throughout a gallery visit.
+
+    You MUST explicitly address each of the following 7 dimensions. Each dimension requires its own clear, substantive statement:
+
+    1. Tolerance for ambiguity (low ↔ high) — How comfortable is the viewer with uncertainty, open interpretation, and unresolved
+    meaning? Do they seek closure or sit with indeterminacy?
+
+    2. Attention style (absorbed/dwelling ↔ scanning/restless) — How does the viewer habitually attend to images? Do they
+    linger and sink in, or move quickly across surfaces and details?
+
+    3. Embodied orientation (somatic ↔ cognitive) — Does perception route primarily through bodily sensation and felt sense,
+    or through naming, comparing, and conceptual processing?
+
+    4. Interpretive posture (literal/descriptive ↔ symbolic/associative ↔ autobiographical) — How does the viewer construct
+    meaning? Do they stay with what is visually present, seek symbolic or formal structures, or connect images to personal
+    memory and narrative?
+
+    5. Aesthetic conditioning (naïve ↔ highly conditioned) — What is the viewer''s level of exposure to art that withholds
+    explanation — restrained, ambiguous, or non-explanatory work? Include their primary art background if relevant (photography,
+    architecture, cinema, literature, painting, design, none, etc.).
+
+    6. Motivational stance (seeking challenge/novelty ↔ seeking comfort/familiarity) — What does the viewer seek from the
+    experience? Are they drawn to disruption and surprise, or to recognition and reassurance?
+
+    7. Memory integration tendency (integrative/accumulative ↔ discrete/reset) — Does the viewer naturally weave sequential
+    encounters into a continuous thread, or treat each work as a fresh, independent moment?
+
+    Write 8–12 sentences total. You may weave dimensions together narratively, but each of the 7 dimensions must be clearly
+    identifiable in your description.
+
+    Avoid: - references to any images - psychological theory, jargon, or explanation - evaluative language (no "interestingly"
+    or "notably") - introductory phrases ("Here is the viewer profile:", "The profile is:") - markdown formatting (no bold,
+    no headers, no bullet points)
+
+    Output ONLY the profile description itself, starting directly with the content.
+
+
+    This time, create a viewer with mixed — lingering on some things, skipping others quickly attention, an interpretive posture
+    that is symbolic with occasional autobiographical flashes, memory integration that is leaning discrete — each work mostly
+    fresh, and aesthetic conditioning: naïve — little exposure to non-explanatory art. Resolve the remaining dimensions yourself
+    to form a coherent, believable person.'
+- id: parametric_005_mixe_mixe_mode_mixe
+  name: 'Parametric #6'
+  system_prompt: 'You generate visitor profiles for a gallery simulation. Follow the user''s instructions exactly. Output
+    only the profile description: no preamble, no "Here is the profile", no markdown.'
+  user_prompt: 'Generate a visitor profile that will be used to simulate how someone experiences a sequence of images in a
+    gallery.
+
+    This profile describes stable perceptual and interpretive dispositions — how this person characteristically attends to,
+    processes, and makes meaning from visual art. These are not momentary states; they are habitual orientations that remain
+    consistent throughout a gallery visit.
+
+    You MUST explicitly address each of the following 7 dimensions. Each dimension requires its own clear, substantive statement:
+
+    1. Tolerance for ambiguity (low ↔ high) — How comfortable is the viewer with uncertainty, open interpretation, and unresolved
+    meaning? Do they seek closure or sit with indeterminacy?
+
+    2. Attention style (absorbed/dwelling ↔ scanning/restless) — How does the viewer habitually attend to images? Do they
+    linger and sink in, or move quickly across surfaces and details?
+
+    3. Embodied orientation (somatic ↔ cognitive) — Does perception route primarily through bodily sensation and felt sense,
+    or through naming, comparing, and conceptual processing?
+
+    4. Interpretive posture (literal/descriptive ↔ symbolic/associative ↔ autobiographical) — How does the viewer construct
+    meaning? Do they stay with what is visually present, seek symbolic or formal structures, or connect images to personal
+    memory and narrative?
+
+    5. Aesthetic conditioning (naïve ↔ highly conditioned) — What is the viewer''s level of exposure to art that withholds
+    explanation — restrained, ambiguous, or non-explanatory work? Include their primary art background if relevant (photography,
+    architecture, cinema, literature, painting, design, none, etc.).
+
+    6. Motivational stance (seeking challenge/novelty ↔ seeking comfort/familiarity) — What does the viewer seek from the
+    experience? Are they drawn to disruption and surprise, or to recognition and reassurance?
+
+    7. Memory integration tendency (integrative/accumulative ↔ discrete/reset) — Does the viewer naturally weave sequential
+    encounters into a continuous thread, or treat each work as a fresh, independent moment?
+
+    Write 8–12 sentences total. You may weave dimensions together narratively, but each of the 7 dimensions must be clearly
+    identifiable in your description.
+
+    Avoid: - references to any images - psychological theory, jargon, or explanation - evaluative language (no "interestingly"
+    or "notably") - introductory phrases ("Here is the viewer profile:", "The profile is:") - markdown formatting (no bold,
+    no headers, no bullet points)
+
+    Output ONLY the profile description itself, starting directly with the content.
+
+
+    This time, create a viewer with memory integration that is mixed — sometimes integrating, sometimes resetting, mixed —
+    lingering on some things, skipping others quickly attention, moderate-to-high ambiguity tolerance, and motivationally
+    mixed — sometimes seeking disruption, sometimes reassurance. Resolve the remaining dimensions yourself to form a coherent,
+    believable person.'
+- id: parametric_006_mixe_more_prim_lean
+  name: 'Parametric #7'
+  system_prompt: 'You generate visitor profiles for a gallery simulation. Follow the user''s instructions exactly. Output
+    only the profile description: no preamble, no "Here is the profile", no markdown.'
+  user_prompt: 'Generate a visitor profile that will be used to simulate how someone experiences a sequence of images in a
+    gallery.
+
+    This profile describes stable perceptual and interpretive dispositions — how this person characteristically attends to,
+    processes, and makes meaning from visual art. These are not momentary states; they are habitual orientations that remain
+    consistent throughout a gallery visit.
+
+    You MUST explicitly address each of the following 7 dimensions. Each dimension requires its own clear, substantive statement:
+
+    1. Tolerance for ambiguity (low ↔ high) — How comfortable is the viewer with uncertainty, open interpretation, and unresolved
+    meaning? Do they seek closure or sit with indeterminacy?
+
+    2. Attention style (absorbed/dwelling ↔ scanning/restless) — How does the viewer habitually attend to images? Do they
+    linger and sink in, or move quickly across surfaces and details?
+
+    3. Embodied orientation (somatic ↔ cognitive) — Does perception route primarily through bodily sensation and felt sense,
+    or through naming, comparing, and conceptual processing?
+
+    4. Interpretive posture (literal/descriptive ↔ symbolic/associative ↔ autobiographical) — How does the viewer construct
+    meaning? Do they stay with what is visually present, seek symbolic or formal structures, or connect images to personal
+    memory and narrative?
+
+    5. Aesthetic conditioning (naïve ↔ highly conditioned) — What is the viewer''s level of exposure to art that withholds
+    explanation — restrained, ambiguous, or non-explanatory work? Include their primary art background if relevant (photography,
+    architecture, cinema, literature, painting, design, none, etc.).
+
+    6. Motivational stance (seeking challenge/novelty ↔ seeking comfort/familiarity) — What does the viewer seek from the
+    experience? Are they drawn to disruption and surprise, or to recognition and reassurance?
+
+    7. Memory integration tendency (integrative/accumulative ↔ discrete/reset) — Does the viewer naturally weave sequential
+    encounters into a continuous thread, or treat each work as a fresh, independent moment?
+
+    Write 8–12 sentences total. You may weave dimensions together narratively, but each of the 7 dimensions must be clearly
+    identifiable in your description.
+
+    Avoid: - references to any images - psychological theory, jargon, or explanation - evaluative language (no "interestingly"
+    or "notably") - introductory phrases ("Here is the viewer profile:", "The profile is:") - markdown formatting (no bold,
+    no headers, no bullet points)
+
+    Output ONLY the profile description itself, starting directly with the content.
+
+
+    This time, create a viewer with mixed — lingering on some things, skipping others quickly attention, an embodied orientation
+    that is more cognitive than somatic, an interpretive posture that is primarily literal and descriptive, and memory integration
+    that is leaning integrative — threads build loosely. Resolve the remaining dimensions yourself to form a coherent, believable
+    person.'

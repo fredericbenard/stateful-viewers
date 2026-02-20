@@ -288,33 +288,19 @@ _HINT_GENERATORS = {
 # ---------------------------------------------------------------------------
 
 def _extract_base_prompt(prompts_yaml_path: Path) -> tuple[str, str]:
-    """Extract (system_prompt, base_user_prompt) from a prompts.yaml.
-
-    The base user prompt is everything before the final "This time, ..." hint
-    paragraph in any variant.
-    """
+    """Extract (system_prompt, base_user_prompt) from a prompts.yaml."""
     raw = yaml.safe_load(prompts_yaml_path.read_text())
 
-    system_prompt = ""
-    if "_system_prompt" in raw:
-        system_prompt = raw["_system_prompt"].strip()
+    system_prompt = raw.get("_system_prompt", "").strip()
 
-    variants = raw.get("variants", [])
-    if not variants:
-        raise ValueError(f"No variants found in {prompts_yaml_path}")
+    base_user_prompt = raw.get("_base_user_prompt", "").strip()
+    if not base_user_prompt:
+        raise ValueError(
+            f"No _base_user_prompt found in {prompts_yaml_path}. "
+            f"Add a _base_user_prompt field with the base user prompt text."
+        )
 
-    first_user_prompt = variants[0]["user_prompt"].strip()
-
-    marker = "\nThis time, "
-    idx = first_user_prompt.rfind(marker)
-    if idx != -1:
-        base = first_user_prompt[:idx].strip()
-    else:
-        marker_alt = "This time, "
-        idx = first_user_prompt.rfind(marker_alt)
-        base = first_user_prompt[:idx].strip() if idx > 0 else first_user_prompt
-
-    return system_prompt, base
+    return system_prompt, base_user_prompt
 
 
 # ---------------------------------------------------------------------------

@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import json
 import re
+import shutil
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Sequence
 
@@ -41,7 +43,7 @@ User: {user_prompt}
 ## Model response
 
 {response}
-
+{judge_context_section}
 ## Evaluation criterion: {criterion_name}
 
 {criterion_description}
@@ -58,22 +60,41 @@ def evaluate_results(
     judge: VisionProvider,
     *,
     judge_model_name: str = "",
-) -> list[EvalScore]:
-    """Score each result against each criterion using the judge LLM."""
+    image_map: dict[str, tuple[str, str]] | None = None,
+) -> tuple[list[EvalScore], list[dict]]:
+    """Score each result against each criterion using the judge LLM.
+
+    *image_map* maps ``image_id`` → ``(base64_data, mime_type)``.  When a
+    criterion has ``requires_image=True`` and the result's image is in the map,
+    the judge call uses vision (``generate``) instead of text-only.
+
+    Returns ``(scores, judge_prompts)`` where *judge_prompts* is a list of
+    dicts recording the exact prompt sent to the judge for each evaluation.
+    """
 
     prompt_map = {p.id: p for p in prompts}
+    image_map = image_map or {}
     total = len(results) * len(criteria)
 
     if not total:
         console.print("[yellow]Nothing to evaluate.[/yellow]")
-        return []
+        return [], []
 
+    vision_count = sum(
+        1 for r in results for c in criteria
+        if c.requires_image and r.image_id in image_map
+    )
     console.print(
         f"\nEvaluating [bold]{len(results)}[/bold] result(s) x "
-        f"[bold]{len(criteria)}[/bold] criteria = {total} judgment(s)\n"
+        f"[bold]{len(criteria)}[/bold] criteria = {total} judgment(s)"
     )
+    if vision_count:
+        console.print(f"  ({vision_count} will use vision for image-grounded criteria)\n")
+    else:
+        console.print()
 
     scores: list[EvalScore] = []
+    judge_prompts: list[dict] = []
 
     with Progress(
         SpinnerColumn(),
@@ -95,21 +116,45 @@ def evaluate_results(
                     description=f"[{result.prompt_variant_id}] x [{criterion.id}]",
                 )
 
+                judge_context_section = ""
+                if variant.judge_context:
+                    judge_context_section = (
+                        f"\n## Additional context for evaluation\n\n"
+                        f"{variant.judge_context}\n"
+                    )
+
                 user_prompt = JUDGE_USER_TEMPLATE.format(
                     system_prompt=variant.system_prompt,
                     user_prompt=variant.user_prompt,
                     response=result.raw_response,
+                    judge_context_section=judge_context_section,
                     criterion_name=criterion.name,
                     criterion_description=criterion.description,
                     scoring_prompt=criterion.scoring_prompt,
                 )
 
-                resp = judge.generate_text(
-                    system_prompt=JUDGE_SYSTEM_PROMPT,
-                    user_prompt=user_prompt,
-                    temperature=0.3,
-                    max_tokens=512,
+                use_vision = (
+                    criterion.requires_image
+                    and result.image_id in image_map
                 )
+
+                if use_vision:
+                    img_b64, img_mime = image_map[result.image_id]
+                    resp = judge.generate(
+                        system_prompt=JUDGE_SYSTEM_PROMPT,
+                        user_prompt=user_prompt,
+                        image_base64=img_b64,
+                        mime_type=img_mime,
+                        temperature=0.3,
+                        max_tokens=512,
+                    )
+                else:
+                    resp = judge.generate_text(
+                        system_prompt=JUDGE_SYSTEM_PROMPT,
+                        user_prompt=user_prompt,
+                        temperature=0.3,
+                        max_tokens=512,
+                    )
 
                 score_val, rationale = _parse_judge_response(resp.content)
 
@@ -123,10 +168,18 @@ def evaluate_results(
                         source="llm",
                     )
                 )
+                judge_prompts.append({
+                    "run_result_id": result.id,
+                    "criterion_id": criterion.id,
+                    "system_prompt": JUDGE_SYSTEM_PROMPT,
+                    "user_prompt": user_prompt,
+                    "used_vision": use_vision,
+                    "image_id": result.image_id if use_vision else None,
+                })
                 progress.advance(task)
 
     console.print(f"\n[green]Completed {len(scores)} evaluation(s).[/green]\n")
-    return scores
+    return scores, judge_prompts
 
 
 def _parse_judge_response(text: str) -> tuple[int, str]:
@@ -146,30 +199,64 @@ def _parse_judge_response(text: str) -> tuple[int, str]:
     return score, rationale
 
 
+def _backup_if_exists(path: Path) -> None:
+    """Rename an existing file with a timestamp suffix before overwriting."""
+    if not path.is_file():
+        return
+    ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H-%M-%S")
+    backup = path.with_suffix(f".bak.{ts}.json")
+    shutil.copy2(path, backup)
+    console.print(f"  [dim]Backed up previous scores to {backup.name}[/dim]")
+
+
 def save_scores(
     run_dir: Path,
     scores: list[EvalScore],
     *,
     judge_model_name: str = "",
+    judge_prompts: list[dict] | None = None,
 ) -> None:
     """Save evaluation scores to the run directory.
 
     Always writes ``scores.json`` (latest).  When *judge_model_name* is
     provided, also writes ``scores_<judge_tag>.json`` so multiple judges can
-    coexist without overwriting each other.
+    coexist without overwriting each other.  Existing files are backed up
+    with a timestamp suffix before being replaced.
+
+    When *judge_prompts* is provided, saves the full judge input for each
+    evaluation as ``judge_prompts.json`` (or ``judge_prompts_<tag>.json``).
     """
-    (run_dir / "scores.json").write_text(
+    scores_path = run_dir / "scores.json"
+    _backup_if_exists(scores_path)
+    scores_path.write_text(
         json.dumps([s.to_dict() for s in scores], indent=2, ensure_ascii=False) + "\n"
     )
-    console.print(f"Scores saved to [bold]{run_dir / 'scores.json'}[/bold]")
+    console.print(f"Scores saved to [bold]{scores_path}[/bold]")
+
+    if judge_prompts is not None:
+        jp_path = run_dir / "judge_prompts.json"
+        _backup_if_exists(jp_path)
+        jp_path.write_text(
+            json.dumps(judge_prompts, indent=2, ensure_ascii=False) + "\n"
+        )
+        console.print(f"Judge prompts saved to [bold]{jp_path}[/bold]")
 
     if judge_model_name:
         tag = judge_model_name.replace("/", "_").replace(" ", "_")
         tagged_path = run_dir / f"scores_{tag}.json"
+        _backup_if_exists(tagged_path)
         tagged_path.write_text(
             json.dumps([s.to_dict() for s in scores], indent=2, ensure_ascii=False) + "\n"
         )
         console.print(f"Also saved to [bold]{tagged_path}[/bold]")
+
+        if judge_prompts is not None:
+            jp_tagged = run_dir / f"judge_prompts_{tag}.json"
+            _backup_if_exists(jp_tagged)
+            jp_tagged.write_text(
+                json.dumps(judge_prompts, indent=2, ensure_ascii=False) + "\n"
+            )
+            console.print(f"Also saved to [bold]{jp_tagged}[/bold]")
 
 
 def scaffold_human_ratings(

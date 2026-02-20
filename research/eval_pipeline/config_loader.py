@@ -19,6 +19,9 @@ def load_experiment(
 ) -> tuple[ExperimentConfig, list[PromptVariant], list[EvalCriterion]]:
     """Load config, prompts, and criteria for an experiment.
 
+    Prefers ``variants.yaml`` over ``prompts.yaml`` when both exist — frozen
+    variants take priority over the base template.
+
     Returns (config, prompts, criteria).
     """
     exp_dir = EXPERIMENTS_DIR / experiment_id
@@ -26,7 +29,13 @@ def load_experiment(
         raise FileNotFoundError(f"Experiment directory not found: {exp_dir}")
 
     config = _load_config(exp_dir / "config.yaml")
-    prompts = _load_prompts(exp_dir / "prompts.yaml")
+
+    variants_path = exp_dir / "variants.yaml"
+    if variants_path.is_file():
+        prompts = _load_prompts(variants_path)
+    else:
+        prompts = _load_prompts(exp_dir / "prompts.yaml")
+
     criteria = _load_criteria(exp_dir / "criteria.yaml")
 
     if provider_override:
@@ -54,7 +63,6 @@ def _load_config(path: Path) -> ExperimentConfig:
         temperature=raw.get("temperature", 0.7),
         max_tokens=raw.get("max_tokens", 2048),
         images=images,
-        prompt_variant_ids=raw.get("prompt_variant_ids", []),
     )
 
 
@@ -79,6 +87,7 @@ def _load_criteria(path: Path) -> list[EvalCriterion]:
             name=c["name"],
             description=c["description"].strip(),
             scoring_prompt=c["scoring_prompt"].strip(),
+            requires_image=c.get("requires_image", False),
         )
         for c in raw.get("criteria", [])
     ]

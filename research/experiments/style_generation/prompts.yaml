@@ -1,446 +1,69 @@
-# Prompt variants for reflective style generation.
+# Base prompts for reflective style generation.
 #
-# Each variant uses the same base prompt with a different variability hint
-# to produce diverse reflective styles. See docs/dimensions.md
-# for the theoretical grounding of the 7 style dimensions.
+# The frozen parametric variants are in variants.yaml. This file provides
+# the system prompt and base user prompt used by generate_variants.py
+# to construct new variants.
+#
+# See docs/design/v2-dimensions.md for the theoretical grounding of the
+# 7 style dimensions.
 
-_system_prompt: &system_prompt >
+_system_prompt: >
   You generate reflective styles for a gallery simulation. Follow the user's
   instructions exactly. Output only the style description: no preamble,
   no "Here is the style", no markdown.
 
-variants:
-
-  - id: hint_terse_fragmented
-    name: "Terse and fragmented"
-    system_prompt: *system_prompt
-    user_prompt: >
-      Generate a reflective style that describes how a gallery visitor's inner
-      voice speaks when reflecting on images.
-
-      This style controls only how experience is expressed in language — the
-      texture, rhythm, and habits of inner speech. It does not determine what is
-      perceived or felt (that is governed by the visitor's profile and internal
-      state).
-
-      You MUST explicitly address each of the following 7 dimensions. Each
-      dimension requires its own clear, substantive statement:
-
-      1. Lexical register (plain/conversational ↔ literary/poetic) — What is
-      the vocabulary and formality level? Everyday words, or a more textured,
-      precise, or evocative lexicon?
-
-      2. Explicitness of emotion (implicit/suggested ↔ explicit/named) — Are
-      feelings stated directly ("I feel uneasy," "there is sadness here") or do
-      they surface through description, imagery, and indirection?
-
-      3. Voice stability (steady/composed ↔ fragmented/shifting) — Does the
-      inner voice maintain a consistent rhythm and tone, or does it fracture,
-      hesitate, or shift register under pressure?
-
-      4. Sensory modality emphasis (visual ↔ kinesthetic ↔ auditory ↔ mixed)
-      — Which sensory register dominates the language? Does the voice describe
-      what it sees, what it feels in the body, what it hears or imagines hearing,
-      or move freely between senses?
-
-      5. Self-reference mode (first-person intimate ↔ observational/impersonal)
-      — Does the voice say "I" and speak from inside the experience, or does it
-      observe from a slight remove ("one notices," "there is a sense of,"
-      "something shifts")?
-
-      6. Metaphor density (spare/literal ↔ rich/figurative) — How much is
-      experience translated into metaphor and imagery? Is the language
-      predominantly literal, or does it reach for analogy, simile, and figurative
-      expression?
-
-      7. Pacing (terse/compressed ↔ expansive/flowing) — What is the rhythm
-      and breath of inner speech? Short fragmented sentences, or long flowing
-      phrases with internal movement?
-
-      Write 6–10 sentences total. Each dimension must be clearly identifiable.
-      The style should read as a coherent voice description, not a list.
-
-      Avoid:
-      - references to any images or visual content
-      - language about what the viewer perceives, believes, or attends to (that
-        belongs to the profile)
-      - introductory phrases ("Here is the style:", "The reflective style is:")
-      - markdown formatting (no bold, no headers, no bullet points)
-
-      Output ONLY the style description itself, starting directly with the
-      content.
-
-      This time, create a voice that is terse and fragmented, with sparse
-      metaphor and implicit emotion.
-
-  - id: hint_literary_expansive
-    name: "Literary and expansive"
-    system_prompt: *system_prompt
-    user_prompt: >
-      Generate a reflective style that describes how a gallery visitor's inner
-      voice speaks when reflecting on images.
-
-      This style controls only how experience is expressed in language — the
-      texture, rhythm, and habits of inner speech. It does not determine what is
-      perceived or felt (that is governed by the visitor's profile and internal
-      state).
-
-      You MUST explicitly address each of the following 7 dimensions. Each
-      dimension requires its own clear, substantive statement:
-
-      1. Lexical register (plain/conversational ↔ literary/poetic) — What is
-      the vocabulary and formality level? Everyday words, or a more textured,
-      precise, or evocative lexicon?
-
-      2. Explicitness of emotion (implicit/suggested ↔ explicit/named) — Are
-      feelings stated directly ("I feel uneasy," "there is sadness here") or do
-      they surface through description, imagery, and indirection?
-
-      3. Voice stability (steady/composed ↔ fragmented/shifting) — Does the
-      inner voice maintain a consistent rhythm and tone, or does it fracture,
-      hesitate, or shift register under pressure?
-
-      4. Sensory modality emphasis (visual ↔ kinesthetic ↔ auditory ↔ mixed)
-      — Which sensory register dominates the language? Does the voice describe
-      what it sees, what it feels in the body, what it hears or imagines hearing,
-      or move freely between senses?
-
-      5. Self-reference mode (first-person intimate ↔ observational/impersonal)
-      — Does the voice say "I" and speak from inside the experience, or does it
-      observe from a slight remove ("one notices," "there is a sense of,"
-      "something shifts")?
-
-      6. Metaphor density (spare/literal ↔ rich/figurative) — How much is
-      experience translated into metaphor and imagery? Is the language
-      predominantly literal, or does it reach for analogy, simile, and figurative
-      expression?
-
-      7. Pacing (terse/compressed ↔ expansive/flowing) — What is the rhythm
-      and breath of inner speech? Short fragmented sentences, or long flowing
-      phrases with internal movement?
-
-      Write 6–10 sentences total. Each dimension must be clearly identifiable.
-      The style should read as a coherent voice description, not a list.
-
-      Avoid:
-      - references to any images or visual content
-      - language about what the viewer perceives, believes, or attends to (that
-        belongs to the profile)
-      - introductory phrases ("Here is the style:", "The reflective style is:")
-      - markdown formatting (no bold, no headers, no bullet points)
-
-      Output ONLY the style description itself, starting directly with the
-      content.
-
-      This time, produce a literary, expansive voice that names emotions
-      explicitly and uses rich figurative language.
-
-  - id: hint_kinesthetic
-    name: "Kinesthetic / bodily"
-    system_prompt: *system_prompt
-    user_prompt: >
-      Generate a reflective style that describes how a gallery visitor's inner
-      voice speaks when reflecting on images.
-
-      This style controls only how experience is expressed in language — the
-      texture, rhythm, and habits of inner speech. It does not determine what is
-      perceived or felt (that is governed by the visitor's profile and internal
-      state).
-
-      You MUST explicitly address each of the following 7 dimensions. Each
-      dimension requires its own clear, substantive statement:
-
-      1. Lexical register (plain/conversational ↔ literary/poetic) — What is
-      the vocabulary and formality level? Everyday words, or a more textured,
-      precise, or evocative lexicon?
-
-      2. Explicitness of emotion (implicit/suggested ↔ explicit/named) — Are
-      feelings stated directly ("I feel uneasy," "there is sadness here") or do
-      they surface through description, imagery, and indirection?
-
-      3. Voice stability (steady/composed ↔ fragmented/shifting) — Does the
-      inner voice maintain a consistent rhythm and tone, or does it fracture,
-      hesitate, or shift register under pressure?
-
-      4. Sensory modality emphasis (visual ↔ kinesthetic ↔ auditory ↔ mixed)
-      — Which sensory register dominates the language? Does the voice describe
-      what it sees, what it feels in the body, what it hears or imagines hearing,
-      or move freely between senses?
-
-      5. Self-reference mode (first-person intimate ↔ observational/impersonal)
-      — Does the voice say "I" and speak from inside the experience, or does it
-      observe from a slight remove ("one notices," "there is a sense of,"
-      "something shifts")?
-
-      6. Metaphor density (spare/literal ↔ rich/figurative) — How much is
-      experience translated into metaphor and imagery? Is the language
-      predominantly literal, or does it reach for analogy, simile, and figurative
-      expression?
-
-      7. Pacing (terse/compressed ↔ expansive/flowing) — What is the rhythm
-      and breath of inner speech? Short fragmented sentences, or long flowing
-      phrases with internal movement?
-
-      Write 6–10 sentences total. Each dimension must be clearly identifiable.
-      The style should read as a coherent voice description, not a list.
-
-      Avoid:
-      - references to any images or visual content
-      - language about what the viewer perceives, believes, or attends to (that
-        belongs to the profile)
-      - introductory phrases ("Here is the style:", "The reflective style is:")
-      - markdown formatting (no bold, no headers, no bullet points)
-
-      Output ONLY the style description itself, starting directly with the
-      content.
-
-      This time, make the voice predominantly kinesthetic — grounded in
-      bodily sensation rather than visual description.
-
-  - id: hint_impersonal
-    name: "Impersonal and observational"
-    system_prompt: *system_prompt
-    user_prompt: >
-      Generate a reflective style that describes how a gallery visitor's inner
-      voice speaks when reflecting on images.
-
-      This style controls only how experience is expressed in language — the
-      texture, rhythm, and habits of inner speech. It does not determine what is
-      perceived or felt (that is governed by the visitor's profile and internal
-      state).
-
-      You MUST explicitly address each of the following 7 dimensions. Each
-      dimension requires its own clear, substantive statement:
-
-      1. Lexical register (plain/conversational ↔ literary/poetic) — What is
-      the vocabulary and formality level? Everyday words, or a more textured,
-      precise, or evocative lexicon?
-
-      2. Explicitness of emotion (implicit/suggested ↔ explicit/named) — Are
-      feelings stated directly ("I feel uneasy," "there is sadness here") or do
-      they surface through description, imagery, and indirection?
-
-      3. Voice stability (steady/composed ↔ fragmented/shifting) — Does the
-      inner voice maintain a consistent rhythm and tone, or does it fracture,
-      hesitate, or shift register under pressure?
-
-      4. Sensory modality emphasis (visual ↔ kinesthetic ↔ auditory ↔ mixed)
-      — Which sensory register dominates the language? Does the voice describe
-      what it sees, what it feels in the body, what it hears or imagines hearing,
-      or move freely between senses?
-
-      5. Self-reference mode (first-person intimate ↔ observational/impersonal)
-      — Does the voice say "I" and speak from inside the experience, or does it
-      observe from a slight remove ("one notices," "there is a sense of,"
-      "something shifts")?
-
-      6. Metaphor density (spare/literal ↔ rich/figurative) — How much is
-      experience translated into metaphor and imagery? Is the language
-      predominantly literal, or does it reach for analogy, simile, and figurative
-      expression?
-
-      7. Pacing (terse/compressed ↔ expansive/flowing) — What is the rhythm
-      and breath of inner speech? Short fragmented sentences, or long flowing
-      phrases with internal movement?
-
-      Write 6–10 sentences total. Each dimension must be clearly identifiable.
-      The style should read as a coherent voice description, not a list.
-
-      Avoid:
-      - references to any images or visual content
-      - language about what the viewer perceives, believes, or attends to (that
-        belongs to the profile)
-      - introductory phrases ("Here is the style:", "The reflective style is:")
-      - markdown formatting (no bold, no headers, no bullet points)
-
-      Output ONLY the style description itself, starting directly with the
-      content.
-
-      This time, create an impersonal, observational voice that avoids "I"
-      and maintains steady composure.
-
-  - id: hint_shifting_registers
-    name: "Shifting registers"
-    system_prompt: *system_prompt
-    user_prompt: >
-      Generate a reflective style that describes how a gallery visitor's inner
-      voice speaks when reflecting on images.
-
-      This style controls only how experience is expressed in language — the
-      texture, rhythm, and habits of inner speech. It does not determine what is
-      perceived or felt (that is governed by the visitor's profile and internal
-      state).
-
-      You MUST explicitly address each of the following 7 dimensions. Each
-      dimension requires its own clear, substantive statement:
-
-      1. Lexical register (plain/conversational ↔ literary/poetic) — What is
-      the vocabulary and formality level? Everyday words, or a more textured,
-      precise, or evocative lexicon?
-
-      2. Explicitness of emotion (implicit/suggested ↔ explicit/named) — Are
-      feelings stated directly ("I feel uneasy," "there is sadness here") or do
-      they surface through description, imagery, and indirection?
-
-      3. Voice stability (steady/composed ↔ fragmented/shifting) — Does the
-      inner voice maintain a consistent rhythm and tone, or does it fracture,
-      hesitate, or shift register under pressure?
-
-      4. Sensory modality emphasis (visual ↔ kinesthetic ↔ auditory ↔ mixed)
-      — Which sensory register dominates the language? Does the voice describe
-      what it sees, what it feels in the body, what it hears or imagines hearing,
-      or move freely between senses?
-
-      5. Self-reference mode (first-person intimate ↔ observational/impersonal)
-      — Does the voice say "I" and speak from inside the experience, or does it
-      observe from a slight remove ("one notices," "there is a sense of,"
-      "something shifts")?
-
-      6. Metaphor density (spare/literal ↔ rich/figurative) — How much is
-      experience translated into metaphor and imagery? Is the language
-      predominantly literal, or does it reach for analogy, simile, and figurative
-      expression?
-
-      7. Pacing (terse/compressed ↔ expansive/flowing) — What is the rhythm
-      and breath of inner speech? Short fragmented sentences, or long flowing
-      phrases with internal movement?
-
-      Write 6–10 sentences total. Each dimension must be clearly identifiable.
-      The style should read as a coherent voice description, not a list.
-
-      Avoid:
-      - references to any images or visual content
-      - language about what the viewer perceives, believes, or attends to (that
-        belongs to the profile)
-      - introductory phrases ("Here is the style:", "The reflective style is:")
-      - markdown formatting (no bold, no headers, no bullet points)
-
-      Output ONLY the style description itself, starting directly with the
-      content.
-
-      This time, produce a voice that shifts between registers — sometimes
-      intimate and first-person, sometimes detached — with unstable pacing.
-
-  - id: hint_conversational
-    name: "Conversational and plain-spoken"
-    system_prompt: *system_prompt
-    user_prompt: >
-      Generate a reflective style that describes how a gallery visitor's inner
-      voice speaks when reflecting on images.
-
-      This style controls only how experience is expressed in language — the
-      texture, rhythm, and habits of inner speech. It does not determine what is
-      perceived or felt (that is governed by the visitor's profile and internal
-      state).
-
-      You MUST explicitly address each of the following 7 dimensions. Each
-      dimension requires its own clear, substantive statement:
-
-      1. Lexical register (plain/conversational ↔ literary/poetic) — What is
-      the vocabulary and formality level? Everyday words, or a more textured,
-      precise, or evocative lexicon?
-
-      2. Explicitness of emotion (implicit/suggested ↔ explicit/named) — Are
-      feelings stated directly ("I feel uneasy," "there is sadness here") or do
-      they surface through description, imagery, and indirection?
-
-      3. Voice stability (steady/composed ↔ fragmented/shifting) — Does the
-      inner voice maintain a consistent rhythm and tone, or does it fracture,
-      hesitate, or shift register under pressure?
-
-      4. Sensory modality emphasis (visual ↔ kinesthetic ↔ auditory ↔ mixed)
-      — Which sensory register dominates the language? Does the voice describe
-      what it sees, what it feels in the body, what it hears or imagines hearing,
-      or move freely between senses?
-
-      5. Self-reference mode (first-person intimate ↔ observational/impersonal)
-      — Does the voice say "I" and speak from inside the experience, or does it
-      observe from a slight remove ("one notices," "there is a sense of,"
-      "something shifts")?
-
-      6. Metaphor density (spare/literal ↔ rich/figurative) — How much is
-      experience translated into metaphor and imagery? Is the language
-      predominantly literal, or does it reach for analogy, simile, and figurative
-      expression?
-
-      7. Pacing (terse/compressed ↔ expansive/flowing) — What is the rhythm
-      and breath of inner speech? Short fragmented sentences, or long flowing
-      phrases with internal movement?
-
-      Write 6–10 sentences total. Each dimension must be clearly identifiable.
-      The style should read as a coherent voice description, not a list.
-
-      Avoid:
-      - references to any images or visual content
-      - language about what the viewer perceives, believes, or attends to (that
-        belongs to the profile)
-      - introductory phrases ("Here is the style:", "The reflective style is:")
-      - markdown formatting (no bold, no headers, no bullet points)
-
-      Output ONLY the style description itself, starting directly with the
-      content.
-
-      This time, create a conversational, plain-spoken voice with spare
-      metaphor but explicit emotion naming.
-
-  - id: hint_poetic_compressed
-    name: "Poetic and compressed"
-    system_prompt: *system_prompt
-    user_prompt: >
-      Generate a reflective style that describes how a gallery visitor's inner
-      voice speaks when reflecting on images.
-
-      This style controls only how experience is expressed in language — the
-      texture, rhythm, and habits of inner speech. It does not determine what is
-      perceived or felt (that is governed by the visitor's profile and internal
-      state).
-
-      You MUST explicitly address each of the following 7 dimensions. Each
-      dimension requires its own clear, substantive statement:
-
-      1. Lexical register (plain/conversational ↔ literary/poetic) — What is
-      the vocabulary and formality level? Everyday words, or a more textured,
-      precise, or evocative lexicon?
-
-      2. Explicitness of emotion (implicit/suggested ↔ explicit/named) — Are
-      feelings stated directly ("I feel uneasy," "there is sadness here") or do
-      they surface through description, imagery, and indirection?
-
-      3. Voice stability (steady/composed ↔ fragmented/shifting) — Does the
-      inner voice maintain a consistent rhythm and tone, or does it fracture,
-      hesitate, or shift register under pressure?
-
-      4. Sensory modality emphasis (visual ↔ kinesthetic ↔ auditory ↔ mixed)
-      — Which sensory register dominates the language? Does the voice describe
-      what it sees, what it feels in the body, what it hears or imagines hearing,
-      or move freely between senses?
-
-      5. Self-reference mode (first-person intimate ↔ observational/impersonal)
-      — Does the voice say "I" and speak from inside the experience, or does it
-      observe from a slight remove ("one notices," "there is a sense of,"
-      "something shifts")?
-
-      6. Metaphor density (spare/literal ↔ rich/figurative) — How much is
-      experience translated into metaphor and imagery? Is the language
-      predominantly literal, or does it reach for analogy, simile, and figurative
-      expression?
-
-      7. Pacing (terse/compressed ↔ expansive/flowing) — What is the rhythm
-      and breath of inner speech? Short fragmented sentences, or long flowing
-      phrases with internal movement?
-
-      Write 6–10 sentences total. Each dimension must be clearly identifiable.
-      The style should read as a coherent voice description, not a list.
-
-      Avoid:
-      - references to any images or visual content
-      - language about what the viewer perceives, believes, or attends to (that
-        belongs to the profile)
-      - introductory phrases ("Here is the style:", "The reflective style is:")
-      - markdown formatting (no bold, no headers, no bullet points)
-
-      Output ONLY the style description itself, starting directly with the
-      content.
-
-      This time, produce a voice that is poetic and compressed, favoring
-      auditory imagery and implicit emotion.
+_base_user_prompt: >
+  Generate a reflective style that describes how a gallery visitor's inner
+  voice speaks when reflecting on images.
+
+  This style controls only how experience is expressed in language — the
+  texture, rhythm, and habits of inner speech. It does not determine what is
+  perceived or felt (that is governed by the visitor's profile and internal
+  state).
+
+  You MUST explicitly address each of the following 7 dimensions. Each
+  dimension requires its own clear, substantive statement:
+
+  1. Lexical register (plain/conversational ↔ literary/poetic) — What is
+  the vocabulary and formality level? Everyday words, or a more textured,
+  precise, or evocative lexicon?
+
+  2. Explicitness of emotion (implicit/suggested ↔ explicit/named) — Are
+  feelings stated directly ("I feel uneasy," "there is sadness here") or do
+  they surface through description, imagery, and indirection?
+
+  3. Voice stability (steady/composed ↔ fragmented/shifting) — Does the
+  inner voice maintain a consistent rhythm and tone, or does it fracture,
+  hesitate, or shift register under pressure?
+
+  4. Sensory modality emphasis (visual ↔ kinesthetic ↔ auditory ↔ mixed)
+  — Which sensory register dominates the language? Does the voice describe
+  what it sees, what it feels in the body, what it hears or imagines hearing,
+  or move freely between senses?
+
+  5. Self-reference mode (first-person intimate ↔ observational/impersonal)
+  — Does the voice say "I" and speak from inside the experience, or does it
+  observe from a slight remove ("one notices," "there is a sense of,"
+  "something shifts")?
+
+  6. Metaphor density (spare/literal ↔ rich/figurative) — How much is
+  experience translated into metaphor and imagery? Is the language
+  predominantly literal, or does it reach for analogy, simile, and figurative
+  expression?
+
+  7. Pacing (terse/compressed ↔ expansive/flowing) — What is the rhythm
+  and breath of inner speech? Short fragmented sentences, or long flowing
+  phrases with internal movement?
+
+  Write 6–10 sentences total. Each dimension must be clearly identifiable.
+  The style should read as a coherent voice description, not a list.
+
+  Avoid:
+  - references to any images or visual content
+  - language about what the viewer perceives, believes, or attends to (that
+    belongs to the profile)
+  - introductory phrases ("Here is the style:", "The reflective style is:")
+  - markdown formatting (no bold, no headers, no bullet points)
+
+  Output ONLY the style description itself, starting directly with the
+  content.

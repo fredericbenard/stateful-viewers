@@ -1,41 +1,31 @@
 #!/usr/bin/env python3
-"""Run a stateful gallery walk: generate or load profile/style/state, then
+"""Run a stateful gallery walk: load or generate profile/style/state, then
 reflect on each image sequentially with state carryover.
 
 Usage examples:
 
-  # Generate all artifacts, walk through the gallery, and evaluate:
-  python scripts/run_stateful.py --evaluate
-
-  # Use saved artifacts from previous generation runs:
-  python scripts/run_stateful.py \
-    --profile output/profile_generation/2026-02-19T.../results.json:hint_unusual_combo \
-    --style output/style_generation/2026-02-19T.../results.json:hint_terse_fragmented \
-    --initial-state output/initial_state_generation/2026-02-19T.../results.json:hint_melancholic_open
-
-  # Use inline text (for quick testing):
-  python scripts/run_stateful.py --profile-text "Tolerance for ambiguity is high..."
+  # Run with frozen artifacts:
+  python scripts/run_stateful.py stateful_reflection_low_ambiguity --evaluate
+  python scripts/run_stateful.py stateful_reflection_high_ambiguity --evaluate
 
   # Override provider/model:
-  python scripts/run_stateful.py --provider anthropic --model claude-sonnet-4-5-20250514
+  python scripts/run_stateful.py stateful_reflection_low_ambiguity -p anthropic -m claude-opus-4-6 --evaluate
 
   # Show results from a previous run:
-  python scripts/run_stateful.py --show output/stateful_reflection/2026-02-19T.../
+  python scripts/run_stateful.py stateful_reflection_low_ambiguity --show output/stateful_reflection_low_ambiguity/2026-02-.../
 
   # Evaluate an existing run:
-  python scripts/run_stateful.py --evaluate-only output/stateful_reflection/2026-02-19T.../
+  python scripts/run_stateful.py stateful_reflection_low_ambiguity --evaluate-only output/stateful_reflection_low_ambiguity/2026-02-.../
 """
 
 from __future__ import annotations
 
 import argparse
 import json
-import random
 import re
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
 
 _RESEARCH_DIR = Path(__file__).resolve().parent.parent
 if str(_RESEARCH_DIR) not in sys.path:
@@ -49,8 +39,8 @@ from rich.table import Table
 import yaml
 
 from eval_pipeline.image_utils import load_image_as_base64
-from eval_pipeline.parametric import generate_parametric_variants
 from eval_pipeline.provider_factory import create_provider
+from eval_pipeline.providers.base import VisionProvider
 from eval_pipeline.types import (
     EvalCriterion,
     ExperimentConfig,
@@ -60,6 +50,7 @@ from eval_pipeline.types import (
     TokenUsage,
 )
 from eval_pipeline.evaluator import evaluate_results, save_scores, scaffold_human_ratings
+from eval_pipeline.manifest import save_manifest
 
 console = Console()
 
@@ -96,113 +87,6 @@ def parse_reflection_and_state(text: str) -> tuple[str, str]:
 
 
 # ---------------------------------------------------------------------------
-# Artifact loading
-# ---------------------------------------------------------------------------
-
-def _load_artifact_from_results(path_spec: str) -> str:
-    """Load an artifact from a results.json file.
-
-    ``path_spec`` is either:
-      - ``path/to/results.json:variant_id`` — load the response for that variant
-      - ``path/to/results.json`` — load the first result
-    """
-    parts = path_spec.rsplit(":", 1)
-    results_path = Path(parts[0])
-    variant_id = parts[1] if len(parts) > 1 else None
-
-    if not results_path.is_file():
-        raise FileNotFoundError(f"Results file not found: {results_path}")
-
-    raw = json.loads(results_path.read_text())
-    if variant_id:
-        matches = [r for r in raw if r["prompt_variant_id"] == variant_id]
-        if not matches:
-            available = sorted({r["prompt_variant_id"] for r in raw})
-            raise ValueError(
-                f"Variant '{variant_id}' not found in {results_path}. "
-                f"Available: {available}"
-            )
-        return matches[0]["raw_response"]
-    return raw[0]["raw_response"]
-
-
-def _load_artifact(
-    file_spec: str | None,
-    inline_text: str | None,
-    experiment_id: str,
-    label: str,
-    provider: Any,
-    config: ExperimentConfig,
-) -> str:
-    """Resolve an artifact from: inline text, file reference, or generation."""
-    if inline_text:
-        console.print(f"  {label}: [dim]inline text ({len(inline_text)} chars)[/dim]")
-        return inline_text
-
-    if file_spec:
-        json_part = file_spec.rsplit(":", 1)[0] if ":" in file_spec else file_spec
-        if json_part.endswith(".json"):
-            text = _load_artifact_from_results(file_spec)
-        else:
-            p = Path(file_spec)
-            if not p.is_file():
-                raise FileNotFoundError(f"Artifact file not found: {p}")
-            text = p.read_text().strip()
-        console.print(f"  {label}: [dim]loaded from {file_spec} ({len(text)} chars)[/dim]")
-        return text
-
-    return _generate_artifact(experiment_id, label, provider, config)
-
-
-def _generate_artifact(
-    experiment_id: str,
-    label: str,
-    provider: Any,
-    config: ExperimentConfig,
-    *,
-    use_parametric: bool = True,
-) -> str:
-    """Generate an artifact using a parametric (or fixed) prompt variant."""
-    if use_parametric:
-        variants = generate_parametric_variants(experiment_id, 1, EXPERIMENTS_DIR)
-    else:
-        exp_dir = EXPERIMENTS_DIR / experiment_id
-        prompts_path = exp_dir / "prompts.yaml"
-        if not prompts_path.is_file():
-            raise FileNotFoundError(
-                f"Cannot generate {label}: {prompts_path} not found. "
-                f"Provide --{label.lower().replace(' ', '-')} or "
-                f"--{label.lower().replace(' ', '-')}-text instead."
-            )
-        raw = yaml.safe_load(prompts_path.read_text())
-        raw_variants = raw.get("variants", [])
-        if not raw_variants:
-            raise ValueError(f"No variants found in {prompts_path}")
-        v = random.choice(raw_variants)
-        from eval_pipeline.types import PromptVariant as PV
-        variants = [PV(
-            id=v["id"], name=v["name"],
-            system_prompt=v["system_prompt"].strip(),
-            user_prompt=v["user_prompt"].strip(),
-        )]
-
-    variant = variants[0]
-    console.print(
-        f"  {label}: [cyan]generating[/cyan] "
-        f"(variant: {variant.id}, provider: {config.provider}/{config.model})"
-    )
-
-    resp = provider.generate_text(
-        system_prompt=variant.system_prompt,
-        user_prompt=variant.user_prompt,
-        temperature=config.temperature,
-        max_tokens=1024,
-    )
-    console.print(f"  {label}: [green]generated[/green] ({len(resp.content)} chars, {resp.latency_ms}ms)")
-    return resp.content
-
-
-# ---------------------------------------------------------------------------
 # Sequential gallery walk
 # ---------------------------------------------------------------------------
 
@@ -214,7 +98,7 @@ def run_gallery_walk(
     profile: str,
     style: str,
     initial_state: str,
-    provider: Any,
+    provider: VisionProvider,
 ) -> tuple[list[RunResult], list[str]]:
     """Run the sequential gallery walk and return results + assembled prompts."""
 
@@ -287,6 +171,59 @@ def run_gallery_walk(
 
     console.print(f"\n[green]Completed gallery walk: {len(results)} reflection(s).[/green]\n")
     return results, assembled_prompts
+
+
+# ---------------------------------------------------------------------------
+# Evaluation helpers: sequence context + image map
+# ---------------------------------------------------------------------------
+
+def _build_sequence_context(images: list[ImageInput], current_index: int) -> str:
+    """Build a factual summary of images shown before the current one."""
+    if current_index == 0:
+        return ""
+    lines = ["Images shown before the current one:"]
+    for i in range(current_index):
+        img = images[i]
+        caption = img.caption or img.id
+        lines.append(f"  {i + 1}. {img.id}: \"{caption}\"")
+    current = images[current_index]
+    caption = current.caption or current.id
+    lines.append(f"Current image ({current_index + 1} of {len(images)}):")
+    lines.append(f"  {current_index + 1}. {current.id}: \"{caption}\"")
+    return "\n".join(lines)
+
+
+def _build_prompts_for_eval(
+    results: list[RunResult],
+    assembled_prompts: list[str],
+    system_prompt: str,
+    images: list[ImageInput],
+) -> list[PromptVariant]:
+    """Build PromptVariant objects with sequence context for the judge."""
+    image_index = {img.id: i for i, img in enumerate(images)}
+    prompts: list[PromptVariant] = []
+    for result, assembled_prompt in zip(results, assembled_prompts):
+        idx = image_index.get(result.image_id, 0)
+        prompts.append(PromptVariant(
+            id=result.prompt_variant_id,
+            name=f"Stateful reflection ({result.image_id})",
+            system_prompt=system_prompt,
+            user_prompt=assembled_prompt,
+            judge_context=_build_sequence_context(images, idx),
+        ))
+    return prompts
+
+
+def _build_image_map(images: list[ImageInput]) -> dict[str, tuple[str, str]]:
+    """Load all images and return a map of image_id → (base64, mime_type)."""
+    image_map: dict[str, tuple[str, str]] = {}
+    for img in images:
+        try:
+            b64, mime = load_image_as_base64(img.source)
+            image_map[img.id] = (b64, mime)
+        except Exception as e:
+            console.print(f"  [yellow]Warning: could not load image {img.id}: {e}[/yellow]")
+    return image_map
 
 
 # ---------------------------------------------------------------------------
@@ -395,6 +332,24 @@ def show_run(run_dir: Path) -> None:
 # CLI
 # ---------------------------------------------------------------------------
 
+def _load_artifacts_from_experiment(exp_dir: Path) -> dict[str, str] | None:
+    """Load frozen artifacts from an experiment's artifacts/ directory.
+
+    Returns ``{profile, style, initial_state}`` if all three files exist,
+    ``None`` otherwise.
+    """
+    artifacts_dir = exp_dir / "artifacts"
+    if not artifacts_dir.is_dir():
+        return None
+    result = {}
+    for key, fname in (("profile", "profile.txt"), ("style", "style.txt"), ("initial_state", "initial_state.txt")):
+        p = artifacts_dir / fname
+        if not p.is_file():
+            return None
+        result[key] = p.read_text().strip()
+    return result
+
+
 def main() -> None:
     load_dotenv(_RESEARCH_DIR / ".env")
 
@@ -403,21 +358,12 @@ def main() -> None:
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=__doc__,
     )
+    parser.add_argument(
+        "experiment",
+        help="Experiment directory name under experiments/ (e.g. stateful_reflection_low_ambiguity).",
+    )
     parser.add_argument("--provider", "-p", default=None, help="Override provider.")
     parser.add_argument("--model", "-m", default=None, help="Override model.")
-
-    parser.add_argument("--profile", default=None, help="Path to profile (results.json:variant_id or text file).")
-    parser.add_argument("--profile-text", default=None, help="Inline profile text.")
-    parser.add_argument("--style", default=None, help="Path to style (results.json:variant_id or text file).")
-    parser.add_argument("--style-text", default=None, help="Inline style text.")
-    parser.add_argument("--initial-state", default=None, help="Path to initial state (results.json:variant_id or text file).")
-    parser.add_argument("--initial-state-text", default=None, help="Inline initial state text.")
-
-    parser.add_argument(
-        "--reuse-artifacts", metavar="RUN_DIR", default=None,
-        help="Load profile/style/initial-state from a previous stateful run's artifacts.json.",
-    )
-
     parser.add_argument("--evaluate", action="store_true", help="Evaluate after running.")
     parser.add_argument("--evaluate-only", metavar="RUN_DIR", default=None, help="Evaluate an existing run.")
     parser.add_argument("--judge-provider", default=None, help="Provider for judge LLM.")
@@ -430,11 +376,16 @@ def main() -> None:
         show_run(Path(args.show))
         return
 
-    exp_dir = EXPERIMENTS_DIR / "stateful_reflection"
+    experiment_name = args.experiment
+    exp_dir = EXPERIMENTS_DIR / experiment_name
+    if not exp_dir.is_dir():
+        console.print(f"[red]Experiment directory not found: {exp_dir}[/red]")
+        sys.exit(1)
+
     config_raw = yaml.safe_load((exp_dir / "config.yaml").read_text())
 
     config = ExperimentConfig(
-        experiment_id=config_raw["experiment_id"],
+        experiment_id=config_raw.get("experiment_id", experiment_name),
         provider=args.provider or config_raw.get("provider", "openai"),
         model=args.model or config_raw.get("model", "gpt-5.2"),
         temperature=config_raw.get("temperature", 0.7),
@@ -456,6 +407,7 @@ def main() -> None:
             name=c["name"],
             description=c["description"].strip(),
             scoring_prompt=c["scoring_prompt"].strip(),
+            requires_image=c.get("requires_image", False),
         )
         for c in criteria_raw.get("criteria", [])
     ]
@@ -466,26 +418,24 @@ def main() -> None:
 
     provider = create_provider(config.provider, config.model)
 
-    console.print("\n[bold]Resolving artifacts...[/bold]")
+    console.print("\n[bold]Loading artifacts...[/bold]")
 
-    if args.reuse_artifacts:
-        artifacts_path = Path(args.reuse_artifacts) / "artifacts.json"
-        if not artifacts_path.is_file():
-            console.print(f"[red]artifacts.json not found in {args.reuse_artifacts}[/red]")
-            sys.exit(1)
-        saved = json.loads(artifacts_path.read_text())
-        profile = saved["profile"]
-        style = saved["style"]
-        initial_state = saved["initial_state"]
+    frozen = _load_artifacts_from_experiment(exp_dir)
+    if not frozen:
         console.print(
-            f"  Reusing artifacts from [cyan]{args.reuse_artifacts}[/cyan] "
-            f"(profile: {len(profile)} chars, style: {len(style)} chars, "
-            f"state: {len(initial_state)} chars)"
+            f"[red]No artifacts/ directory found in {exp_dir.name}/. "
+            f"Use freeze_artifacts.py to create one.[/red]"
         )
-    else:
-        profile = _load_artifact(args.profile, args.profile_text, "profile_generation", "Profile", provider, config)
-        style = _load_artifact(args.style, args.style_text, "style_generation", "Style", provider, config)
-        initial_state = _load_artifact(args.initial_state, args.initial_state_text, "initial_state_generation", "Initial state", provider, config)
+        sys.exit(1)
+
+    profile = frozen["profile"]
+    style = frozen["style"]
+    initial_state = frozen["initial_state"]
+    console.print(
+        f"  Loaded from [cyan]{exp_dir.name}/artifacts/[/cyan] "
+        f"(profile: {len(profile)} chars, style: {len(style)} chars, "
+        f"state: {len(initial_state)} chars)"
+    )
 
     results, assembled_prompts = run_gallery_walk(
         config=config,
@@ -508,16 +458,11 @@ def main() -> None:
         "initial_state": initial_state,
     }
     run_dir = save_run(config, results, artifacts, assembled_prompts, system_prompt)
+    save_manifest(run_dir)
 
-    prompts_for_eval = [
-        PromptVariant(
-            id=result.prompt_variant_id,
-            name=f"Stateful reflection ({result.image_id})",
-            system_prompt=system_prompt,
-            user_prompt=assembled_prompt,
-        )
-        for result, assembled_prompt in zip(results, assembled_prompts)
-    ]
+    prompts_for_eval = _build_prompts_for_eval(
+        results, assembled_prompts, system_prompt, config.images,
+    )
     scaffold_human_ratings(run_dir, results, criteria)
 
     if args.evaluate:
@@ -526,14 +471,17 @@ def main() -> None:
         judge = create_provider(judge_provider_name, judge_model)
         judge_name = f"{judge_provider_name}/{judge_model}"
 
-        scores = evaluate_results(
+        image_map = _build_image_map(config.images)
+
+        scores, judge_prompts = evaluate_results(
             results,
             prompts_for_eval,
             criteria,
             judge,
             judge_model_name=judge_name,
+            image_map=image_map,
         )
-        save_scores(run_dir, scores, judge_model_name=judge_name)
+        save_scores(run_dir, scores, judge_model_name=judge_name, judge_prompts=judge_prompts)
 
     show_run(run_dir)
     console.print("\n[bold green]Done.[/bold green]\n")
@@ -561,7 +509,7 @@ def _evaluate_existing(args, config, criteria, system_prompt, user_prompt_templa
     ]
 
     prompts_for_eval = _rebuild_prompts_for_eval(
-        run_dir, results, system_prompt, user_prompt_template
+        run_dir, results, system_prompt, user_prompt_template, config.images,
     )
 
     judge_provider_name = args.judge_provider or config.provider
@@ -569,14 +517,17 @@ def _evaluate_existing(args, config, criteria, system_prompt, user_prompt_templa
     judge = create_provider(judge_provider_name, judge_model)
     judge_name = f"{judge_provider_name}/{judge_model}"
 
-    scores = evaluate_results(
+    image_map = _build_image_map(config.images)
+
+    scores, judge_prompts = evaluate_results(
         results,
         prompts_for_eval,
         criteria,
         judge,
         judge_model_name=judge_name,
+        image_map=image_map,
     )
-    save_scores(run_dir, scores, judge_model_name=judge_name)
+    save_scores(run_dir, scores, judge_model_name=judge_name, judge_prompts=judge_prompts)
     show_run(run_dir)
     console.print("\n[bold green]Done.[/bold green]\n")
 
@@ -586,6 +537,7 @@ def _rebuild_prompts_for_eval(
     results: list[RunResult],
     system_prompt: str,
     user_prompt_template: str,
+    images: list[ImageInput] | None = None,
 ) -> list[PromptVariant]:
     """Rebuild per-result PromptVariant objects for evaluation.
 
@@ -593,16 +545,32 @@ def _rebuild_prompts_for_eval(
     1. assembled_prompts.json (saved by newer runs)
     2. Reconstruction from artifacts.json + state replay
     3. Fallback to the raw template (will produce inaccurate adherence scores)
+
+    When *images* is provided, each variant gets a ``judge_context`` with
+    the sequence of images shown up to that point.
     """
+    image_index = {img.id: i for i, img in enumerate(images)} if images else {}
+
+    def _add_context(variant: PromptVariant, image_id: str) -> PromptVariant:
+        if images and image_id in image_index:
+            variant.judge_context = _build_sequence_context(
+                images, image_index[image_id],
+            )
+        return variant
+
     assembled_path = run_dir / "assembled_prompts.json"
     if assembled_path.is_file():
         records = json.loads(assembled_path.read_text())
+        result_map = {r.prompt_variant_id: r.image_id for r in results}
         return [
-            PromptVariant(
-                id=rec["prompt_variant_id"],
-                name=f"Stateful reflection",
-                system_prompt=rec.get("system_prompt", system_prompt),
-                user_prompt=rec["user_prompt"],
+            _add_context(
+                PromptVariant(
+                    id=rec["prompt_variant_id"],
+                    name="Stateful reflection",
+                    system_prompt=rec.get("system_prompt", system_prompt),
+                    user_prompt=rec["user_prompt"],
+                ),
+                result_map.get(rec["prompt_variant_id"], ""),
             )
             for rec in records
         ]
@@ -623,14 +591,15 @@ def _rebuild_prompts_for_eval(
                 style=artifacts["style"],
                 current_state=current_state,
             )
-            prompts.append(
+            prompts.append(_add_context(
                 PromptVariant(
                     id=r.prompt_variant_id,
                     name=f"Stateful reflection ({r.image_id})",
                     system_prompt=system_prompt,
                     user_prompt=assembled,
-                )
-            )
+                ),
+                r.image_id,
+            ))
             _, new_state = parse_reflection_and_state(r.raw_response)
             if new_state:
                 current_state = new_state
@@ -642,11 +611,14 @@ def _rebuild_prompts_for_eval(
         "Using raw template — adherence scores may be inaccurate.[/yellow]"
     )
     return [
-        PromptVariant(
-            id=r.prompt_variant_id,
-            name="Stateful reflection",
-            system_prompt=system_prompt,
-            user_prompt=user_prompt_template,
+        _add_context(
+            PromptVariant(
+                id=r.prompt_variant_id,
+                name="Stateful reflection",
+                system_prompt=system_prompt,
+                user_prompt=user_prompt_template,
+            ),
+            r.image_id,
         )
         for r in results
     ]

@@ -35,12 +35,10 @@ def run_experiment(
     called once via ``provider.generate_text()`` with no image.
     """
 
-    prompt_map = {p.id: p for p in prompts}
-    variant_ids = config.prompt_variant_ids or list(prompt_map.keys())
-    variants = [prompt_map[vid] for vid in variant_ids if vid in prompt_map]
+    variants = list(prompts)
 
     if not variants:
-        console.print("[red]No matching prompt variants found.[/red]")
+        console.print("[red]No prompt variants found.[/red]")
         return []
 
     text_only = not images

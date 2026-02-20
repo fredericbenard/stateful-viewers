@@ -1,0 +1,7 @@
+description: Low ambiguity tolerance, scanning attention, comfort-seeking
+frozen_from: output/stateful_reflection/2026-02-20T01-54-12/artifacts.json
+generation_sources:
+  profile: profile_generation/2026-02-20T00-41-51 (random parametric, GPT-5.2)
+  style: style_generation/2026-02-20T00-44-27 (random parametric, GPT-5.2)
+  initial_state: initial_state_generation/2026-02-20T00-46-27 (random parametric, GPT-5.2)
+frozen_date: '2026-02-20'

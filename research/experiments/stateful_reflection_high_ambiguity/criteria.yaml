@@ -1,15 +1,10 @@
-# Evaluation criteria for stateful baseline v2 reflections.
+# Evaluation criteria for stateful reflections.
 #
-# Extends the emotional_response criteria with dimensions specific to
-# statefulness: cross-image coherence, state evolution quality, and
-# profile/style adherence.
-#
-# Criteria 1–5 are shared with emotional_response (same constructs).
-# Criteria 6–9 are new for the stateful pipeline.
+# 5 criteria for reflection quality + 4 criteria specific to the stateful pipeline.
 
 criteria:
 
-  # --- Shared with emotional_response (reflection quality) ---
+  # --- Reflection quality ---
 
   - id: emotional_depth
     name: "Emotional depth"
@@ -27,15 +22,28 @@ criteria:
 
   - id: image_responsiveness
     name: "Image responsiveness"
+    requires_image: true
     description: >
       Is the reflection clearly grounded in the specific image? Can you tell
       which image prompted this response, or could it apply to any photograph?
+      If the reflection references previous images in the sequence, those
+      references must be factually accurate — confabulating details about
+      earlier images should lower the score.
     scoring_prompt: >
+      You are shown the actual image alongside the model's response. Check
+      whether the visual details mentioned in the reflection match what you
+      see. Also check the "Additional context" section (if present) for a
+      list of images shown earlier in the sequence; if the reflection makes
+      claims about prior images, verify them against that list.
       1 = Entirely generic; could apply to any image.
-      2 = Mostly generic with one vague reference.
-      3 = Some specific references but also substantial generic content.
-      4 = Mostly grounded in the specific image with clear visual anchors.
-      5 = Deeply specific; could only have been written about this image.
+      2 = Mostly generic with one vague reference, or contains factual
+          errors about the current or prior images.
+      3 = Some specific references but also substantial generic content
+          or minor factual inaccuracies about the sequence.
+      4 = Mostly grounded in the specific image with clear visual anchors;
+          any cross-image references are accurate.
+      5 = Deeply specific; could only have been written about this image,
+          and all references to earlier images are factually correct.
 
   - id: non_genericness
     name: "Non-genericness"
@@ -74,7 +82,7 @@ criteria:
       4 = Primarily experiential with minor analytical moments.
       5 = Fully situated in lived experience; reads as an encounter, not an assessment.
 
-  # --- New: stateful pipeline criteria ---
+  # --- Stateful pipeline criteria ---
 
   - id: state_evolution_quality
     name: "State evolution quality"
@@ -109,8 +117,7 @@ criteria:
     description: >
       Does the reflection reflect the viewer's profile — their interpretive
       posture, attention style, embodied orientation, motivational stance, etc.?
-      A different profile should produce a noticeably different reflection for
-      the same image.
+      A different profile should produce a noticeably different reflection.
     scoring_prompt: >
       1 = No detectable influence of the profile; could be any viewer.
       2 = One minor trace of profile influence.

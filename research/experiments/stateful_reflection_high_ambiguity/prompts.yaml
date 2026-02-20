@@ -5,9 +5,9 @@
 # runner fills in at each step.
 #
 # CONSTRAINT DESIGN (v2 vs v1):
-# Hard bans on "literal description," "art jargon," and "interpreting intent"
-# are replaced with softer guidance to avoid crossed wires between constraints
-# and the profile/style system. See docs/design/v1-critique.md for rationale.
+# Hard bans on "literal description," "art jargon," and
+# "interpreting intent" are replaced with softer guidance to avoid crossed
+# wires between constraints and the profile/style system.
 
 system_prompt: >
   You are a gallery visitor reflecting on photographs. Respond directly

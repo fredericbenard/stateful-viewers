@@ -18,7 +18,7 @@ from rich.console import Console
 
 from eval_pipeline.config_loader import load_experiment
 from eval_pipeline.evaluator import evaluate_results, save_scores, scaffold_human_ratings
-from eval_pipeline.parametric import generate_parametric_variants
+from eval_pipeline.manifest import save_manifest
 from eval_pipeline.provider_factory import create_provider
 from eval_pipeline.runner import run_experiment, save_run
 from eval_pipeline.summarize import print_summary, save_summary, summarize_experiment
@@ -77,19 +77,6 @@ def main() -> None:
         help="Summarize scores across all runs of the experiment (no generation or evaluation).",
     )
     parser.add_argument(
-        "--parametric",
-        metavar="N",
-        type=int,
-        default=None,
-        help="Generate N parametric variants (randomly sampled dimensions) instead of fixed hints.",
-    )
-    parser.add_argument(
-        "--reuse-prompts",
-        metavar="RUN_DIR",
-        default=None,
-        help="Load prompts from a previous run's prompts.json (for controlled cross-model comparison).",
-    )
-    parser.add_argument(
         "--show",
         metavar="RUN_DIR",
         default=None,
@@ -119,23 +106,6 @@ def main() -> None:
         _evaluate_existing(args, config, prompts, criteria)
         return
 
-    # --- Override prompts if requested ---
-    if args.reuse_prompts:
-        prompts = _load_prompts_from_run(Path(args.reuse_prompts))
-        console.print(
-            f"[cyan]Loaded {len(prompts)} prompt(s) from "
-            f"{args.reuse_prompts}[/cyan]\n"
-        )
-    elif args.parametric:
-        experiments_dir = _RESEARCH_DIR / "experiments"
-        prompts = generate_parametric_variants(
-            args.experiment, args.parametric, experiments_dir,
-        )
-        console.print(
-            f"[cyan]Generated {len(prompts)} parametric variant(s) "
-            f"with randomly sampled dimensions.[/cyan]\n"
-        )
-
     # --- Run generation ---
     provider = create_provider(config.provider, config.model)
     results = run_experiment(config, prompts, config.images, provider)
@@ -145,6 +115,7 @@ def main() -> None:
         sys.exit(1)
 
     run_dir = save_run(OUTPUT_DIR, config, prompts, results)
+    save_manifest(run_dir)
     scaffold_human_ratings(run_dir, results, criteria)
 
     # --- Evaluate if requested ---
@@ -217,14 +188,14 @@ def _run_evaluation(args, config, run_dir, results, prompts, criteria) -> None:
     judge = create_provider(judge_provider_name, judge_model)
 
     judge_name = f"{judge_provider_name}/{judge_model}"
-    scores = evaluate_results(
+    scores, judge_prompts = evaluate_results(
         results,
         prompts,
         criteria,
         judge,
         judge_model_name=judge_name,
     )
-    save_scores(run_dir, scores, judge_model_name=judge_name)
+    save_scores(run_dir, scores, judge_model_name=judge_name, judge_prompts=judge_prompts)
 
     _print_summary(results, scores, criteria)
 

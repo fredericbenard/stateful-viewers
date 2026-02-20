@@ -1,52 +1,28 @@
 # Research: LLM Evaluation Pipeline
 
-A Python-based evaluation pipeline for running controlled experiments with vision-language models. Define prompt variants, send them with images to LLMs, collect responses, and evaluate them via LLM-as-judge (with human rating support scaffolded).
+A Python-based evaluation pipeline for running controlled experiments with vision-language models. Generate prompt variants, send them to LLMs, collect responses, and evaluate via LLM-as-judge.
 
 ## Setup
 
 ```bash
 cd research
-
-# Create a virtual environment
 python3 -m venv .venv
 source .venv/bin/activate
-
-# Install dependencies
 pip install -r requirements.txt
-
-# Configure API keys
-cp .env.example .env
-# Edit .env with your keys
+cp .env.example .env   # then edit with your API keys
 ```
 
 ## Quick start
 
-Run the first experiment (emotional response to an image, 5 prompt variants):
-
 ```bash
-# Run with OpenAI (default)
-python scripts/run_experiment.py --experiment emotional_response
+# Generate profiles with frozen variants and evaluate
+python scripts/run_experiment.py -e profile_generation --evaluate
 
-# Run with a different provider
-python scripts/run_experiment.py --experiment emotional_response --provider anthropic
+# Run a stateful gallery walk with frozen artifacts
+python scripts/run_stateful.py stateful_reflection_low_ambiguity --evaluate
 
-# Run and evaluate (LLM-as-judge)
-python scripts/run_experiment.py --experiment emotional_response --evaluate
-
-# Use a different model for judging
-python scripts/run_experiment.py --experiment emotional_response \
-  --evaluate --judge-provider openai --judge-model gpt-5.2
-
-# Evaluate existing results
-python scripts/run_experiment.py --experiment emotional_response \
-  --evaluate-only output/emotional_response/2026-02-18T14-30-00/
-
-# Show scores and responses for a specific run
-python scripts/run_experiment.py --experiment emotional_response \
-  --show output/emotional_response/2026-02-18T21-40-41
-
-# Summarize scores across all runs
-python scripts/run_experiment.py --experiment emotional_response --summarize
+# Full 2×2 contrastive experiment (GPT × Claude generators and judges)
+python scripts/run_contrastive.py stateful_reflection_low_ambiguity --dry-run
 ```
 
 ## Project structure
@@ -55,277 +31,158 @@ python scripts/run_experiment.py --experiment emotional_response --summarize
 research/
   eval_pipeline/              # Core library
     types.py                  # Dataclasses (PromptVariant, RunResult, EvalScore, ...)
-    config_loader.py          # Load experiment config from YAML
+    config_loader.py          # Load experiment config from YAML (prefers variants.yaml)
     provider_factory.py       # Instantiate providers by name
-    runner.py                 # Run prompt x image matrix, collect results (+ text-only)
-    evaluator.py              # LLM-as-judge + human rating scaffolding
-    parametric.py             # Parametric hint generation (random dimension sampling)
-    labeler.py                # LLM-based short label generation for artifacts
+    runner.py                 # Run prompt × image matrix, collect results (+ text-only)
+    evaluator.py              # LLM-as-judge scoring + human rating scaffolding
+    parametric.py             # Parametric hint generation (used by generate_variants.py)
+    manifest.py               # Run manifest (CLI args, git SHA, environment)
     summarize.py              # Aggregate scores across all runs
     image_utils.py            # Load/encode images from URL or file
     providers/
       base.py                 # VisionProvider protocol
       openai_provider.py      # OpenAI (GPT-5.2, ...)
-      anthropic_provider.py   # Anthropic (Claude Opus 4.6, Claude Sonnet 4.6, ...)
+      anthropic_provider.py   # Anthropic (Claude Opus 4.6, ...)
       gemini_provider.py      # Google Gemini
-  experiments/                # Experiment definitions (YAML)
-    emotional_response/       # Single-image emotional response (5 prompt variants)
-    profile_generation/       # v2 profile generation (7 variability hints, text-only)
-    style_generation/         # v2 style generation (7 variability hints, text-only)
-    initial_state_generation/ # v2 initial state generation (7 variability hints, text-only)
-    stateful_reflection/      # Sequential gallery walk (profile + style + state + images)
-    stateful_baseline/        # Master prompt definitions + dimension docs (reference)
-  output/                     # Results (gitignored)
+  experiments/                # Experiment definitions (YAML) — committed to git
+    profile_generation/       # Profile generation + frozen variants.yaml
+    style_generation/         # Style generation + frozen variants.yaml
+    initial_state_generation/ # Initial state generation + frozen variants.yaml
+    stateful_reflection/      # Shared prompt template + criteria (not directly runnable)
+    stateful_reflection_low_ambiguity/   # Frozen artifacts: low-ambiguity profile
+    stateful_reflection_high_ambiguity/  # Frozen artifacts: high-ambiguity profile
+  output/                     # Results (gitignored — regenerable from experiments/)
   scripts/
-    run_experiment.py         # CLI for single-stage experiments
+    run_experiment.py         # CLI for single-stage generation experiments
     run_stateful.py           # CLI for sequential gallery walk
-    run_contrastive_stateful.py # Orchestrate 2×2 cross-model/cross-judge stateful comparison
-    generate_labels.py        # Generate short (2–4 word) labels for artifacts
-  docs/                       # Research documentation
-    generation-eval-report.md # Full evaluation report with scores, analysis, and pending work
-    dimensions.md             # Theoretical grounding for the 7-dimension framework
+    run_contrastive.py        # Orchestrate 2×2 cross-model/cross-judge experiments
+    generate_variants.py      # Generate & freeze parametric variants as variants.yaml
+    freeze_artifacts.py       # Freeze artifacts into a stateful experiment directory
+  docs/                       # Research documentation (see docs/README.md for index)
 ```
 
-## Defining experiments
+## Reproducibility model
 
-Each experiment is a directory under `experiments/` with three YAML files:
+Everything needed to reproduce an experiment is committed to git under `experiments/`:
 
-### `config.yaml` — what to run
+- **Generation experiments** have `variants.yaml` — frozen parametric prompt variants.
+- **Stateful experiments** have `artifacts/` — frozen profile, style, and initial state text, with `provenance.yaml` recording their origin.
 
-- `experiment_id`: directory name
-- `provider` / `model`: which LLM to use
-- `temperature` / `max_tokens`: generation parameters
-- `images`: list of images (URL or local path, with optional caption)
-- `prompt_variant_ids`: which variants to run (empty = all)
+The `output/` directory is gitignored — results are regenerable from the committed experiment definitions. Each run also saves a `run_manifest.json` with the CLI command, git SHA, and Python version.
 
-### `prompts.yaml` — prompt variants
+## Experiment types
 
-Each variant has:
+### Generation experiments (text-only)
 
-- `id`: unique identifier
-- `name`: human-readable label
-- `system_prompt`: the system message
-- `user_prompt`: the user message sent with the image
-
-### `criteria.yaml` — evaluation criteria
-
-Each criterion has:
-
-- `id`: unique identifier
-- `name`: human-readable label
-- `description`: what it measures
-- `scoring_prompt`: 1-5 rubric for the judge LLM
-
-## Output format
-
-Each run creates a timestamped directory:
-
-```
-output/emotional_response/2026-02-18T14-30-00/
-  config.json                          # Frozen experiment config
-  prompts.json                         # Frozen prompt variants (including parametric hints)
-  results.json                         # All RunResults (response text, latency, tokens)
-  scores.json                          # LLM-as-judge scores (latest judge)
-  scores_openai_gpt-5.2.json           # Judge-specific scores (when judge_model_name is set)
-  scores_anthropic_claude-opus-4-6.json # Allows multiple judges without overwrites
-  human_ratings/
-    template.json                      # Pre-filled template for manual scoring
-```
-
-When `--evaluate-only` is used, prompts are loaded from the run's own `prompts.json` (not the experiment YAML), so parametric and reuse-prompt runs evaluate correctly.
-
-The `human_ratings/template.json` uses the same schema as LLM scores, so human and automated scores can be compared directly.
-
-Stateful reflection runs also include:
-
-```
-output/stateful_reflection/<timestamp>/
-  artifacts.json            # Generated profile, style, and initial state text
-  assembled_prompts.json    # Fully substituted prompts sent to the VLM per image
-```
-
-## Summarizing across runs
-
-Use `--summarize` to aggregate scores from every run of an experiment:
+Generate profiles, styles, or initial states using frozen parametric variants:
 
 ```bash
-python scripts/run_experiment.py --experiment emotional_response --summarize
+python scripts/run_experiment.py -e profile_generation --evaluate
+python scripts/run_experiment.py -e style_generation --evaluate
+python scripts/run_experiment.py -e initial_state_generation --evaluate
 ```
 
-This prints:
+Each experiment directory contains:
 
-- A **runs** table with provider, model, and result/score counts per run
-- A **mean scores** table (variant x criterion) with sample counts and row averages
-- A **score ranges** table showing min-max spread per cell
+- `config.yaml` — provider, model, temperature, max_tokens, images
+- `prompts.yaml` — base system prompt and user prompt template
+- `variants.yaml` — frozen parametric prompt variants (used by default)
+- `criteria.yaml` — evaluation criteria with 1–5 scoring rubrics
 
-It also saves `output/<experiment_id>/summary.json` with the full aggregated data. No API keys are needed — it reads only from local output files.
-
-## Stateful baseline v2 experiments
-
-The v2 prompt architecture separates generation into independent stages that can be tested and combined factorially. See `docs/dimensions.md` for the full theoretical grounding.
-
-### Step 1: Generate and evaluate artifacts (text-only)
+Cross-model comparison uses the same frozen variants:
 
 ```bash
-# Generate and evaluate profiles (7 fixed hint variants)
-python scripts/run_experiment.py --experiment profile_generation --evaluate
-
-# Generate and evaluate styles (7 fixed hint variants)
-python scripts/run_experiment.py --experiment style_generation --evaluate
-
-# Generate and evaluate initial states (7 fixed hint variants)
-python scripts/run_experiment.py --experiment initial_state_generation --evaluate
-```
-
-These are text-only experiments (no images). Each produces 7 outputs (one per variability hint) and evaluates them against stage-specific criteria.
-
-#### Parametric variants
-
-Instead of the 7 fixed hints (which carve narrow corridors in the dimension space), use `--parametric N` to randomly sample dimensions:
-
-```bash
-# Generate 7 parametric profiles and evaluate
-python scripts/run_experiment.py --experiment profile_generation --parametric 7 --evaluate
-
-# Same for styles and initial states
-python scripts/run_experiment.py --experiment style_generation --parametric 7 --evaluate
-python scripts/run_experiment.py --experiment initial_state_generation --parametric 7 --evaluate
-```
-
-Each parametric variant randomly selects 2–4 of the 7 dimensions to constrain, leaving the rest for the model to resolve creatively. This produces more diverse and coherent outputs than specifying all dimensions at once.
-
-#### Cross-model testing
-
-Use `--provider` / `--model` to change the generator, and `--judge-provider` / `--judge-model` to change the evaluator:
-
-```bash
-# GPT-5.2 generates, GPT-5.2 judges (default)
-python scripts/run_experiment.py -e profile_generation --parametric 7 --evaluate
-
-# GPT-5.2 generates, Claude Opus 4.6 judges
-python scripts/run_experiment.py -e profile_generation --parametric 7 --evaluate \
-  --judge-provider anthropic --judge-model claude-opus-4-6
-
-# Claude Opus 4.6 generates, GPT-5.2 judges
-python scripts/run_experiment.py -e profile_generation --parametric 7 \
-  -p anthropic -m claude-opus-4-6 --evaluate \
-  --judge-provider openai --judge-model gpt-5.2
-
-# Claude Opus 4.6 generates, Claude Opus 4.6 judges
-python scripts/run_experiment.py -e profile_generation --parametric 7 \
+# Claude generates with same variants
+python scripts/run_experiment.py -e profile_generation \
   -p anthropic -m claude-opus-4-6 --evaluate
 
-# Re-evaluate an existing GPT run with Claude as judge
+# Re-evaluate an existing run with a different judge
 python scripts/run_experiment.py -e profile_generation \
   --evaluate-only output/profile_generation/<timestamp>/ \
   --judge-provider anthropic --judge-model claude-opus-4-6
 ```
 
-#### Controlled cross-model comparison with `--reuse-prompts`
-
-When using `--parametric`, each run gets different randomly generated hints, making direct comparison across providers unreliable. To fix this, use `--reuse-prompts` to apply the exact same prompts from a previous run to a different generator:
+To regenerate frozen variants (e.g. with a different seed):
 
 ```bash
-# 1. Generate with GPT (creates prompts.json with parametric hints)
-python scripts/run_experiment.py -e profile_generation --parametric 7 --evaluate
+python scripts/generate_variants.py profile_generation --count 7 --seed 42
+```
 
-# 2. Re-run with Claude using the same prompts
-python scripts/run_experiment.py -e profile_generation \
-  --reuse-prompts output/profile_generation/<gpt-timestamp>/ \
+### Stateful reflection experiments (multimodal)
+
+Walk through a gallery sequence with a frozen viewer profile, reflective style, and initial state:
+
+```bash
+python scripts/run_stateful.py stateful_reflection_low_ambiguity --evaluate
+python scripts/run_stateful.py stateful_reflection_high_ambiguity \
   -p anthropic -m claude-opus-4-6 --evaluate
-
-# 3. Cross-judge: evaluate the GPT run with Claude as judge
-python scripts/run_experiment.py -e profile_generation \
-  --evaluate-only output/profile_generation/<gpt-timestamp>/ \
-  --judge-provider anthropic --judge-model claude-opus-4-6
-
-# 4. Cross-judge: evaluate the Claude run with GPT as judge
-python scripts/run_experiment.py -e profile_generation \
-  --evaluate-only output/profile_generation/<claude-timestamp>/ \
-  --judge-provider openai --judge-model gpt-5.2
 ```
 
-This gives a full 2×2 comparison (GPT-gen / Claude-gen × GPT-judge / Claude-judge) with identical input prompts.
+Each per-profile experiment directory contains:
 
-### Step 2: Run a sequential gallery walk
+- `artifacts/profile.txt`, `style.txt`, `initial_state.txt` — frozen text artifacts
+- `config.yaml` — provider, model, images
+- `prompts.yaml` — reflection prompt template with `{profile}`, `{style}`, `{current_state}` placeholders
+- `criteria.yaml` — 9 evaluation criteria (including vision-grounded `image_responsiveness`)
+- `provenance.yaml` — records where artifacts came from
+
+The runner loads artifacts, walks through each image, and carries `[STATE]` forward between images.
+
+### Cross-model contrastive experiments
+
+Run the full 2×2 matrix (GPT/Claude generators × GPT/Claude judges):
 
 ```bash
-# Auto-generate all artifacts and walk through the gallery
-python scripts/run_stateful.py
-
-# With evaluation
-python scripts/run_stateful.py --evaluate
-
-# Use saved artifacts from step 1 (factorial experiments)
-python scripts/run_stateful.py \
-  --profile output/profile_generation/<timestamp>/results.json:hint_unusual_combo \
-  --style output/style_generation/<timestamp>/results.json:hint_terse_fragmented \
-  --initial-state output/initial_state_generation/<timestamp>/results.json:hint_depleted_guarded
-
-# Use inline text for quick testing
-python scripts/run_stateful.py --profile-text "Tolerance for ambiguity is high..."
-
-# Reuse artifacts from a previous run (for controlled cross-model comparison)
-python scripts/run_stateful.py \
-  -p anthropic -m claude-opus-4-6 \
-  --reuse-artifacts output/stateful_reflection/<gpt-timestamp>/ \
-  --evaluate
-
-# Show results from a previous run
-python scripts/run_stateful.py --show output/stateful_reflection/<timestamp>/
+python scripts/run_contrastive.py stateful_reflection_low_ambiguity
+python scripts/run_contrastive.py stateful_reflection_low_ambiguity stateful_reflection_high_ambiguity
+python scripts/run_contrastive.py stateful_reflection_low_ambiguity --dry-run
 ```
 
-The stateful runner:
-1. Resolves profile, style, and initial state (from files, inline text, or auto-generation)
-2. For each image, assembles the reflection prompt with the current state
-3. Calls the VLM, parses `[REFLECTION]` and `[STATE]` from the response
-4. Carries the `[STATE]` forward to the next image
-5. Saves all results + artifacts to a timestamped output directory
+## Creating new experiments
 
-### Factorial design
-
-To test profile x style x state interactions, run step 1 once to build a library of artifacts, then run step 2 multiple times with different combinations:
+**New generation experiment:** create a directory with `config.yaml`, `prompts.yaml`, `criteria.yaml`, then generate frozen variants:
 
 ```bash
-# Profile A x Style A
-python scripts/run_stateful.py \
-  --profile output/profile_generation/.../results.json:hint_unusual_combo \
-  --style output/style_generation/.../results.json:hint_terse_fragmented
-
-# Profile A x Style B (same profile, different style)
-python scripts/run_stateful.py \
-  --profile output/profile_generation/.../results.json:hint_unusual_combo \
-  --style output/style_generation/.../results.json:hint_literary_expansive
+python scripts/generate_variants.py my_experiment --count 7 --seed 42
+python scripts/run_experiment.py -e my_experiment --evaluate
 ```
 
-### Cross-model stateful comparison
-
-Use `run_contrastive_stateful.py` to run the full 2×2 matrix (GPT-gen / Claude-gen × GPT-judge / Claude-judge) for a given set of artifacts:
+**New stateful experiment:** freeze artifacts from generation runs:
 
 ```bash
-# Run with default artifacts (high-ambiguity profile)
-python scripts/run_contrastive_stateful.py
-
-# Dry-run: print commands without executing
-python scripts/run_contrastive_stateful.py --dry-run
-
-# Custom artifact selection
-python scripts/run_contrastive_stateful.py \
-  --profile output/profile_generation/<timestamp>/results.json:<variant_id> \
-  --style output/style_generation/<timestamp>/results.json:<variant_id> \
-  --state output/initial_state_generation/<timestamp>/results.json:<variant_id>
+python scripts/freeze_artifacts.py stateful_reflection_new_profile \
+  --profile output/profile_generation/<ts>/results.json:<variant_id> \
+  --style output/style_generation/<ts>/results.json:<variant_id> \
+  --state output/initial_state_generation/<ts>/results.json:<variant_id> \
+  --description "Description of this profile configuration"
 ```
 
-This orchestrates 4 sequential steps: GPT generation + self-eval, Claude cross-judge, Claude generation (reusing artifacts) + self-eval, GPT cross-judge.
+## Output format
 
-## Adding a new experiment
+Each run creates a timestamped directory under `output/`:
 
-1. Create a directory under `experiments/` (e.g. `experiments/my_experiment/`)
-2. Add `config.yaml`, `prompts.yaml`, and `criteria.yaml`
-3. Run: `python scripts/run_experiment.py --experiment my_experiment --evaluate`
+```
+output/<experiment_id>/<timestamp>/
+  run_manifest.json            # CLI args, git SHA, Python version
+  config.json                  # Frozen experiment config
+  prompts.json                 # Frozen prompt variants used
+  results.json                 # All responses (text, latency, tokens)
+  scores.json                  # LLM-as-judge scores (latest judge)
+  scores_<provider>_<model>.json  # Judge-tagged scores (multiple judges coexist)
+  judge_prompts.json           # Exact prompts sent to the judge
+  human_ratings/template.json  # Pre-filled template for manual scoring
+```
 
-Text-only experiments: set `images: []` in config.yaml. The runner will use `generate_text()` instead of the vision API.
+Stateful runs additionally include `artifacts.json` and `assembled_prompts.json`.
+
+## Summarizing across runs
+
+```bash
+python scripts/run_experiment.py -e profile_generation --summarize
+```
+
+Aggregates scores from all runs into a summary table and saves `output/<experiment_id>/summary.json`. No API keys needed.
 
 ## Relation to the main app
 
-This pipeline is **independent** of the TypeScript/React app. It calls LLM APIs directly via Python SDKs — no Vite proxy or Express server needed. The prompt design draws from `src/prompts.ts` and `docs/prompts/`, and the evaluation criteria map to the research constructs in `research/docs/thesis-defense-plan.md`.
+This pipeline is **independent** of the TypeScript/React app. It calls LLM APIs directly via Python SDKs. The prompt design draws from `src/prompts.ts` and `docs/prompts/`, and the evaluation criteria map to the research constructs in `docs/planning/thesis-defense-plan.md`.
