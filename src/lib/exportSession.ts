@@ -50,6 +50,30 @@ export function exportAsMarkdown(
   options?: ExportOptions
 ): string {
   const exportedAt = new Date().toISOString();
+  const isFr = options?.locale?.toString().toLowerCase().startsWith("fr") ?? false;
+  const H = isFr
+    ? {
+        viewer: "Regardeur",
+        label: "Étiquette",
+        profile: "Profil",
+        reflectionStyle: "Style de réflexion",
+        initialState: "État initial",
+        image: "Image",
+        internalStateLabel: "État interne",
+        lastInternalState: "Dernier état interne",
+        trajectorySummary: "Résumé de la trajectoire",
+      }
+    : {
+        viewer: "Viewer",
+        label: "Label",
+        profile: "Profile",
+        reflectionStyle: "Reflection style",
+        initialState: "Initial state",
+        image: "Image",
+        internalStateLabel: "Internal state",
+        lastInternalState: "Last internal state",
+        trajectorySummary: "Trajectory summary",
+      };
   const lines: string[] = [];
 
   lines.push("---");
@@ -80,16 +104,16 @@ export function exportAsMarkdown(
   lines.push("");
 
   if (profile || reflectionStyle || options?.initialState) {
-    lines.push("## Viewer");
+    lines.push(`## ${H.viewer}`);
     lines.push("");
     if (options?.profileLabel) {
-      lines.push("### Label");
+      lines.push(`### ${H.label}`);
       lines.push("");
       lines.push(options.profileLabel);
       lines.push("");
     }
     if (profile) {
-      lines.push("### Profile");
+      lines.push(`### ${H.profile}`);
       lines.push("");
       if (options?.profileShort) {
         lines.push(`*${options.profileShort}*`);
@@ -99,7 +123,7 @@ export function exportAsMarkdown(
       lines.push("");
     }
     if (reflectionStyle) {
-      lines.push("### Reflection style");
+      lines.push(`### ${H.reflectionStyle}`);
       lines.push("");
       if (options?.reflectionStyleShort) {
         lines.push(`*${options.reflectionStyleShort}*`);
@@ -109,7 +133,7 @@ export function exportAsMarkdown(
       lines.push("");
     }
     if (options?.initialState) {
-      lines.push("### Initial state");
+      lines.push(`### ${H.initialState}`);
       lines.push("");
       if (options?.initialStateShort) {
         lines.push(`*${options.initialStateShort}*`);
@@ -124,7 +148,7 @@ export function exportAsMarkdown(
   lines.push("");
 
   reflections.forEach((r) => {
-    lines.push(`## Image ${r.imageIndex + 1}`);
+    lines.push(`## ${H.image} ${r.imageIndex + 1}`);
     lines.push("");
     lines.push(`- imageId: ${r.imageId}`);
     lines.push(`- imageUrl: ${r.imageUrl}`);
@@ -134,7 +158,7 @@ export function exportAsMarkdown(
     lines.push(r.content);
     if (r.internalState) {
       lines.push("");
-      lines.push(`*Internal state: ${r.internalState}*`);
+      lines.push(`*${H.internalStateLabel}: ${r.internalState}*`);
     }
     lines.push("");
   });
@@ -142,7 +166,7 @@ export function exportAsMarkdown(
   if (lastInternalState) {
     lines.push("---");
     lines.push("");
-    lines.push("## Last internal state");
+    lines.push(`## ${H.lastInternalState}`);
     lines.push("");
     lines.push(lastInternalState);
   }
@@ -151,7 +175,7 @@ export function exportAsMarkdown(
     lines.push("");
     lines.push("---");
     lines.push("");
-    lines.push("## Trajectory summary");
+    lines.push(`## ${H.trajectorySummary}`);
     lines.push("");
     if (options.trajectorySummaryGeneratedAt) {
       lines.push(`- generatedAt: ${options.trajectorySummaryGeneratedAt}`);

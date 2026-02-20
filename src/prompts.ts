@@ -385,12 +385,9 @@ export function getProfileLabelUserPrompt(
 ): string {
   const langBlock =
     locale === "fr"
-      ? `LANGUAGE: Write the tag entirely in French. Start with a French article (Le, La, L'). Do NOT mix English and French.`
+      ? `LANGUAGE: Write the tag entirely in French. Do NOT mix English and French.`
       : `LANGUAGE: Write the tag entirely in English. Do NOT use an article (do not start with "The").`;
-  const articleRule =
-    locale === "fr"
-      ? `- 3–5 words. Must start with a French article ("Le", "La", "L'").`
-      : `- 3–5 words. No article (do not start with "The").`;
+  const articleRule = `- 3–5 words. No article (do not start with "The", "Le", "La", or "L'").`;
 
   return `Given the following viewer profile and reflective style, write a short descriptive tag that captures how this person engages with art. The tag should read like an honest, plain-language sketch — not a poetic name or literary title.
 
@@ -415,11 +412,11 @@ English examples (for tone and form, not to copy):
 - "Cautious accumulator of detail"
 
 French examples (for tone and form, not to copy):
-- "Le lent, absorbé, en quête de structure"
-- "La prudente mais émotionnellement précise"
-- "Le vif, porté par les sensations"
-- "L'attentif, méfiant, très formel"
-- "L'accumulateur prudent de détails"
+- "Lent, absorbé, en quête de structure"
+- "Prudent mais émotionnellement précis"
+- "Vif et porté par les sensations"
+- "Attentif, méfiant, très formel"
+- "Accumulateur prudent de détails"
 
 Viewer profile:
 
