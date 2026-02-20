@@ -1028,12 +1028,10 @@ function App() {
         locale
       );
       let cleanedLabel: string | undefined;
-      let labelRaw: string | undefined;
       if (!labelResult.error && labelResult.content) {
         cleanedLabel = normalizeLabelSentenceCase(
           cleanGeneratedText(labelResult.content).trim()
         );
-        labelRaw = labelResult.content;
       }
 
       // 5. Generate short descriptions
@@ -1060,7 +1058,6 @@ function App() {
         profileShort: shortProfile || undefined,
         reflectionStyleShort: shortStyle || undefined,
         initialStateShort: shortState || undefined,
-        labelRaw,
         labelCleaned: cleanedLabel,
         provider: visionProvider,
       });

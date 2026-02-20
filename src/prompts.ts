@@ -376,7 +376,7 @@ export function getInitialStateUserPrompt(locale: OutputLocale): string {
 // Profile label generation
 // ---------------------------------------------------------------------------
 
-export const PROFILE_LABEL_PROMPT = `You name fictional gallery visitors. You are evocative, concise, and inventive.`;
+export const PROFILE_LABEL_PROMPT = `You write concise descriptive tags for fictional gallery visitors. You are precise, honest, and concrete.`;
 
 export function getProfileLabelUserPrompt(
   viewerProfile: string,
@@ -387,33 +387,32 @@ export function getProfileLabelUserPrompt(
     ? `LANGUAGE: Write the name entirely in French. Use a French article (Le, La, L'). Do NOT mix English and French.`
     : `LANGUAGE: Write the name entirely in English. Use "The" as the article.`;
 
-  return `Given the following viewer profile and reflective style, invent a short evocative name for this gallery visitor. The name should feel like a character epithet — poetic, memorable, and in everyday language.
+  return `Given the following viewer profile and reflective style, write a short descriptive tag that captures how this person engages with art. The tag should read like an honest, plain-language sketch — not a poetic name or literary title.
 
 Rules:
-- ${locale === "fr" ? 'Start with a French article (Le, La, or L\').' : 'Start with "The".'}
-- 2–4 words total (including the article).
-- Use everyday, evocative language — no psychology jargon, no dimension names (avoid words like "ambiguity," "symbolic," "cognitive," "somatic," "kinesthetic," "pattern," etc.).
-- Avoid generic defaults: do NOT use "patient," "quiet," "restless," "observer," or "wanderer" — find a more specific, surprising word.
-- Prefer concrete nouns and unusual adjectives over abstract or clinical ones.
-- Sentence case: capitalize only the article and proper nouns.
-- Output only the name. No preamble, no quotes, no markdown.
+- 3–5 words. No article ("The", "Le", etc.).
+- Describe the person's viewing attitude, pace, or emotional stance — what makes them distinctive.
+- Use plain, concrete language. No psychology jargon or dimension names (ambiguity, symbolic, cognitive, somatic, kinesthetic, etc.).
+- Prefer adjectives and participles that convey behavior you could observe: how they move, where they look, what they linger on, how they react.
+- Sentence case (capitalize first word only).
+- Output only the tag. No preamble, no quotes, no markdown.
 
 ${langBlock}
 
-English examples (for tone, not to copy):
-- "The slow archivist"
-- "The tender skeptic"
-- "The drowsy surveyor"
-- "The stubborn bloom"
-- "The careful trespasser"
-- "The heavy-lidded collector"
+English examples (for tone and form, not to copy):
+- "Slow, absorbed, pattern-seeking"
+- "Guarded but emotionally precise"
+- "Eager and structurally minded"
+- "Lingering, wary, deeply formal"
+- "Brisk and sensation-driven"
+- "Cautious accumulator of detail"
 
-French examples (for tone, not to copy):
-- "L'arpenteur lent"
-- "Le sceptique attendri"
-- "La cueilleuse méfiante"
-- "Le somnambule attentif"
-- "L'archiviste immobile"
+French examples (for tone and form, not to copy):
+- "Lent, absorbé, en quête de structure"
+- "Prudent mais émotionnellement précis"
+- "Vif et porté par les sensations"
+- "Attentif, méfiant, très formel"
+- "Accumulateur prudent de détails"
 
 Viewer profile:
 
@@ -423,7 +422,7 @@ Reflective style:
 
 ${reflectionStyle}
 
-Name this visitor:`;
+Describe this visitor:`;
 }
 
 // ---------------------------------------------------------------------------

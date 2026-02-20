@@ -228,7 +228,7 @@ Use **"Summarize trajectory"** in the Reflection history section (after reflecti
 
 **Implemented**
 
-- **Narrative summarization** (`src/lib/analyzeTrajectory.ts`) -- `generateNarrativeSummary(trajectory, initialState, provider, locale)` produces a short reflective summary of how the experience moved (e.g. gradual settling, oscillation, depletion, drift). In the UI this is triggered by the button in the Reflection history section; programmatically, load a session from `data/reflections/*.json`, convert with `trajectoryFromSession()`, then call `generateNarrativeSummary()` with your chosen LLM provider and target locale. See `docs/trajectory-summary-prompt-example.md` for the exact prompt sent to the LLM.
+- **Narrative summarization** (`src/lib/analyzeTrajectory.ts`) -- `generateNarrativeSummary(trajectory, initialState, provider, locale)` produces a short reflective summary of how the experience moved (e.g. gradual settling, oscillation, depletion, drift). In the UI this is triggered by the button in the Reflection history section; programmatically, load a session from `data/reflections/*.json`, convert with `trajectoryFromSession()`, then call `generateNarrativeSummary()` with your chosen LLM provider and target locale.
 
 ## Research
 

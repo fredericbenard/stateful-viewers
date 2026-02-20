@@ -299,7 +299,7 @@ function checkApiKeyAvailable(provider: string): boolean {
 
 async function generateLabel(
   profile: Profile
-): Promise<{ label: string; rawLabel: string } | null> {
+): Promise<{ label: string } | null> {
   const profileText = profile.profile;
   if (!profileText) {
     console.warn(`  ⚠ Profile ${profile.id} has no profile text`);
@@ -342,7 +342,6 @@ async function generateLabel(
 
     return {
       label: normalizeLabelSentenceCase(rawLabel),
-      rawLabel: rawLabel,
     };
   } catch (error) {
     const errorMessage =
@@ -496,7 +495,7 @@ async function main() {
 
     // Update profile with label
     profile.label = result.label;
-    profile.rawLabel = result.rawLabel;
+    delete profile.rawLabel;
 
     // Write updated profile back to file
     const filePath = path.join(PROFILE_DIR, file);

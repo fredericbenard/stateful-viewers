@@ -185,4 +185,4 @@ Aggregates scores from all runs into a summary table and saves `output/<experime
 
 ## Relation to the main app
 
-This pipeline is **independent** of the TypeScript/React app. It calls LLM APIs directly via Python SDKs. The prompt design draws from `src/prompts.ts` and `docs/prompts/`, and the evaluation criteria map to the research constructs in `docs/planning/thesis-defense-plan.md`.
+This pipeline is **independent** of the TypeScript/React app. It calls LLM APIs directly via Python SDKs. The prompt design draws from `src/prompts.ts`, and the evaluation criteria map to the research constructs in `docs/planning/thesis-defense-plan.md`.

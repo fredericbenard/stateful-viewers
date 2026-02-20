@@ -35,8 +35,6 @@ export interface SavedProfilePayload {
   rawProfile?: string;
   /** Raw LLM output for reflection style (before cleaning) */
   rawReflectionStyle?: string;
-  /** Raw LLM output for label (before cleaning) */
-  rawLabel?: string;
   /** Raw LLM output for initial state (before cleaning) */
   rawInitialState?: string;
 }
@@ -52,7 +50,6 @@ export interface SaveProfileParams {
   profileShort?: string;
   reflectionStyleShort?: string;
   initialStateShort?: string;
-  labelRaw?: string;
   labelCleaned?: string;
   provider: VisionProvider;
 }
@@ -76,7 +73,6 @@ export async function saveGeneratedProfile(
     modelLabel: labels.llm,
     ...(params.labelCleaned && {
       label: params.labelCleaned,
-      rawLabel: params.labelRaw,
     }),
     profile: params.profileCleaned,
     ...(params.profileShort && { profileShort: params.profileShort }),

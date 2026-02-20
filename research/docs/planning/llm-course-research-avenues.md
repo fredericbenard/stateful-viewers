@@ -155,7 +155,7 @@ These are good entry points for students to build on existing structure and save
 - **Trajectory representation**: `src/lib/trajectory.ts` (trajectory types and `trajectoryFromSession()`)
 - **Existing analysis hook**: `src/lib/analyzeTrajectory.ts` (narrative summary; extensible)
 - **Reflection parsing**: `src/lib/parseReflection.ts` (parses `[REFLECTION]` / `[STATE]`)
-- **Prompting surface**: `src/prompts.ts` and `docs/prompts/*`
+- **Prompting surface**: `src/prompts.ts`
 - **Persistence artifacts**: `data/profiles/*.json`, `data/reflections/*.json` (gitignored; but ideal as an exchange format)
 
 ---

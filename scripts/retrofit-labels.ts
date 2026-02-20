@@ -4,7 +4,7 @@
  * Run: npx tsx scripts/retrofit-labels.ts
  *
  * Requires OPENAI_API_KEY in .env or environment.
- * Overwrites the `label` and `rawLabel` fields on every profile JSON file.
+ * Overwrites the `label` field on every profile JSON file.
  */
 
 import { config } from "dotenv";
@@ -116,7 +116,7 @@ async function main() {
       const label = cleanLabel(rawLabel);
 
       profile.label = label;
-      profile.rawLabel = rawLabel;
+      delete profile.rawLabel;
       fs.writeFileSync(filePath, JSON.stringify(profile, null, 2), "utf-8");
 
       console.log(label);

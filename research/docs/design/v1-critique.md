@@ -3,7 +3,6 @@
 This document critiques **Stateful Viewers** as it currently exists in the repository, based on:
 
 - `README.md` (conceptual framing, pipeline, references)
-- `docs/prompts/`* (prompt schemas and examples for profile, style, reflection+state, labels, trajectory summary)
 - the in-app About content (`src/content/about.ts`)
 
 It aims to do two things at once:
@@ -491,10 +490,6 @@ This is an artistic lever worth treating intentionally (voice selection, rate, a
 ## Appendix: primary source pointers in this repo
 
 - Conceptual framing + references: `README.md`, `src/content/about.ts`
-- Prompt examples (canonical as documented): `docs/prompts/`*
-  - profile: `docs/prompts/profile-generation-prompt-example.md`
-  - style: `docs/prompts/reflection-style-prompt-example.md`
-  - reflection+state: `docs/prompts/reflection-and-state-prompt-example.md`
-  - trajectory summary: `docs/prompts/trajectory-summary-prompt-example.md`
+- Prompting surface: `src/prompts.ts`
 - Research program scaffolding: `research/llm-course-research-avenues.md`, `research/thesis-defense-plan.md`
 
