@@ -1,12 +1,16 @@
 /**
- * Export session data as markdown or JSON
- * Format aligned with reflection session payload (data/reflections/*.json).
+ * Export session data as markdown or JSON.
+ *
+ * LLM provenance uses consistent field names across both formats:
+ *   profileLlm / profileLlmModelLabel       -- LLM that generated the profile
+ *   reflectionLlm / reflectionLlmModelLabel  -- text LLM used for reflections
+ *   reflectionVlm / reflectionVlmModelLabel  -- vision model used for reflections
  */
 
 import type { Gallery } from "../data/galleries";
 import type { VisionProvider } from "../api/vision";
 import type { OutputLocale } from "../prompts";
-import { getModelLabels, type ReflectionSessionPayload } from "./saveReflectionSession";
+import { getModelLabels } from "./saveReflectionSession";
 
 export interface ExportReflection {
   imageIndex: number;
@@ -23,9 +27,17 @@ export interface ExportOptions {
   sessionStartedAt?: string;
   visionProvider?: VisionProvider;
   locale?: OutputLocale;
+  /** LLM provider used to generate the profile (may differ from visionProvider). */
+  profileLlm?: string;
+  /** Human-readable label for the profile-generation LLM. */
+  profileLlmModelLabel?: string;
   trajectorySummary?: string;
   trajectorySummaryLocale?: OutputLocale;
   trajectorySummaryGeneratedAt?: string;
+  initialState?: string;
+  profileShort?: string;
+  reflectionStyleShort?: string;
+  initialStateShort?: string;
 }
 
 export function exportAsMarkdown(
@@ -39,7 +51,6 @@ export function exportAsMarkdown(
   const exportedAt = new Date().toISOString();
   const lines: string[] = [];
 
-  // Metadata (aligned with session format)
   lines.push("---");
   lines.push(`exportedAt: ${exportedAt}`);
   lines.push(`galleryId: ${gallery.id}`);
@@ -47,12 +58,16 @@ export function exportAsMarkdown(
   if (options?.sessionStartedAt)
     lines.push(`sessionStartedAt: ${options.sessionStartedAt}`);
   if (options?.locale) lines.push(`locale: ${options.locale}`);
+  if (options?.profileLlm) {
+    lines.push(`profileLlm: ${options.profileLlm}`);
+    if (options.profileLlmModelLabel) lines.push(`profileLlmModelLabel: ${options.profileLlmModelLabel}`);
+  }
   if (options?.visionProvider) {
     const labels = getModelLabels(options.visionProvider);
-    lines.push(`llm: ${options.visionProvider}`);
-    lines.push(`llmModelLabel: ${labels.llm}`);
-    lines.push(`vlm: ${options.visionProvider}`);
-    lines.push(`vlmModelLabel: ${labels.vlm}`);
+    lines.push(`reflectionLlm: ${options.visionProvider}`);
+    lines.push(`reflectionLlmModelLabel: ${labels.llm}`);
+    lines.push(`reflectionVlm: ${options.visionProvider}`);
+    lines.push(`reflectionVlmModelLabel: ${labels.vlm}`);
   }
   lines.push("---");
   lines.push("");
@@ -62,19 +77,37 @@ export function exportAsMarkdown(
   lines.push(gallery.description);
   lines.push("");
 
-  if (profile || reflectionStyle) {
+  if (profile || reflectionStyle || options?.initialState) {
     lines.push("## Viewer");
     lines.push("");
     if (profile) {
       lines.push("### Profile");
       lines.push("");
+      if (options?.profileShort) {
+        lines.push(`*${options.profileShort}*`);
+        lines.push("");
+      }
       lines.push(profile);
       lines.push("");
     }
     if (reflectionStyle) {
       lines.push("### Reflection style");
       lines.push("");
+      if (options?.reflectionStyleShort) {
+        lines.push(`*${options.reflectionStyleShort}*`);
+        lines.push("");
+      }
       lines.push(reflectionStyle);
+      lines.push("");
+    }
+    if (options?.initialState) {
+      lines.push("### Initial state");
+      lines.push("");
+      if (options?.initialStateShort) {
+        lines.push(`*${options.initialStateShort}*`);
+        lines.push("");
+      }
+      lines.push(options.initialState);
       lines.push("");
     }
   }
@@ -127,7 +160,6 @@ export function exportAsMarkdown(
   return lines.join("\n");
 }
 
-/** JSON shape matches ReflectionSessionPayload for consistency with data/reflections/*.json */
 export function exportAsJson(
   gallery: Gallery,
   reflections: ExportReflection[],
@@ -140,7 +172,7 @@ export function exportAsJson(
   const provider = options?.visionProvider ?? "openai";
   const labels = getModelLabels(provider);
   const sessionStartedAt = options?.sessionStartedAt ?? new Date().toISOString();
-  const payload: ReflectionSessionPayload = {
+  const payload: Record<string, unknown> = {
     profileId: options?.profileId ?? "anonymous",
     galleryId: gallery.id,
     sessionStartedAt,
@@ -152,8 +184,14 @@ export function exportAsJson(
       era: gallery.era,
       description: gallery.description,
     },
+    ...(options?.profileLlm && { profileLlm: options.profileLlm }),
+    ...(options?.profileLlmModelLabel && { profileLlmModelLabel: options.profileLlmModelLabel }),
     profile: profile ?? "",
+    ...(options?.profileShort && { profileShort: options.profileShort }),
     reflectionStyle: reflectionStyle ?? "",
+    ...(options?.reflectionStyleShort && { reflectionStyleShort: options.reflectionStyleShort }),
+    ...(options?.initialState && { initialState: options.initialState }),
+    ...(options?.initialStateShort && { initialStateShort: options.initialStateShort }),
     reflections: reflections.map((r) => ({
       imageIndex: r.imageIndex,
       imageId: r.imageId,
@@ -164,10 +202,10 @@ export function exportAsJson(
       ...(r.locale && { locale: r.locale }),
     })),
     lastInternalState,
-    llm: provider,
-    llmModelLabel: labels.llm,
-    vlm: provider,
-    vlmModelLabel: labels.vlm,
+    reflectionLlm: provider,
+    reflectionLlmModelLabel: labels.llm,
+    reflectionVlm: provider,
+    reflectionVlmModelLabel: labels.vlm,
     ...(options?.trajectorySummary && { trajectorySummary: options.trajectorySummary }),
     ...(options?.trajectorySummaryLocale && { trajectorySummaryLocale: options.trajectorySummaryLocale }),
     ...(options?.trajectorySummaryGeneratedAt && { trajectorySummaryGeneratedAt: options.trajectorySummaryGeneratedAt }),

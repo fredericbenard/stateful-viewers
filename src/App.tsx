@@ -8,12 +8,16 @@ import {
   getStatefulPrompt,
   getViewerProfileUserPrompt,
   getReflectionStyleUserPrompt,
+  getInitialStateUserPrompt,
   getProfileLabelUserPrompt,
-  getPersonalizedProfileUserPrompt,
+  getShortProfileUserPrompt,
+  getShortStyleUserPrompt,
+  getShortStateUserPrompt,
   VIEWER_PROFILE_PROMPT,
   REFLECTION_STYLE_PROMPT,
+  INITIAL_STATE_PROMPT,
   PROFILE_LABEL_PROMPT,
-  getPersonalizedProfileQuestions,
+  SHORT_DESCRIPTION_PROMPT,
 } from "./prompts";
 import { parseReflection } from "./lib/parseReflection";
 import { useSpeech } from "./hooks/useSpeech";
@@ -50,9 +54,10 @@ interface Reflection {
 
 type GenerationStatusKey =
   | "generatingProfile"
-  | "generatingPersonalizedProfile"
   | "generatingReflectionStyle"
+  | "generatingInitialState"
   | "generatingLabel"
+  | "generatingSummaries"
   | "saving";
 
 // Helper function to truncate text at word boundaries
@@ -171,8 +176,14 @@ function getPreferredTtsVoice(
 const STORAGE_KEYS = {
   viewerProfile: "stateful-viewers:viewerProfile",
   reflectionStyle: "stateful-viewers:reflectionStyle",
+  initialState: "stateful-viewers:initialState",
+  profileShort: "stateful-viewers:profileShort",
+  reflectionStyleShort: "stateful-viewers:reflectionStyleShort",
+  initialStateShort: "stateful-viewers:initialStateShort",
   profileId: "stateful-viewers:profileId",
   profileLabel: "stateful-viewers:profileLabel",
+  profileLlm: "stateful-viewers:profileLlm",
+  profileLlmModelLabel: "stateful-viewers:profileLlmModelLabel",
   locale: "stateful-viewers:locale",
   selectedGalleryId: "stateful-viewers:selectedGalleryId",
   currentIndexByGallery: "stateful-viewers:currentIndexByGallery",
@@ -340,7 +351,7 @@ function App() {
     } catch (e) {
       console.warn("Failed to restore autoVoiceOver from localStorage:", e);
     }
-    return !isMobileViewport();
+    return false;
   });
   const [speechCompleteForWalkThrough, setSpeechCompleteForWalkThrough] =
     useState(false);
@@ -373,6 +384,35 @@ function App() {
       return "";
     }
   });
+  const [initialState, setInitialState] = useState(() => {
+    try {
+      return localStorage.getItem(STORAGE_KEYS.initialState) || "";
+    } catch (e) {
+      console.warn("Failed to restore initialState from localStorage:", e);
+      return "";
+    }
+  });
+  const [profileShort, setProfileShort] = useState(() => {
+    try {
+      return localStorage.getItem(STORAGE_KEYS.profileShort) || "";
+    } catch (e) {
+      return "";
+    }
+  });
+  const [reflectionStyleShort, setReflectionStyleShort] = useState(() => {
+    try {
+      return localStorage.getItem(STORAGE_KEYS.reflectionStyleShort) || "";
+    } catch (e) {
+      return "";
+    }
+  });
+  const [initialStateShort, setInitialStateShort] = useState(() => {
+    try {
+      return localStorage.getItem(STORAGE_KEYS.initialStateShort) || "";
+    } catch (e) {
+      return "";
+    }
+  });
   const [profileId, setProfileId] = useState<string | null>(() => {
     try {
       return localStorage.getItem(STORAGE_KEYS.profileId);
@@ -386,6 +426,20 @@ function App() {
       return localStorage.getItem(STORAGE_KEYS.profileLabel);
     } catch (e) {
       console.warn("Failed to restore profileLabel from localStorage:", e);
+      return null;
+    }
+  });
+  const [profileLlm, setProfileLlm] = useState<string | null>(() => {
+    try {
+      return localStorage.getItem(STORAGE_KEYS.profileLlm);
+    } catch {
+      return null;
+    }
+  });
+  const [profileLlmModelLabel, setProfileLlmModelLabel] = useState<string | null>(() => {
+    try {
+      return localStorage.getItem(STORAGE_KEYS.profileLlmModelLabel);
+    } catch {
       return null;
     }
   });
@@ -425,15 +479,10 @@ function App() {
     width: number;
     height: number;
   } | null>(null);
-  const [showPersonalizedModal, setShowPersonalizedModal] = useState(false);
-  const [personalizedAnswers, setPersonalizedAnswers] = useState<Record<string, string>>({});
-  const [personalizedName, setPersonalizedName] = useState("");
   const [profileExpanded, setProfileExpanded] = useState(false);
-  const [showNewProfileMenu, setShowNewProfileMenu] = useState(false);
   const [revealedSensitiveByImageKey, setRevealedSensitiveByImageKey] = useState<
     Record<string, boolean>
   >({});
-  const newProfileMenuRef = useRef<HTMLDivElement>(null);
   const [showExportMenu, setShowExportMenu] = useState(false);
   const exportMenuRef = useRef<HTMLDivElement>(null);
 
@@ -520,18 +569,6 @@ function App() {
     }
   }, [locale]);
 
-  // Close New profile menu when clicking outside
-  useEffect(() => {
-    if (!showNewProfileMenu) return;
-    const handleClick = (e: MouseEvent) => {
-      if (newProfileMenuRef.current && !newProfileMenuRef.current.contains(e.target as Node)) {
-        setShowNewProfileMenu(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
-  }, [showNewProfileMenu]);
-
   // Close export menu when clicking outside
   useEffect(() => {
     if (!showExportMenu) return;
@@ -608,6 +645,46 @@ function App() {
 
   useEffect(() => {
     try {
+      if (initialState) {
+        localStorage.setItem(STORAGE_KEYS.initialState, initialState);
+      } else {
+        localStorage.removeItem(STORAGE_KEYS.initialState);
+      }
+    } catch { /* ignore */ }
+  }, [initialState]);
+
+  useEffect(() => {
+    try {
+      if (profileShort) {
+        localStorage.setItem(STORAGE_KEYS.profileShort, profileShort);
+      } else {
+        localStorage.removeItem(STORAGE_KEYS.profileShort);
+      }
+    } catch { /* ignore */ }
+  }, [profileShort]);
+
+  useEffect(() => {
+    try {
+      if (reflectionStyleShort) {
+        localStorage.setItem(STORAGE_KEYS.reflectionStyleShort, reflectionStyleShort);
+      } else {
+        localStorage.removeItem(STORAGE_KEYS.reflectionStyleShort);
+      }
+    } catch { /* ignore */ }
+  }, [reflectionStyleShort]);
+
+  useEffect(() => {
+    try {
+      if (initialStateShort) {
+        localStorage.setItem(STORAGE_KEYS.initialStateShort, initialStateShort);
+      } else {
+        localStorage.removeItem(STORAGE_KEYS.initialStateShort);
+      }
+    } catch { /* ignore */ }
+  }, [initialStateShort]);
+
+  useEffect(() => {
+    try {
       if (profileId) {
         localStorage.setItem(STORAGE_KEYS.profileId, profileId);
       } else {
@@ -629,6 +706,26 @@ function App() {
       console.warn("Failed to save profileLabel to localStorage:", e);
     }
   }, [profileLabel]);
+
+  useEffect(() => {
+    try {
+      if (profileLlm) {
+        localStorage.setItem(STORAGE_KEYS.profileLlm, profileLlm);
+      } else {
+        localStorage.removeItem(STORAGE_KEYS.profileLlm);
+      }
+    } catch { /* noop */ }
+  }, [profileLlm]);
+
+  useEffect(() => {
+    try {
+      if (profileLlmModelLabel) {
+        localStorage.setItem(STORAGE_KEYS.profileLlmModelLabel, profileLlmModelLabel);
+      } else {
+        localStorage.removeItem(STORAGE_KEYS.profileLlmModelLabel);
+      }
+    } catch { /* noop */ }
+  }, [profileLlmModelLabel]);
 
   useEffect(() => {
     try {
@@ -849,9 +946,12 @@ function App() {
     setGenerationError(null);
     setViewerProfile("");
     setReflectionStyle("");
+    setInitialState("");
+    setProfileShort("");
+    setReflectionStyleShort("");
+    setInitialStateShort("");
     setProfileId(null);
 
-    // Clear all reflection history when generating a new profile
     setReflectionsByGallery({});
     setLastInternalStateByGallery({});
     setSelectedReflectionGeneratedAtByGallery({});
@@ -865,14 +965,14 @@ function App() {
         setGenerationStatus(null);
         return;
       }
-      const profileUserPrompt = getViewerProfileUserPrompt(locale);
+
+      // 1. Generate profile
       const profileResult = await generateText(
         visionProvider,
         VIEWER_PROFILE_PROMPT,
-        profileUserPrompt,
+        getViewerProfileUserPrompt(locale),
         locale
       );
-
       if (profileResult.error) {
         setGenerationError(
           t(locale, "errors.failedGenerateProfile", { error: profileResult.error })
@@ -881,17 +981,16 @@ function App() {
         setGenerationStatus(null);
         return;
       }
-
       const cleanedProfile = cleanGeneratedText(profileResult.content);
-      setGenerationStatus("generatingReflectionStyle");
 
+      // 2. Generate reflective style (independent of profile in v2)
+      setGenerationStatus("generatingReflectionStyle");
       const styleResult = await generateText(
         visionProvider,
         REFLECTION_STYLE_PROMPT,
-        getReflectionStyleUserPrompt(profileResult.content, locale),
+        getReflectionStyleUserPrompt(locale),
         locale
       );
-
       if (styleResult.error) {
         setGenerationError(
           t(locale, "errors.failedGenerateReflectionStyle", { error: styleResult.error })
@@ -900,18 +999,34 @@ function App() {
         setGenerationStatus(null);
         return;
       }
-
       const cleanedStyle = cleanGeneratedText(styleResult.content);
-      setGenerationStatus("generatingLabel");
 
-      // Generate a concise label for the profile
+      // 3. Generate initial state
+      setGenerationStatus("generatingInitialState");
+      const stateResult = await generateText(
+        visionProvider,
+        INITIAL_STATE_PROMPT,
+        getInitialStateUserPrompt(locale),
+        locale
+      );
+      if (stateResult.error) {
+        setGenerationError(
+          t(locale, "errors.failedGenerateInitialState", { error: stateResult.error })
+        );
+        setIsGeneratingViewer(false);
+        setGenerationStatus(null);
+        return;
+      }
+      const cleanedState = cleanGeneratedText(stateResult.content);
+
+      // 4. Generate label
+      setGenerationStatus("generatingLabel");
       const labelResult = await generateText(
         visionProvider,
         PROFILE_LABEL_PROMPT,
-        getProfileLabelUserPrompt(cleanedProfile, locale),
+        getProfileLabelUserPrompt(cleanedProfile, cleanedStyle, locale),
         locale
       );
-
       let cleanedLabel: string | undefined;
       let labelRaw: string | undefined;
       if (!labelResult.error && labelResult.content) {
@@ -921,173 +1036,55 @@ function App() {
         labelRaw = labelResult.content;
       }
 
-      setGenerationStatus("saving");
+      // 5. Generate short descriptions
+      setGenerationStatus("generatingSummaries");
+      const [shortProfileRes, shortStyleRes, shortStateRes] = await Promise.all([
+        generateText(visionProvider, SHORT_DESCRIPTION_PROMPT, getShortProfileUserPrompt(cleanedProfile, locale), locale),
+        generateText(visionProvider, SHORT_DESCRIPTION_PROMPT, getShortStyleUserPrompt(cleanedStyle, locale), locale),
+        generateText(visionProvider, SHORT_DESCRIPTION_PROMPT, getShortStateUserPrompt(cleanedState, locale), locale),
+      ]);
+      const shortProfile = shortProfileRes.error ? "" : cleanGeneratedText(shortProfileRes.content).trim();
+      const shortStyle = shortStyleRes.error ? "" : cleanGeneratedText(shortStyleRes.content).trim();
+      const shortState = shortStateRes.error ? "" : cleanGeneratedText(shortStateRes.content).trim();
 
-      // Save profile + reflection style + label to data/profiles/<uuid>.json (dev server only)
+      // 6. Save
+      setGenerationStatus("saving");
       const savedId = await saveGeneratedProfile({
         locale,
-        profileUserPrompt,
         profileRaw: profileResult.content,
         profileCleaned: cleanedProfile,
-        reflectionStyleUserMessage: getReflectionStyleUserPrompt(profileResult.content, locale),
         styleRaw: styleResult.content,
         styleCleaned: cleanedStyle,
+        initialStateRaw: stateResult.content,
+        initialStateCleaned: cleanedState,
+        profileShort: shortProfile || undefined,
+        reflectionStyleShort: shortStyle || undefined,
+        initialStateShort: shortState || undefined,
         labelRaw,
         labelCleaned: cleanedLabel,
         provider: visionProvider,
       });
 
-      // Only show profile, style, and ID once everything is complete (including save)
-      if (savedId) {
-        setProfileId(savedId);
+      const applyState = () => {
+        const labels = getModelLabels(visionProvider);
         setViewerProfile(cleanedProfile);
         setReflectionStyle(cleanedStyle);
+        setInitialState(cleanedState);
         setProfileLabel(cleanedLabel || null);
+        setProfileLlm(visionProvider);
+        setProfileLlmModelLabel(labels.llm);
+        setProfileShort(shortProfile);
+        setReflectionStyleShort(shortStyle);
+        setInitialStateShort(shortState);
+      };
+
+      if (savedId) {
+        setProfileId(savedId);
+        applyState();
         console.info(`Profile saved to data/profiles/${savedId}.json`);
-        // Refresh the profile list to include the newly generated profile
-        loadProfilesForProvider(visionProvider);
+        loadProfiles();
       } else {
-        // If save failed, still show the profile/style but without ID
-        setViewerProfile(cleanedProfile);
-        setReflectionStyle(cleanedStyle);
-        setProfileLabel(cleanedLabel || null);
-      }
-
-      setGenerationStatus(null);
-      setIsGeneratingViewer(false);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
-      setGenerationError(t(locale, "errors.unexpectedError", { error: errorMessage }));
-      setIsGeneratingViewer(false);
-      setGenerationStatus(null);
-    }
-  };
-
-  const handleGeneratePersonalizedViewer = async (
-    answers: Record<string, string>,
-    nameForLabel: string
-  ) => {
-    const keys = getApiKeys();
-    const needsKey =
-      (visionProvider === "openai" && !keys.openai?.trim()) ||
-      (visionProvider === "gemini" && !keys.google?.trim()) ||
-      (visionProvider === "anthropic" && !keys.anthropic?.trim());
-    if (needsKey) {
-      setShowPersonalizedModal(false);
-      setGenerationError(t(locale, "errors.apiKeyRequired"));
-      setShowApiKeysModal(true);
-      return;
-    }
-
-    setShowPersonalizedModal(false);
-    setIsGeneratingViewer(true);
-    setGenerationStatus("generatingPersonalizedProfile");
-    setGenerationError(null);
-    setViewerProfile("");
-    setReflectionStyle("");
-    setProfileId(null);
-
-    setReflectionsByGallery({});
-    setLastInternalStateByGallery({});
-    setSelectedReflectionGeneratedAtByGallery({});
-    setWalkThroughActive(false);
-
-    try {
-      const apiReachable = await checkApiHealth();
-      if (!apiReachable) {
-        setGenerationError(t(locale, "errors.serverNotResponding"));
-        setIsGeneratingViewer(false);
-        setGenerationStatus(null);
-        return;
-      }
-      const profileUserPrompt = getPersonalizedProfileUserPrompt(answers, locale);
-      const profileResult = await generateText(
-        visionProvider,
-        VIEWER_PROFILE_PROMPT,
-        profileUserPrompt,
-        locale
-      );
-
-      if (profileResult.error) {
-        setGenerationError(
-          t(locale, "errors.failedGenerateProfile", { error: profileResult.error })
-        );
-        setIsGeneratingViewer(false);
-        setGenerationStatus(null);
-        return;
-      }
-
-      const cleanedProfile = cleanGeneratedText(profileResult.content);
-      setGenerationStatus("generatingReflectionStyle");
-
-      const styleResult = await generateText(
-        visionProvider,
-        REFLECTION_STYLE_PROMPT,
-        getReflectionStyleUserPrompt(profileResult.content, locale),
-        locale
-      );
-
-      if (styleResult.error) {
-        setGenerationError(
-          t(locale, "errors.failedGenerateReflectionStyle", { error: styleResult.error })
-        );
-        setIsGeneratingViewer(false);
-        setGenerationStatus(null);
-        return;
-      }
-
-      const cleanedStyle = cleanGeneratedText(styleResult.content);
-      setGenerationStatus("generatingLabel");
-
-      const labelResult = await generateText(
-        visionProvider,
-        PROFILE_LABEL_PROMPT,
-        getProfileLabelUserPrompt(cleanedProfile, locale),
-        locale
-      );
-
-      let cleanedLabel: string | undefined;
-      let labelRaw: string | undefined;
-      if (!labelResult.error && labelResult.content) {
-        cleanedLabel = normalizeLabelSentenceCase(
-          cleanGeneratedText(labelResult.content).trim()
-        );
-        labelRaw = labelResult.content;
-      }
-
-      const nameTrimmed = nameForLabel.trim();
-      const finalLabel =
-        cleanedLabel != null
-          ? nameTrimmed
-            ? `${cleanedLabel} (${nameTrimmed})`
-            : cleanedLabel
-          : undefined;
-
-      setGenerationStatus("saving");
-
-      const savedId = await saveGeneratedProfile({
-        locale,
-        profileUserPrompt,
-        profileRaw: profileResult.content,
-        profileCleaned: cleanedProfile,
-        reflectionStyleUserMessage: getReflectionStyleUserPrompt(profileResult.content, locale),
-        styleRaw: styleResult.content,
-        styleCleaned: cleanedStyle,
-        labelRaw,
-        labelCleaned: finalLabel,
-        provider: visionProvider,
-      });
-
-      if (savedId) {
-        setProfileId(savedId);
-        setViewerProfile(cleanedProfile);
-        setReflectionStyle(cleanedStyle);
-        setProfileLabel(finalLabel ?? null);
-        loadProfilesForProvider(visionProvider);
-      } else {
-        setViewerProfile(cleanedProfile);
-        setReflectionStyle(cleanedStyle);
-        setProfileLabel(finalLabel ?? null);
+        applyState();
       }
 
       setGenerationStatus(null);
@@ -1102,24 +1099,18 @@ function App() {
 
   const handleProviderChange = (provider: VisionProvider) => {
     setVisionProvider(provider);
-    setViewerProfile("");
-    setReflectionStyle("");
-    setProfileId(null);
-    setProfileLabel(null);
     setReflectionsByGallery({});
     setLastInternalStateByGallery({});
     setSelectedReflectionGeneratedAtByGallery({});
     setWalkThroughActive(false);
     setGenerationError(null);
     setGenerationStatus(null);
-    // Load profiles for the new provider
-    loadProfilesForProvider(provider);
   };
 
-  const loadProfilesForProvider = async (provider: VisionProvider) => {
+  const loadProfiles = async () => {
     setIsLoadingProfiles(true);
     try {
-      const profiles = await listProfiles(provider);
+      const profiles = await listProfiles();
       setAvailableProfiles(profiles);
     } catch (error) {
       console.error("Failed to load profiles:", error);
@@ -1137,8 +1128,13 @@ function App() {
         setProfileId(profile.id);
         setViewerProfile(profile.profile);
         setReflectionStyle(profile.reflectionStyle);
+        setInitialState(profile.initialState || "");
         setProfileLabel(profile.label || null);
-        // Clear reflection history when loading a profile
+        setProfileLlm(profile.llm || null);
+        setProfileLlmModelLabel(profile.llmModelLabel || profile.modelLabel || null);
+        setProfileShort(profile.profileShort || "");
+        setReflectionStyleShort(profile.reflectionStyleShort || "");
+        setInitialStateShort(profile.initialStateShort || "");
         setReflectionsByGallery({});
         setLastInternalStateByGallery({});
         setSelectedReflectionGeneratedAtByGallery({});
@@ -1155,9 +1151,8 @@ function App() {
     }
   };
 
-  // Load profiles when component mounts
   useEffect(() => {
-    loadProfilesForProvider(visionProvider);
+    loadProfiles();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -1202,7 +1197,7 @@ function App() {
       return { ...prev, [galleryId]: updated };
     });
 
-    const previousState = lastInternalState || undefined;
+    const previousState = lastInternalState || initialState || undefined;
     const prompt = getStatefulPrompt(viewerProfile, reflectionStyle, locale);
 
     const result = await reflectOnImage(
@@ -1377,6 +1372,12 @@ function App() {
       sessionStartedAt,
       visionProvider,
       locale,
+      ...(profileLlm && { profileLlm }),
+      ...(profileLlmModelLabel && { profileLlmModelLabel }),
+      ...(initialState && { initialState }),
+      ...(profileShort && { profileShort }),
+      ...(reflectionStyleShort && { reflectionStyleShort }),
+      ...(initialStateShort && { initialStateShort }),
       ...(narrativeSummary && { trajectorySummary: narrativeSummary }),
       ...(narrativeSummaryLocale && { trajectorySummaryLocale: narrativeSummaryLocale }),
       ...(narrativeSummaryGeneratedAt && {
@@ -1453,7 +1454,7 @@ function App() {
       vlmModelLabel: labels.vlm,
     };
     const trajectory = trajectoryFromSession(payload);
-    const result = await generateNarrativeSummary(trajectory, visionProvider, locale);
+    const result = await generateNarrativeSummary(trajectory, visionProvider, locale, initialState || undefined);
     setNarrativeSummaryLoading(false);
     if (result.error) {
       setNarrativeSummaryError(result.error);
@@ -1565,7 +1566,6 @@ function App() {
     showAbout ||
     showApiKeysModal ||
     showImageModal ||
-    showPersonalizedModal ||
     (showTrajectorySummaryModal &&
       (narrativeSummary !== null || narrativeSummaryError !== null));
 
@@ -1672,49 +1672,16 @@ function App() {
           </div>
           <div className="sidebar-section">
             <h2>{t(locale, "sidebar.viewer")}</h2>
-            <div
-              className="viewer-actions-row"
-              ref={newProfileMenuRef}
-            >
-              <div className="new-profile-wrap">
-                <button
-                  className="generate-viewer-btn"
-                  onClick={() => !isGeneratingViewer && setShowNewProfileMenu((v) => !v)}
-                  disabled={isGeneratingViewer}
-                  aria-expanded={showNewProfileMenu}
-                  aria-haspopup="true"
-                >
-                  {isGeneratingViewer
-                    ? t(locale, "sidebar.generating")
-                    : t(locale, "sidebar.generateProfile")}
-                </button>
-                {showNewProfileMenu && (
-                  <div className="new-profile-menu" role="menu">
-                    <button
-                      type="button"
-                      role="menuitem"
-                      className="new-profile-menu-item"
-                      onClick={() => {
-                        setShowNewProfileMenu(false);
-                        handleGenerateViewer();
-                      }}
-                    >
-                      {t(locale, "sidebar.random")}
-                    </button>
-                    <button
-                      type="button"
-                      role="menuitem"
-                      className="new-profile-menu-item"
-                      onClick={() => {
-                        setShowNewProfileMenu(false);
-                        setShowPersonalizedModal(true);
-                      }}
-                    >
-                      {t(locale, "sidebar.personalized")}
-                    </button>
-                  </div>
-                )}
-              </div>
+            <div className="viewer-actions-row">
+              <button
+                className="generate-viewer-btn"
+                onClick={() => !isGeneratingViewer && handleGenerateViewer()}
+                disabled={isGeneratingViewer}
+              >
+                {isGeneratingViewer
+                  ? t(locale, "sidebar.generating")
+                  : t(locale, "sidebar.generateProfile")}
+              </button>
               <button
                 className="load-profile-btn"
                 onClick={() => setShowProfileSelector(!showProfileSelector)}
@@ -1776,8 +1743,7 @@ function App() {
                   <span>.</span>
                   <span>.</span>
                 </span>
-                {(generationStatus === "generatingProfile" ||
-                  generationStatus === "generatingPersonalizedProfile") && (
+                {generationStatus === "generatingProfile" && (
                   <div className="generation-status-hint">
                     {t(locale, "status.firstUseHint")}
                   </div>
@@ -1812,13 +1778,27 @@ function App() {
                     <h3 className="viewer-profile-label">
                       {t(locale, "viewerProfile.profileHeading")}
                     </h3>
-                    <p className="viewer-profile-text">{viewerProfile}</p>
-                    {reflectionStyle && (
+                    <p className="viewer-profile-text">
+                      {profileShort || viewerProfile}
+                    </p>
+                    {(reflectionStyleShort || reflectionStyle) && (
                       <>
                         <h3 className="viewer-profile-label">
                           {t(locale, "viewerProfile.reflectionStyleHeading")}
                         </h3>
-                        <p className="viewer-profile-text">{reflectionStyle}</p>
+                        <p className="viewer-profile-text">
+                          {reflectionStyleShort || reflectionStyle}
+                        </p>
+                      </>
+                    )}
+                    {(initialStateShort || initialState) && (
+                      <>
+                        <h3 className="viewer-profile-label">
+                          {t(locale, "viewerProfile.initialStateHeading")}
+                        </h3>
+                        <p className="viewer-profile-text">
+                          {initialStateShort || initialState}
+                        </p>
                       </>
                     )}
                   </div>
@@ -1927,80 +1907,6 @@ function App() {
           </div>
         )}
 
-        {showPersonalizedModal && (
-          <div className="about-overlay" onClick={() => setShowPersonalizedModal(false)}>
-            <div
-              className="about-modal personalized-modal"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="about-modal-header">
-                <h2>{t(locale, "personalizedModal.title")}</h2>
-                <button
-                  className="about-close"
-                  onClick={() => setShowPersonalizedModal(false)}
-                >
-                  ×
-                </button>
-              </div>
-              <div className="about-modal-content">
-                <p className="personalized-intro">
-                  {t(locale, "personalizedModal.intro")}
-                </p>
-                <div className="personalized-form">
-                  {getPersonalizedProfileQuestions(locale).map((q) => (
-                    <label key={q.id} className="personalized-question">
-                      <span className="personalized-question-label">{q.label}</span>
-                      <input
-                        type="text"
-                        className="personalized-input"
-                        placeholder={q.placeholder}
-                        value={personalizedAnswers[q.id] ?? ""}
-                        onChange={(e) =>
-                          setPersonalizedAnswers((prev) => ({
-                            ...prev,
-                            [q.id]: e.target.value,
-                          }))
-                        }
-                      />
-                    </label>
-                  ))}
-                  <label className="personalized-question">
-                    <span className="personalized-question-label">
-                      {t(locale, "personalizedModal.yourName")}{" "}
-                      <span className="optional">
-                        {t(locale, "personalizedModal.optionalForLabel")}
-                      </span>
-                    </span>
-                    <input
-                      type="text"
-                      className="personalized-input"
-                      placeholder={t(locale, "personalizedModal.namePlaceholder")}
-                      value={personalizedName}
-                      onChange={(e) => setPersonalizedName(e.target.value)}
-                    />
-                  </label>
-                </div>
-                <div className="personalized-actions">
-                  <button
-                    className="generate-viewer-btn"
-                    onClick={() =>
-                      handleGeneratePersonalizedViewer(personalizedAnswers, personalizedName)
-                    }
-                  >
-                    {t(locale, "personalizedModal.generate")}
-                  </button>
-                  <button
-                    className="about-btn"
-                    onClick={() => setShowPersonalizedModal(false)}
-                  >
-                    {t(locale, "common.cancel")}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
         {showAbout && (
           <div className="about-overlay" onClick={() => setShowAbout(false)}>
             <div className="about-modal" onClick={(e) => e.stopPropagation()}>
@@ -2048,6 +1954,7 @@ function App() {
                       {renderSection(about.researchPositioning)}
                       {renderSection(about.viewerProfile)}
                       {renderSection(about.reflectionStyle)}
+                      {renderSection(about.initialState)}
                       {renderSection(about.statefulReflections)}
                       {renderSection(about.summarizeTrajectory)}
                       {renderSection(about.modelsAndFeatures)}

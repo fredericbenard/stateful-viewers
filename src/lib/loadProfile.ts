@@ -24,17 +24,12 @@ export interface LoadProfileResponse {
 }
 
 /**
- * List all profiles, optionally filtered by LLM provider.
+ * List all profiles.
  * Returns empty array if endpoint is not available (e.g. production build).
  */
-export async function listProfiles(
-  llmFilter?: string
-): Promise<ProfileSummary[]> {
+export async function listProfiles(): Promise<ProfileSummary[]> {
   try {
-    const url = llmFilter
-      ? `/api/list-profiles?llm=${encodeURIComponent(llmFilter)}`
-      : "/api/list-profiles";
-    const res = await fetch(url);
+    const res = await fetch("/api/list-profiles");
     if (!res.ok) return [];
     const data: ListProfilesResponse = await res.json();
     return data.profiles || [];

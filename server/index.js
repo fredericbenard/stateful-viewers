@@ -328,7 +328,6 @@ app.post('/api/save-reflection-session', (req, res) => {
 
 app.get('/api/list-profiles', (req, res) => {
   try {
-    const llmFilter = req.query.llm;
     const publicDir = path.join(PROFILES_DIR, 'public');
     const profilesMap = new Map();
 
@@ -375,9 +374,7 @@ app.get('/api/list-profiles', (req, res) => {
         });
     }
 
-    const profiles = Array.from(profilesMap.values()).filter(
-      (p) => !llmFilter || p.llm === llmFilter
-    );
+    const profiles = Array.from(profilesMap.values());
     res.json({ profiles });
   } catch (e) {
     res.status(500).json({ error: String(e) });

@@ -10,9 +10,10 @@ export const en = {
   },
   status: {
     generatingProfile: "Generating profile",
-    generatingPersonalizedProfile: "Generating personalized profile",
     generatingReflectionStyle: "Generating reflection style",
+    generatingInitialState: "Generating initial state",
     generatingLabel: "Generating label",
+    generatingSummaries: "Generating summaries",
     saving: "Saving",
     firstUseHint: "First use or after sleep can take up to a minute.",
   },
@@ -23,15 +24,16 @@ export const en = {
       "The app server isn't responding. If you're on Hugging Face Spaces, wait for the Space to finish loading, then try again.",
     failedGenerateProfile: "Failed to generate profile: {error}",
     failedGenerateReflectionStyle: "Failed to generate reflection style: {error}",
+    failedGenerateInitialState: "Failed to generate initial state: {error}",
     unexpectedError: "Unexpected error: {error}",
   },
   apiErrors: {
     requestTimedOut: "Request timed out ({seconds}s). Try again.",
     networkCouldNotReachServer:
-      "Network error: the request could not reach the server. If you're on Hugging Face Spaces, the app may be starting—try again in a moment.",
-    httpStatusError: "{provider} error: {status} — {message}{hint}",
+      "Network error: the request could not reach the server. If you're on Hugging Face Spaces, the app may be starting\u2014try again in a moment.",
+    httpStatusError: "{provider} error: {status} \u2014 {message}{hint}",
     retriesExhaustedHint:
-      " Retries exhausted—please try again. This is usually a temporary server issue.",
+      " Retries exhausted\u2014please try again. This is usually a temporary server issue.",
     noContentReturned:
       "{provider} returned no content{hint}. See browser console for details.",
   },
@@ -49,18 +51,16 @@ export const en = {
     collapseSidebar: "Collapse sidebar",
     viewer: "Viewer",
     generateProfile: "Generate profile",
-    generating: "Generating…",
-    random: "Random",
-    personalized: "Personalized",
+    generating: "Generating\u2026",
     loadProfile: "Load profile",
     hideProfiles: "Hide profiles",
-    loadingProfiles: "Loading profiles…",
+    loadingProfiles: "Loading profiles\u2026",
     noProfilesForProvider: "No profiles found for this provider",
     showOtherLanguages: "Show other languages",
     untitledProfile: "Untitled profile",
     galleries: "Galleries",
     stopWalkthroughToSwitchGalleries: "Stop walk-through to switch galleries",
-    imagesCopyright: "Images ©",
+    imagesCopyright: "Images \u00a9",
     allRightsReserved: "All rights reserved.",
   },
   apiKeysModal: {
@@ -68,18 +68,9 @@ export const en = {
     intro:
       "Paste your API keys below to use cloud models. Keys are stored only in your browser and sent with each request; the server does not store them. Leave blank to use server-configured keys (if any).",
   },
-  personalizedModal: {
-    title: "Personalized viewer profile",
-    intro:
-      "Answer a few questions; we'll generate a profile and reflection style tailored to you. You can add your name to the profile label (e.g. “Patient observer (Maria)”).",
-    yourName: "Your name",
-    optionalForLabel: "(optional, for the profile label)",
-    namePlaceholder: "e.g. Maria",
-    generate: "Generate personalized profile",
-  },
   reflection: {
     title: "Reflection",
-    reflecting: "Reflecting…",
+    reflecting: "Reflecting\u2026",
     reflectOnThisImage: "Reflect on this image",
     startWalkthrough: "Start walk-through",
     stopWalkthrough: "Stop walk-through",
@@ -89,12 +80,12 @@ export const en = {
     stopWalkthroughHint:
       "Stop walk-through to switch galleries, jump images, or select a reflection.",
     selectImageHint:
-      "Select an image and click “Reflect on this image,” or start a gallery walk-through.",
+      "Select an image and click \u201cReflect on this image,\u201d or start a gallery walk-through.",
     autoAdvance: "Auto-advance",
     autoVoiceOver: "Auto voice-over",
     voice: "Voice",
-    loadingVoices: "Loading voices…",
-    next: "Next →",
+    loadingVoices: "Loading voices\u2026",
+    next: "Next \u2192",
     listen: "Listen",
     stopListening: "Stop",
     myCurrentState: "My current state:",
@@ -103,7 +94,7 @@ export const en = {
     title: "Trajectory summary",
   },
   image: {
-    previous: "← Previous",
+    previous: "\u2190 Previous",
     thumbnailAlt: "Image {n}",
     stopWalkthroughToJump: "Stop walk-through to jump to another image",
     sensitiveChip: "Sensitive",
@@ -118,7 +109,7 @@ export const en = {
     export: "Export",
     exportMarkdown: "Export Markdown (.md)",
     exportJson: "Export JSON (.json)",
-    summarizing: "Summarizing…",
+    summarizing: "Summarizing\u2026",
     summarize: "Summarize trajectory",
     reflectionsOne: "{count} reflection",
     reflectionsMany: "{count} reflections",
@@ -130,6 +121,6 @@ export const en = {
     hide: "Hide",
     profileHeading: "Profile",
     reflectionStyleHeading: "Reflection style",
+    initialStateHeading: "Initial state",
   },
 } as const;
-

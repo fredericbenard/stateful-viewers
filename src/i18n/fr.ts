@@ -10,30 +10,32 @@ export const fr = {
   },
   status: {
     generatingProfile: "Génération du profil",
-    generatingPersonalizedProfile: "Génération du profil personnalisé",
     generatingReflectionStyle: "Génération du style de réflexion",
-    generatingLabel: "Génération de l’étiquette",
+    generatingInitialState: "Génération de l'état initial",
+    generatingLabel: "Génération de l'étiquette",
+    generatingSummaries: "Génération des résumés",
     saving: "Enregistrement",
-    firstUseHint: "Le premier lancement (ou après une mise en veille) peut prendre jusqu’à une minute.",
+    firstUseHint: "Le premier lancement (ou après une mise en veille) peut prendre jusqu'à une minute.",
   },
   errors: {
     apiKeyRequired:
-      "Ajoutez d’abord une clé API : ouvrez Clés API dans la barre latérale (sous Modèles).",
+      "Ajoutez d'abord une clé API : ouvrez Clés API dans la barre latérale (sous Modèles).",
     serverNotResponding:
-      "Le serveur de l’application ne répond pas. Si vous êtes sur Hugging Face Spaces, attendez que l’espace finisse de charger, puis réessayez.",
+      "Le serveur de l'application ne répond pas. Si vous êtes sur Hugging Face Spaces, attendez que l'espace finisse de charger, puis réessayez.",
     failedGenerateProfile: "Impossible de générer le profil : {error}",
     failedGenerateReflectionStyle: "Impossible de générer le style de réflexion : {error}",
+    failedGenerateInitialState: "Impossible de générer l'état initial : {error}",
     unexpectedError: "Erreur inattendue : {error}",
   },
   apiErrors: {
     requestTimedOut: "La requête a expiré ({seconds}s). Réessayez.",
     networkCouldNotReachServer:
-      "Erreur réseau : la requête n’a pas pu atteindre le serveur. Si vous êtes sur Hugging Face Spaces, l’application est peut-être en cours de démarrage — réessayez dans un instant.",
+      "Erreur réseau : la requête n'a pas pu atteindre le serveur. Si vous êtes sur Hugging Face Spaces, l'application est peut-être en cours de démarrage — réessayez dans un instant.",
     httpStatusError: "Erreur {provider} : {status} — {message}{hint}",
     retriesExhaustedHint:
-      " Tentatives épuisées — réessayez. Il s’agit le plus souvent d’un problème temporaire du serveur.",
+      " Tentatives épuisées — réessayez. Il s'agit le plus souvent d'un problème temporaire du serveur.",
     noContentReturned:
-      "{provider} n’a renvoyé aucun contenu{hint}. Consultez la console du navigateur pour plus de détails.",
+      "{provider} n'a renvoyé aucun contenu{hint}. Consultez la console du navigateur pour plus de détails.",
   },
   common: {
     save: "Enregistrer",
@@ -50,8 +52,6 @@ export const fr = {
     viewer: "Regardeur",
     generateProfile: "Générer un profil",
     generating: "Génération…",
-    random: "Aléatoire",
-    personalized: "Personnalisé",
     loadProfile: "Charger un profil",
     hideProfiles: "Masquer les profils",
     loadingProfiles: "Chargement des profils…",
@@ -68,15 +68,6 @@ export const fr = {
     intro:
       "Collez vos clés API ci-dessous pour utiliser des modèles cloud. Les clés sont stockées uniquement dans votre navigateur et envoyées avec chaque requête ; le serveur ne les stocke pas. Laissez vide pour utiliser les clés configurées côté serveur (le cas échéant).",
   },
-  personalizedModal: {
-    title: "Profil de regardeur personnalisé",
-    intro:
-      "Répondez à quelques questions : nous générerons un profil et un style de réflexion adaptés à vous. Vous pouvez ajouter votre nom à l’étiquette du profil (par ex. « Observateur patient (Marc) »).",
-    yourName: "Votre nom",
-    optionalForLabel: "(optionnel, pour l’étiquette du profil)",
-    namePlaceholder: "ex. Marc",
-    generate: "Générer un profil personnalisé",
-  },
   reflection: {
     title: "Réflexion",
     reflecting: "Réflexion…",
@@ -84,8 +75,8 @@ export const fr = {
     startWalkthrough: "Démarrer le parcours",
     stopWalkthrough: "Arrêter le parcours",
     walkthroughInProgress: "Parcours en cours.",
-    autoAdvanceOn: "L’avancement automatique est activé : la progression est entièrement automatisée.",
-    autoAdvanceOff: "L’avancement automatique est désactivé : utilisez Suivant pour avancer.",
+    autoAdvanceOn: "L'avancement automatique est activé : la progression est entièrement automatisée.",
+    autoAdvanceOff: "L'avancement automatique est désactivé : utilisez Suivant pour avancer.",
     stopWalkthroughHint:
       "Arrêtez le parcours pour changer de galerie, sauter des images ou sélectionner une réflexion.",
     selectImageHint:
@@ -108,13 +99,13 @@ export const fr = {
     stopWalkthroughToJump: "Arrêtez le parcours pour sauter à une autre image",
     sensitiveChip: "Sensible",
     containsArtisticNudity: "Cette image contient de la nudité artistique.",
-    revealImage: "Afficher l’image",
-    hideImageAgain: "Masquer l’image à nouveau",
+    revealImage: "Afficher l'image",
+    hideImageAgain: "Masquer l'image à nouveau",
   },
   history: {
     title: "Historique des réflexions",
-    show: "Afficher l’historique",
-    hide: "Masquer l’historique",
+    show: "Afficher l'historique",
+    hide: "Masquer l'historique",
     export: "Exporter",
     exportMarkdown: "Exporter en Markdown (.md)",
     exportJson: "Exporter en JSON (.json)",
@@ -130,6 +121,6 @@ export const fr = {
     hide: "Masquer",
     profileHeading: "Profil du regardeur",
     reflectionStyleHeading: "Style de réflexion",
+    initialStateHeading: "État initial",
   },
 } as const;
-

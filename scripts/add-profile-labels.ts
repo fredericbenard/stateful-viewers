@@ -99,7 +99,7 @@ async function generateLabelOpenAI(profile: string): Promise<string | null> {
       model: "gpt-5.2",
       messages: [
         { role: "system", content: PROFILE_LABEL_SYSTEM_PROMPT },
-        { role: "user", content: getProfileLabelUserPrompt(profile) },
+        { role: "user", content: getProfileLabelUserPrompt(profile, "", "en") },
       ],
       max_completion_tokens: 64,
       temperature: 0.95,
@@ -126,7 +126,7 @@ async function generateLabelOllama(profile: string): Promise<string | null> {
       model: "llama3.1:8b-instruct-q5_K_M",
       messages: [
         { role: "system", content: PROFILE_LABEL_SYSTEM_PROMPT },
-        { role: "user", content: getProfileLabelUserPrompt(profile) },
+        { role: "user", content: getProfileLabelUserPrompt(profile, "", "en") },
       ],
       stream: false,
       options: { temperature: 0.95 },
@@ -191,7 +191,7 @@ async function generateLabelGemini(profile: string): Promise<string | null> {
         },
         contents: [
           {
-            parts: [{ text: getProfileLabelUserPrompt(profile) }],
+            parts: [{ text: getProfileLabelUserPrompt(profile, "", "en") }],
           },
         ],
         generationConfig: {
@@ -262,7 +262,7 @@ async function generateLabelAnthropic(profile: string): Promise<string | null> {
       messages: [
         {
           role: "user",
-          content: getProfileLabelUserPrompt(profile),
+          content: getProfileLabelUserPrompt(profile, "", "en"),
         },
       ],
     }),

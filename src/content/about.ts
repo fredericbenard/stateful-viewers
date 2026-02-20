@@ -13,6 +13,7 @@ export type AboutContent = {
   researchPositioning: AboutSection;
   viewerProfile: AboutSection;
   reflectionStyle: AboutSection;
+  initialState: AboutSection;
   statefulReflections: AboutSection;
   summarizeTrajectory: AboutSection;
   modelsAndFeatures: AboutSection;
@@ -47,6 +48,7 @@ export const ABOUT_CONTENT: Record<UiLocale, AboutContent> = {
       bullets: [
         { term: "Viewer profile", refs: "Jauss, Merleau-Ponty, Gombrich" },
         { term: "Reflection style", refs: "Vygotsky, Bruner, Husserl" },
+        { term: "Initial state", refs: "Merleau-Ponty, Husserl, Dewey" },
         { term: "Stateful reflection", refs: "Dewey, Tomkins" },
       ],
       note: "(See README for full references.)",
@@ -54,58 +56,67 @@ export const ABOUT_CONTENT: Record<UiLocale, AboutContent> = {
     viewerProfile: {
       heading: "Viewer profile",
       paragraphs: [
-        "Generate a unique viewer profile and reflection style before viewing. The profile is a temporary inner stance—a mode of attention and perception—not a fixed personality. It includes:",
+        "The viewer profile describes stable perceptual and interpretive dispositions — how this person characteristically attends to, processes, and makes meaning from visual art. It addresses 7 dimensions:",
       ],
       bullets: [
-        { term: "Baseline emotional state", description: "starting affective tone" },
-        {
-          term: "Tolerance for ambiguity",
-          description: "comfort with uncertainty and open interpretation",
-        },
-        {
-          term: "Relationship to control and boundaries",
-          description: "orientation toward structure and limits",
-        },
-        { term: "Attention style", description: "slow/dwelling, scanning, restless, absorbed, etc." },
-        { term: "Level of embodied awareness", description: "bodily vs cognitive" },
-        {
-          term: "Aesthetic conditioning",
-          description: "exposure to restrained, ambiguous, or non-explanatory art",
-        },
-        {
-          term: "Primary art background",
-          description:
-            "optional (photography, architecture, painting, cinema, literature, design, etc.)",
-        },
+        { term: "Tolerance for ambiguity", description: "comfort with uncertainty and open interpretation" },
+        { term: "Attention style", description: "absorbed/dwelling ↔ scanning/restless" },
+        { term: "Embodied orientation", description: "somatic ↔ cognitive" },
+        { term: "Interpretive posture", description: "literal/descriptive ↔ symbolic/associative ↔ autobiographical" },
+        { term: "Aesthetic conditioning", description: "naïve ↔ highly conditioned, with art background" },
+        { term: "Motivational stance", description: "seeking challenge/novelty ↔ seeking comfort/familiarity" },
+        { term: "Memory integration tendency", description: "integrative/accumulative ↔ discrete/reset" },
       ],
     },
     reflectionStyle: {
       heading: "Reflection style",
-      paragraphs: ["Derived from the profile, the reflection style defines how experience is expressed:"],
+      paragraphs: [
+        "Independent of the profile, the reflection style defines how experience is expressed in language — the texture, rhythm, and habits of inner speech. It addresses 7 dimensions:",
+      ],
       bullets: [
-        { term: "Explicitness of emotions", description: "implicit ↔ explicit" },
-        { term: "Stability of inner voice", description: "steady, tentative, wavering, fragmented" },
-        { term: "Distance from experience", description: "embodied, reflective, detached" },
-        { term: "Pacing and length", description: "rhythm and duration of reflections" },
-        { term: "Restraint or confidence", description: "in articulating feelings" },
+        { term: "Lexical register", description: "plain/conversational ↔ literary/poetic" },
+        { term: "Emotion explicitness", description: "implicit/suggested ↔ explicit/named" },
+        { term: "Voice stability", description: "steady/composed ↔ fragmented/shifting" },
+        { term: "Sensory modality emphasis", description: "visual, kinesthetic, auditory, or mixed" },
+        { term: "Self-reference mode", description: "first-person intimate ↔ observational/impersonal" },
+        { term: "Metaphor density", description: "spare/literal ↔ rich/figurative" },
+        { term: "Pacing", description: "terse/compressed ↔ expansive/flowing" },
+      ],
+    },
+    initialState: {
+      heading: "Initial internal state",
+      paragraphs: [
+        "Before encountering any images, the system generates an initial internal state — a momentary snapshot of how the viewer arrives today. This uses the same 7-dimension schema that evolves throughout the visit:",
+      ],
+      bullets: [
+        { term: "Dominant mood", description: "e.g. calm, restless, melancholic, alert, wistful" },
+        { term: "Underlying tension or ease", description: "the deeper felt texture beneath the surface mood" },
+        { term: "Energy and engagement", description: "depleted/fatigued ↔ energized/ready" },
+        { term: "Emotional openness", description: "guarded/defended ↔ receptive/permeable" },
+        { term: "Attentional focus", description: "narrow/concentrated ↔ diffuse/wandering" },
+        { term: "Meaning-making pressure", description: "strong pressure to understand ↔ letting-be" },
+        { term: "Somatic activation", description: "body barely present ↔ intensely present" },
       ],
     },
     statefulReflections: {
       heading: "Stateful reflections",
       paragraphs: [
-        "Each reflection incorporates the viewer profile and reflection style, carries forward accumulated internal state, and evolves gradually unless an image is strongly disruptive. State is qualitative: dominant mood, tension or ease, energy (engaged ↔ fatigued), openness (guarded ↔ receptive).",
+        "Each reflection incorporates the viewer profile and reflection style, and evolves gradually unless an image is strongly disruptive. On the first image, the generated initial state provides the starting point; subsequent images carry forward the state from the previous reflection.",
+        "State is qualitative and expressed across the same 7 dimensions as the initial state (dominant mood, tension/ease, energy, openness, focus, meaning-making pressure, somatic activation).",
       ],
     },
     summarizeTrajectory: {
       heading: "Summarize trajectory",
       paragraphs: [
-        "Reflection sessions can be treated as experiential trajectories: ordered paths of internal state through a gallery. Use Summarize trajectory to get a short narrative summary of how the experience moved (e.g. gradual settling, oscillation, depletion). Analysis stays qualitative and phenomenological—no valence/arousal or sentiment scores.",
+        "Reflection sessions can be treated as experiential trajectories: ordered paths of internal state through a gallery. Use Summarize trajectory to get a short narrative summary of how the experience moved (e.g. gradual settling, oscillation, depletion). Analysis stays qualitative and phenomenological — no valence/arousal or sentiment scores.",
       ],
     },
     modelsAndFeatures: {
       heading: "Models & features",
       paragraphs: [
-        "Vision: LLaVA-1.6 7B (Ollama), GPT-5.2 (OpenAI), Gemini 3 Pro (Google), Claude Sonnet 4.5 (Anthropic). Profile and reflection style are generated by your chosen provider using text-only (no image input). Walk-through mode, auto-advance, text-to-speech, auto voice-over, reflection history.",
+        "Vision: LLaVA-1.6 7B (Ollama), GPT-5.2 (OpenAI), Gemini 3 Pro (Google), Claude Sonnet 4.5 (Anthropic). Profile, reflection style, and initial state are generated by the chosen provider. Variability is ensured by parametric hints that pin a random subset of dimensions and let the model resolve the rest.",
+        "The profile list is not filtered by LLM provider — you can load a profile generated by one provider and reflect with another. Exported data tracks the profile-generation LLM separately from the reflection LLM/VLM.",
+        "Walk-through mode, auto-advance, text-to-speech, auto voice-over, reflection history.",
       ],
     },
     images: {
@@ -127,20 +138,21 @@ export const ABOUT_CONTENT: Record<UiLocale, AboutContent> = {
     overview: {
       heading: "Aperçu",
       paragraphs: [
-        "Stateful Viewers est un projet d’art et de recherche qui simule la visite d’une galerie. Un modèle vision-langage réfléchit aux images une à une, en portant en lui mémoire, attention et affect, de sorte que chaque rencontre façonne subtilement la perception des images suivantes.",
-        "Plutôt que de traiter les images comme des entrées indépendantes, le système modélise l’expérience du regard comme un processus continu et cumulatif.",
+        "Stateful Viewers est un projet d'art et de recherche qui simule la visite d'une galerie. Un modèle vision-langage réfléchit aux images une à une, en portant en lui mémoire, attention et affect, de sorte que chaque rencontre façonne subtilement la perception des images suivantes.",
+        "Plutôt que de traiter les images comme des entrées indépendantes, le système modélise l'expérience du regard comme un processus continu et cumulatif.",
       ],
     },
     researchPositioning: {
       heading: "Positionnement de recherche",
       paragraphs: [
-        "Stateful Viewers s’appuie sur la théorie de la réception, la phénoménologie et la psychologie esthétique. Il modélise la posture perceptive du regardeur avant la rencontre avec l’image, maintient une voix expressive stable d’une image à l’autre, et considère la réponse émotionnelle comme un processus qui se déploie dans le temps.",
-        "Le système opérationnalise des théories qualitatives de l’expérience esthétique dans un cadre génératif structuré, sans réduire l’expérience à des scores numériques ni à des catégories émotionnelles fixes.",
-        "Là où l’informatique affective demande souvent quelle émotion est présente, Stateful Viewers s’interroge sur <em>ce que signifie faire l’expérience de cette image, après avoir déjà fait l’expérience des précédentes.</em>",
+        "Stateful Viewers s'appuie sur la théorie de la réception, la phénoménologie et la psychologie esthétique. Il modélise la posture perceptive du regardeur avant la rencontre avec l'image, maintient une voix expressive stable d'une image à l'autre, et considère la réponse émotionnelle comme un processus qui se déploie dans le temps.",
+        "Le système opérationnalise des théories qualitatives de l'expérience esthétique dans un cadre génératif structuré, sans réduire l'expérience à des scores numériques ni à des catégories émotionnelles fixes.",
+        "Là où l'informatique affective demande souvent quelle émotion est présente, Stateful Viewers s'interroge sur <em>ce que signifie faire l'expérience de cette image, après avoir déjà fait l'expérience des précédentes.</em>",
       ],
       bullets: [
         { term: "Profil du regardeur", refs: "Jauss, Merleau-Ponty, Gombrich" },
         { term: "Style de réflexion", refs: "Vygotsky, Bruner, Husserl" },
+        { term: "État initial", refs: "Merleau-Ponty, Husserl, Dewey" },
         { term: "Réflexions avec état", refs: "Dewey, Tomkins" },
       ],
       note: "(Voir le README pour les références complètes.)",
@@ -148,86 +160,67 @@ export const ABOUT_CONTENT: Record<UiLocale, AboutContent> = {
     viewerProfile: {
       heading: "Profil du regardeur",
       paragraphs: [
-        "Avant d’entrer dans la galerie, le système génère un profil de regardeur et un style de réflexion correspondant. Le profil représente une posture intérieure temporaire plutôt qu’une personnalité fixe. Il comprend :",
+        "Le profil décrit des dispositions perceptives et interprétatives stables — la manière dont cette personne porte habituellement attention aux images, les traite et en construit le sens. Il couvre 7 dimensions :",
       ],
       bullets: [
-        {
-          term: "Tonalité émotionnelle de base",
-          description: "le ton affectif initial",
-        },
-        {
-          term: "Tolérance à l’ambiguïté",
-          description: "le confort avec l’incertitude et l’interprétation ouverte",
-        },
-        {
-          term: "Rapport au contrôle et aux limites",
-          description: "l’orientation vers la structure, les règles et les frontières",
-        },
-        {
-          term: "Style attentionnel",
-          description: "attention qui s’attarde, scanne, erre, s’absorbe, etc.",
-        },
-        {
-          term: "Degré de conscience incarnée",
-          description: "plutôt corporel ou plutôt cognitif",
-        },
-        {
-          term: "Conditionnement esthétique",
-          description:
-            "exposition à des formes d’art retenues, ambiguës ou non-explicatives",
-        },
-        {
-          term: "Formation artistique principale",
-          description:
-            "optionnel (photo, architecture, peinture, cinéma, littérature, design, etc.)",
-        },
+        { term: "Tolérance à l'ambiguïté", description: "confort avec l'incertitude et l'interprétation ouverte" },
+        { term: "Style attentionnel", description: "absorbé/contemplatif ↔ balayant/fébrile" },
+        { term: "Orientation incarnée", description: "somatique ↔ cognitive" },
+        { term: "Posture interprétative", description: "littérale/descriptive ↔ symbolique/associative ↔ autobiographique" },
+        { term: "Conditionnement esthétique", description: "naïve ↔ fortement conditionné, avec formation artistique" },
+        { term: "Posture motivationnelle", description: "recherche de défi/nouveauté ↔ recherche de confort/familiarité" },
+        { term: "Tendance à l'intégration mnésique", description: "intégrative/cumulative ↔ discrète/remise à zéro" },
       ],
     },
     reflectionStyle: {
       heading: "Style de réflexion",
       paragraphs: [
-        "Issu du profil, le style de réflexion façonne la manière dont l’expérience est exprimée, indépendamment du contenu des images.",
+        "Indépendant du profil, le style de réflexion définit la manière dont l'expérience est exprimée en langage — la texture, le rythme et les habitudes du discours intérieur. Il couvre 7 dimensions :",
       ],
       bullets: [
-        {
-          term: "Le degré d’explicitation de l’émotion",
-          description: "implicite ↔ explicite",
-        },
-        {
-          term: "La stabilité de la voix intérieure",
-          description: "stable, hésitante, vacillante, fragmentée",
-        },
-        {
-          term: "La distance à l’expérience (immergé ↔ réflexif)",
-          description: "incarné, réflexif, détaché",
-        },
-        {
-          term: "Le rythme et la longueur des réflexions",
-          description: "cadence et durée des textes",
-        },
-        {
-          term: "La retenue ou l’assurance dans l’articulation",
-          description: "manière de formuler et d’assumer le ressenti",
-        },
+        { term: "Registre lexical", description: "courant/conversationnel ↔ littéraire/poétique" },
+        { term: "Explicitation de l'émotion", description: "implicite/suggérée ↔ explicite/nommée" },
+        { term: "Stabilité de la voix", description: "stable/composée ↔ fragmentée/changeante" },
+        { term: "Modalité sensorielle", description: "visuelle, kinesthésique, auditive ou mixte" },
+        { term: "Mode d'autoréférence", description: "première personne intime ↔ observationnel/impersonnel" },
+        { term: "Densité métaphorique", description: "sobre/littéral ↔ riche/figuré" },
+        { term: "Rythme", description: "condensé/laconique ↔ ample/fluide" },
+      ],
+    },
+    initialState: {
+      heading: "État interne initial",
+      paragraphs: [
+        "Avant toute rencontre avec les images, le système génère un état interne initial — un instantané de l'état intérieur du regardeur au moment où il entre dans la galerie. Cet état utilise le même schéma à 7 dimensions qui évolue tout au long de la visite :",
+      ],
+      bullets: [
+        { term: "Humeur dominante", description: "ex. : calme, agité, mélancolique, alerte, nostalgique" },
+        { term: "Tension ou aisance sous-jacente", description: "la texture ressentie sous l'humeur de surface" },
+        { term: "Énergie et engagement", description: "épuisé/fatigué ↔ énergisé/prêt" },
+        { term: "Ouverture émotionnelle", description: "gardé/défendu ↔ réceptif/perméable" },
+        { term: "Focalisation attentionnelle", description: "étroite/concentrée ↔ diffuse/errante" },
+        { term: "Pression de construction de sens", description: "forte pression pour comprendre ↔ laisser-être" },
+        { term: "Activation somatique", description: "corps à peine présent ↔ intensité corporelle immédiate" },
       ],
     },
     statefulReflections: {
       heading: "Réflexions avec état",
       paragraphs: [
-        "Chaque réflexion intègre le profil du regardeur et le style de réflexion, prolonge un état interne accumulé à partir des images précédentes et évolue graduellement, sauf lorsqu’une image provoque une rupture marquante.",
-        "L’état interne est qualitatif plutôt que numérique, et s’exprime à travers des dimensions telles que : humeur dominante, tension ou relâchement, énergie (engagé ↔ fatigué), ouverture (réservé ↔ réceptif).",
+        "Chaque réflexion intègre le profil du regardeur et le style de réflexion, et évolue graduellement, sauf lorsqu'une image provoque une rupture marquante. Pour la première image, l'état initial généré sert de point de départ ; les images suivantes prolongent l'état issu de la réflexion précédente.",
+        "L'état est qualitatif et s'exprime selon les mêmes 7 dimensions que l'état initial (humeur dominante, tension/aisance, énergie, ouverture, focalisation, pression de sens, activation somatique).",
       ],
     },
     summarizeTrajectory: {
       heading: "Résumer la trajectoire",
       paragraphs: [
-        "Les sessions de réflexion peuvent être considérées comme des trajectoires expérientielles : des parcours ordonnés de l’état interne à travers une galerie. La fonction « Résumer la trajectoire » permet d’obtenir un court résumé narratif de la manière dont l’expérience a évolué (par exemple : apaisement graduel, oscillation, épuisement). L’analyse reste qualitative et phénoménologique — pas de scores valence–arousal ni d’analyse de sentiment.",
+        "Les sessions de réflexion peuvent être considérées comme des trajectoires expérientielles : des parcours ordonnés de l'état interne à travers une galerie. La fonction « Résumer la trajectoire » permet d'obtenir un court résumé narratif de la manière dont l'expérience a évolué (par exemple : apaisement graduel, oscillation, épuisement). L'analyse reste qualitative et phénoménologique — pas de scores valence–arousal ni d'analyse de sentiment.",
       ],
     },
     modelsAndFeatures: {
       heading: "Modèles et fonctionnalités",
       paragraphs: [
-        "Vision : LLaVA-1.6 7B (Ollama), GPT-5.2 (OpenAI), Gemini 3 Pro (Google), Claude Sonnet 4.5 (Anthropic). Le profil et le style de réflexion sont générés par le fournisseur choisi à partir de texte uniquement (sans image). Mode parcours guidé, avancement automatique, synthèse vocale et lecture automatique, historique des réflexions.",
+        "Vision : LLaVA-1.6 7B (Ollama), GPT-5.2 (OpenAI), Gemini 3 Pro (Google), Claude Sonnet 4.5 (Anthropic). Le profil, le style de réflexion et l'état initial sont générés par le fournisseur choisi. La diversité est assurée par des indices paramétriques qui fixent un sous-ensemble aléatoire de dimensions et laissent le modèle résoudre le reste.",
+        "La liste des profils n'est pas filtrée par fournisseur — vous pouvez charger un profil généré par un fournisseur et réfléchir avec un autre. Les données exportées distinguent le LLM utilisé pour la génération du profil de celui utilisé pour les réflexions.",
+        "Mode parcours guidé, avancement automatique, synthèse vocale et lecture automatique, historique des réflexions.",
       ],
     },
     images: {
@@ -245,4 +238,3 @@ export const ABOUT_CONTENT: Record<UiLocale, AboutContent> = {
     },
   },
 };
-

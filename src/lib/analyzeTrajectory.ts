@@ -47,7 +47,8 @@ export interface NarrativeSummaryResult {
 export async function generateNarrativeSummary(
   trajectory: ExperientialTrajectory,
   provider: VisionProvider,
-  locale: OutputLocale
+  locale: OutputLocale,
+  initialState?: string
 ): Promise<NarrativeSummaryResult> {
   const internalStates = trajectory.steps.map((s) => s.internalState);
   if (internalStates.length === 0) {
@@ -58,7 +59,7 @@ export async function generateNarrativeSummary(
   }
   const userPrompt = getTrajectorySummaryUserPrompt(
     trajectory.gallery.name,
-    trajectory.profile,
+    initialState || trajectory.profile,
     internalStates,
     locale
   );
