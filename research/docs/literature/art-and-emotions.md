@@ -41,6 +41,7 @@ This aligns strongly with the phenomenological idea that aesthetic experience un
 
 - Menninghaus, W., Wagner, V., Hanich, J., Wassiliwizky, E., Kuehnast, M., & Jacobsen, T. (2015). Towards a psychological construct of being moved. *PLoS ONE*, 10(6), e0128451.
 - Keltner, D., & Haidt, J. (2003). Approaching awe, a moral, spiritual, and aesthetic emotion. *Cognition and Emotion*, 17(2), 297–314.
+- Menninghaus, W., Wagner, V., Wassiliwizky, E., Jacobsen, T., & Koelsch, S. (2017). The Distancing–Embracing model of the enjoyment of negative emotions in art reception. *Behavioral and Brain Sciences*, 40, e347.
 - Eerola, T., & Vuoskoski, J. K. (2011). A comparison of the discrete and dimensional models of emotion in music. *Psychology of Music*, 39(1), 18–49.
 
 ---
@@ -59,6 +60,7 @@ This is the domain of **reception theory** (Jauss, Iser): the viewer is not a bl
 ### Key sources
 
 - Jauss, H. R. (1982). *Toward an aesthetic of reception* (T. Bahti, Trans.). University of Minnesota Press.
+- Iser, W. (1978). *The act of reading: A theory of aesthetic response*. Johns Hopkins University Press.
 - Leder, H., & Nadal, M. (2014). Ten years of a model of aesthetic appreciation and aesthetic judgments: The aesthetic episode—developments and challenges in empirical aesthetics. *British Journal of Psychology*, 105(4), 443–464.
 - Bullot, N. J., & Reber, R. (2013). The artful mind meets art history: Toward a psycho-historical framework for the science of art appreciation. *Behavioral and Brain Sciences*, 36(2), 123–137.
 
@@ -238,6 +240,8 @@ Dewey, J. (2005). *Art as experience*. Perigee Books. (Original work published 1
 
 Eerola, T., & Vuoskoski, J. K. (2011). A comparison of the discrete and dimensional models of emotion in music. *Psychology of Music*, 39(1), 18–49.
 
+Iser, W. (1978). *The act of reading: A theory of aesthetic response*. Johns Hopkins University Press.
+
 Jakesch, M., & Leder, H. (2009). Finding meaning in art: Preferred levels of ambiguity in art appreciation. *Quarterly Journal of Experimental Psychology*, 62(11), 2105–2112.
 
 Jauss, H. R. (1982). *Toward an aesthetic of reception* (T. Bahti, Trans.). University of Minnesota Press.
@@ -251,6 +255,8 @@ Leder, H., & Nadal, M. (2014). Ten years of a model of aesthetic appreciation an
 Locher, P., Krupinski, E. A., Mello-Thoms, C., & Nodine, C. F. (2007). Visual interest in pictorial art during an aesthetic experience. *Spatial Vision*, 21(1–2), 55–77.
 
 Menninghaus, W., Wagner, V., Hanich, J., Wassiliwizky, E., Kuehnast, M., & Jacobsen, T. (2015). Towards a psychological construct of being moved. *PLoS ONE*, 10(6), e0128451.
+
+Menninghaus, W., Wagner, V., Wassiliwizky, E., Jacobsen, T., & Koelsch, S. (2017). The Distancing–Embracing model of the enjoyment of negative emotions in art reception. *Behavioral and Brain Sciences*, 40, e347.
 
 Merleau-Ponty, M. (2012). *Phenomenology of perception* (D. A. Landes, Trans.). Routledge. (Original work published 1945)
 

@@ -45,13 +45,6 @@ export const ABOUT_CONTENT: Record<UiLocale, AboutContent> = {
         "The system operationalizes qualitative theories of aesthetic experience within a structured generative framework, without reducing experience to numerical scores or fixed emotion labels.",
         "Where affective computing often asks what emotion is present, Stateful Viewers asks <em>what it is like to encounter this image, having already encountered the previous ones.</em>",
       ],
-      bullets: [
-        { term: "Viewer profile", refs: "Jauss, Merleau-Ponty, Gombrich" },
-        { term: "Reflection style", refs: "Vygotsky, Bruner, Husserl" },
-        { term: "Initial state", refs: "Merleau-Ponty, Husserl, Dewey" },
-        { term: "Stateful reflection", refs: "Dewey, Tomkins" },
-      ],
-      note: "(See README for full references.)",
     },
     viewerProfile: {
       heading: "Viewer profile",
@@ -149,13 +142,6 @@ export const ABOUT_CONTENT: Record<UiLocale, AboutContent> = {
         "Le système opérationnalise des théories qualitatives de l'expérience esthétique dans un cadre génératif structuré, sans réduire l'expérience à des scores numériques ni à des catégories émotionnelles fixes.",
         "Là où l'informatique affective demande souvent quelle émotion est présente, Stateful Viewers s'interroge sur <em>ce que signifie faire l'expérience de cette image, après avoir déjà fait l'expérience des précédentes.</em>",
       ],
-      bullets: [
-        { term: "Profil du regardeur", refs: "Jauss, Merleau-Ponty, Gombrich" },
-        { term: "Style de réflexion", refs: "Vygotsky, Bruner, Husserl" },
-        { term: "État initial", refs: "Merleau-Ponty, Husserl, Dewey" },
-        { term: "Réflexions avec état", refs: "Dewey, Tomkins" },
-      ],
-      note: "(Voir le README pour les références complètes.)",
     },
     viewerProfile: {
       heading: "Profil du regardeur",

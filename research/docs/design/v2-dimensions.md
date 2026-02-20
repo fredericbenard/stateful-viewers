@@ -30,10 +30,10 @@ These describe what the viewer characteristically brings to any gallery encounte
 
 ### Theoretical grounding
 
-- **Tolerance for ambiguity**: Frenkel-Brunswik's ambiguity tolerance construct; Jakesch & Leder (2009) on optimal ambiguity in art appreciation; Berlyne (1971) on collative variables.
-- **Attention style**: Locher et al. (2007) on visual interest patterns during aesthetic experience; Csikszentmihalyi on absorption and flow; relates to Leder et al. (2004) processing stages.
+- **Tolerance for ambiguity**: Frenkel-Brunswik's intolerance of ambiguity construct (1949); Jakesch & Leder (2009) on optimal ambiguity in art appreciation; Berlyne (1971) on collative variables.
+- **Attention style**: Locher et al. (2007) on visual interest patterns during aesthetic experience; Csikszentmihalyi (1990) on absorption and flow; relates to Leder et al. (2004) processing stages.
 - **Embodied orientation**: Merleau-Ponty (1945/2012) on embodied perception; Damasio's somatic marker hypothesis; Wassiliwizky et al. (2015) on bodily aesthetic responses. The art-and-emotions literature (section 7) documents that aesthetic emotions have embodied signatures (chills, tears, postural changes).
-- **Interpretive posture**: Jauss (1982) on horizon of expectations; Eco on open and closed interpretation; the critique (section 3) identified this as a "high-impact candidate" missing from v1. Directly operationalizes reception theory's central claim that the viewer's interpretive habits condition what is felt.
+- **Interpretive posture**: Jauss (1982) on horizon of expectations; Eco (1989) on open interpretation; the critique (section 3) identified this as a "high-impact candidate" missing from v1. Directly operationalizes reception theory's central claim that the viewer's interpretive habits condition what is felt.
 - **Aesthetic conditioning**: Leder et al. (2004) model of aesthetic appreciation; Chamorro-Premuzic & Furnham (2004) on art expertise and personality; section 8 of art-and-emotions doc ("art expertise changes the balance of cognitive vs affective processing").
 - **Motivational stance**: Berlyne (1971) arousal theory (curiosity-driven vs hedonic motivation); Bullough (1912) on aesthetic distance; Saarikallio & Erkkilä (2007) on art as emotion regulation. The art-and-emotions doc (section 9) notes "emotion regulation goals" as a dimension not yet modeled.
 - **Memory integration tendency**: Bruner on narrative cognition; McAdams on narrative identity; the critique (section 3) identified "memory style" as a high-impact missing dimension. Critical for how state carryover functions—an integrative viewer accumulates, a discrete viewer resets.
@@ -164,9 +164,15 @@ Bullough, E. (1912). "Psychical distance" as a factor in art and an aesthetic pr
 
 Chamorro-Premuzic, T., & Furnham, A. (2004). Art judgement: A measure related to both personality and intelligence? *Imagination, Cognition and Personality*, 24(1), 3–24.
 
+Csikszentmihalyi, M. (1990). *Flow: The psychology of optimal experience*. Harper & Row.
+
 Damasio, A. R. (1994). *Descartes' error: Emotion, reason, and the human brain*. Putnam.
 
 Dewey, J. (2005). *Art as experience*. Perigee Books. (Original work published 1934)
+
+Eco, U. (1989). *The open work* (A. Cancogni, Trans.). Harvard University Press. (Original work published 1962)
+
+Frenkel-Brunswik, E. (1949). Intolerance of ambiguity as an emotional and perceptual personality variable. *Journal of Personality*, 18(1), 108–143.
 
 Jakesch, M., & Leder, H. (2009). Finding meaning in art: Preferred levels of ambiguity in art appreciation. *Quarterly Journal of Experimental Psychology*, 62(11), 2105–2112.
 
