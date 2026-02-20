@@ -36,6 +36,7 @@ export const ABOUT_CONTENT: Record<UiLocale, AboutContent> = {
       paragraphs: [
         "Stateful Viewers is an art and research project that simulates a visitor walking through a gallery. A vision–language model reflects on images one at a time, carrying forward memory, attention, and affect so that each encounter subtly shapes how subsequent images are perceived.",
         "Rather than treating images as independent inputs, the system models viewing as a continuous, cumulative experience.",
+        'Source code: <a href="https://github.com/fredericbenard/stateful-viewers">GitHub repository</a>.',
       ],
     },
     researchPositioning: {
@@ -133,6 +134,7 @@ export const ABOUT_CONTENT: Record<UiLocale, AboutContent> = {
       paragraphs: [
         "Stateful Viewers est un projet d'art et de recherche qui simule la visite d'une galerie. Un modèle vision-langage réfléchit aux images une à une, en portant en lui mémoire, attention et affect, de sorte que chaque rencontre façonne subtilement la perception des images suivantes.",
         "Plutôt que de traiter les images comme des entrées indépendantes, le système modélise l'expérience du regard comme un processus continu et cumulatif.",
+        'Code source : <a href="https://github.com/fredericbenard/stateful-viewers">dépôt GitHub</a>.',
       ],
     },
     researchPositioning: {

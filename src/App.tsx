@@ -72,8 +72,8 @@ function truncateAtWord(text: string, maxLength: number): string {
   return truncated + "…";
 }
 
-function renderInlineItalics(text: string) {
-  const pattern = /<(em|it|italic)>([\s\S]*?)<\/\1>/g;
+function renderInlineMarkup(text: string) {
+  const pattern = /<(em|it|italic)>([\s\S]*?)<\/\1>|<a\s+href="([^"]+)">([\s\S]*?)<\/a>/g;
   const parts: ReactNode[] = [];
   let lastIndex = 0;
   let match: RegExpExecArray | null;
@@ -83,7 +83,19 @@ function renderInlineItalics(text: string) {
       parts.push(text.slice(lastIndex, match.index));
     }
 
-    parts.push(<em key={`em-${match.index}`}>{match[2]}</em>);
+    // <em>...</em>
+    if (match[1]) {
+      parts.push(<em key={`em-${match.index}`}>{match[2]}</em>);
+    } else {
+      // <a href="...">...</a>
+      const href = match[3];
+      const label = match[4];
+      parts.push(
+        <a key={`a-${match.index}`} href={href} target="_blank" rel="noreferrer">
+          {label}
+        </a>
+      );
+    }
     lastIndex = pattern.lastIndex;
   }
 
@@ -1919,7 +1931,7 @@ function App() {
                     <>
                       <h3>{section.heading}</h3>
                       {section.paragraphs?.map((p, idx) => (
-                        <p key={`${section.heading}-p-${idx}`}>{renderInlineItalics(p)}</p>
+                        <p key={`${section.heading}-p-${idx}`}>{renderInlineMarkup(p)}</p>
                       ))}
                       {section.bullets && section.bullets.length > 0 && (
                         <ul>
