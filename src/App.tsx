@@ -521,11 +521,13 @@ function App() {
           : "selected";
   const onboardingHint = selectedProviderNeedsApiKey
     ? t(locale, "onboarding.nextStepAddApiKey", { provider: providerLabel })
-    : !viewerProfile?.trim()
-      ? t(locale, "onboarding.nextStepGenerateOrLoadProfile")
-      : !selectedGallery
-        ? t(locale, "onboarding.nextStepSelectGallery")
-        : "";
+    : isGeneratingViewer
+      ? t(locale, "onboarding.generatingProfile")
+      : !viewerProfile?.trim()
+        ? t(locale, "onboarding.nextStepGenerateOrLoadProfile")
+        : !selectedGallery
+          ? t(locale, "onboarding.nextStepSelectGallery")
+          : "";
 
   const getImageKey = (gallery: Gallery | null, image: GalleryImage | null): string | null => {
     if (!gallery || !image) return null;
@@ -2194,25 +2196,28 @@ function App() {
 
                 <aside className="experience-panel">
                   <div className="reflection-section experience-current">
-                    {(!onboardingHint && (walkThroughActive || (reflections.length === 0 && !isLoading))) && (
-                      <p className="experience-panel-hint">
-                        {walkThroughActive ? (
-                          <>
-                            {t(locale, "reflection.walkthroughInProgress")}
-                            <br />
-                            {autoAdvance
-                              ? t(locale, "reflection.autoAdvanceOn")
-                              : t(locale, "reflection.autoAdvanceOff")}
-                            <br />
-                            {t(locale, "reflection.stopWalkthroughHint")}
-                          </>
-                        ) : (
-                          <>
-                            {t(locale, "reflection.selectImageHint")}
-                          </>
-                        )}
-                      </p>
-                    )}
+                    {!onboardingHint &&
+                      (isLoading ? (
+                        <p className="experience-panel-hint">
+                          {t(locale, "reflection.reflectingHint")}
+                        </p>
+                      ) : walkThroughActive || reflections.length === 0 ? (
+                        <p className="experience-panel-hint">
+                          {walkThroughActive ? (
+                            <>
+                              {t(locale, "reflection.walkthroughInProgress")}
+                              <br />
+                              {autoAdvance
+                                ? t(locale, "reflection.autoAdvanceOn")
+                                : t(locale, "reflection.autoAdvanceOff")}
+                              <br />
+                              {t(locale, "reflection.stopWalkthroughHint")}
+                            </>
+                          ) : (
+                            <>{t(locale, "reflection.selectImageHint")}</>
+                          )}
+                        </p>
+                      ) : null)}
                     <div className="reflection-header-row">
                       <h3>{t(locale, "reflection.title")}</h3>
                     </div>

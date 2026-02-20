@@ -7,6 +7,7 @@ export const fr = {
     nextStepAddApiKey: "Prochaine étape : ajoutez votre clé API {provider} dans Clés API.",
     nextStepGenerateOrLoadProfile: "Prochaine étape : générez ou chargez un profil.",
     nextStepSelectGallery: "Prochaine étape : sélectionnez une galerie.",
+    generatingProfile: "Génération du profil…",
   },
   status: {
     generatingProfile: "Génération du profil",
@@ -71,6 +72,7 @@ export const fr = {
   reflection: {
     title: "Réflexion",
     reflecting: "Réflexion…",
+    reflectingHint: "Réflexion sur l’image…",
     reflectOnThisImage: "Réfléchir à cette image",
     startWalkthrough: "Démarrer le parcours",
     stopWalkthrough: "Arrêter le parcours",
