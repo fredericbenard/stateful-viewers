@@ -87,7 +87,8 @@ export const ABOUT_CONTENT: Record<UiLocale, AboutContent> = {
     initialState: {
       heading: "Initial Internal State",
       paragraphs: [
-        "Before encountering any images, the system generates an initial internal state — a momentary snapshot of how the viewer arrives at the gallery on this particular day. This state is expressed across the same seven dimensions that will evolve over time:",
+        "Before encountering any images, the system generates an initial internal state — a momentary snapshot of how the viewer arrives at the gallery on this particular day.",
+        "This state is expressed across seven qualitative dimensions that will evolve over time:",
       ],
       bullets: [
         { term: "Dominant mood", description: "e.g. calm, restless, melancholic, alert, wistful" },
@@ -102,8 +103,9 @@ export const ABOUT_CONTENT: Record<UiLocale, AboutContent> = {
     statefulReflections: {
       heading: "Stateful Reflections",
       paragraphs: [
-        "Each reflection incorporates the viewer profile and reflection style, and evolves gradually unless an image is strongly disruptive. The first image begins from the initial internal state; each subsequent image carries forward the state from the previous reflection.",
-        "State is qualitative and expressed across the same seven dimensions (mood, tension/ease, energy, openness, focus, meaning-making pressure, and somatic activation), allowing subtle shifts to accumulate over time.",
+        "Each reflection is generated from the viewer profile, reflection style, and current internal state. After each image, the internal state is updated for the next step — typically shifting incrementally, unless an image produces a stronger disruption.",
+        "The first image starts from the initial internal state; each subsequent image begins from the state carried forward from the previous reflection.",
+        "Because the same seven dimensions are maintained across steps, small variations can accumulate into meaningful experiential trajectories.",
       ],
     },
     summarizeTrajectory: {
@@ -191,7 +193,8 @@ export const ABOUT_CONTENT: Record<UiLocale, AboutContent> = {
     initialState: {
       heading: "État interne initial",
       paragraphs: [
-        "Avant toute rencontre avec les images, le système génère un état interne initial — un instantané de l’état intérieur du regardeur au moment où il entre dans la galerie. Cet état est exprimé selon les mêmes sept dimensions qui évolueront tout au long de la visite :",
+        "Avant toute rencontre avec les images, le système génère un état interne initial — un instantané de l’état intérieur du regardeur au moment où il entre dans la galerie.",
+        "Cet état est exprimé selon sept dimensions qualitatives qui évolueront au fil du temps :",
       ],
       bullets: [
         { term: "Humeur dominante", description: "ex. : calme, agité, mélancolique, alerte, nostalgique" },
@@ -206,8 +209,9 @@ export const ABOUT_CONTENT: Record<UiLocale, AboutContent> = {
     statefulReflections: {
       heading: "Réflexions avec état",
       paragraphs: [
-        "Chaque réflexion intègre le profil du regardeur et le style de réflexion, et évolue graduellement, sauf lorsqu’une image provoque une rupture marquante. La première image prend appui sur l’état interne initial ; les images suivantes prolongent l’état issu de la réflexion précédente.",
-        "L’état est qualitatif et s’exprime selon les mêmes sept dimensions (humeur dominante, tension/aisance, énergie, ouverture, focalisation, pression de sens et activation somatique), ce qui permet à de fines variations de s’accumuler au fil du parcours.",
+        "Chaque réflexion est générée à partir du profil du regardeur, du style de réflexion et de l’état interne courant. Après chaque image, l’état interne est mis à jour pour l’étape suivante — le plus souvent par de légers déplacements, sauf lorsqu’une image produit une perturbation plus forte.",
+        "La première image commence depuis l’état interne initial ; chaque image suivante commence depuis l’état transmis par la réflexion précédente.",
+        "Parce que les mêmes sept dimensions sont maintenues d’une étape à l’autre, de petites variations peuvent s’accumuler et former des trajectoires expérientielles significatives.",
       ],
     },
     summarizeTrajectory: {
