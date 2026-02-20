@@ -383,14 +383,19 @@ export function getProfileLabelUserPrompt(
   reflectionStyle: string,
   locale: OutputLocale
 ): string {
-  const langBlock = locale === "fr"
-    ? `LANGUAGE: Write the name entirely in French. Use a French article (Le, La, L'). Do NOT mix English and French.`
-    : `LANGUAGE: Write the name entirely in English. Use "The" as the article.`;
+  const langBlock =
+    locale === "fr"
+      ? `LANGUAGE: Write the tag entirely in French. Start with a French article (Le, La, L'). Do NOT mix English and French.`
+      : `LANGUAGE: Write the tag entirely in English. Do NOT use an article (do not start with "The").`;
+  const articleRule =
+    locale === "fr"
+      ? `- 3–5 words. Must start with a French article ("Le", "La", "L'").`
+      : `- 3–5 words. No article (do not start with "The").`;
 
   return `Given the following viewer profile and reflective style, write a short descriptive tag that captures how this person engages with art. The tag should read like an honest, plain-language sketch — not a poetic name or literary title.
 
 Rules:
-- 3–5 words. No article ("The", "Le", etc.).
+${articleRule}
 - Describe the person's viewing attitude, pace, or emotional stance — what makes them distinctive.
 - Use plain, concrete language. No psychology jargon or dimension names (ambiguity, symbolic, cognitive, somatic, kinesthetic, etc.).
 - Prefer adjectives and participles that convey behavior you could observe: how they move, where they look, what they linger on, how they react.
@@ -398,6 +403,8 @@ Rules:
 - Output only the tag. No preamble, no quotes, no markdown.
 
 ${langBlock}
+
+${outputLanguageInstruction(locale)}
 
 English examples (for tone and form, not to copy):
 - "Slow, absorbed, pattern-seeking"
@@ -408,11 +415,11 @@ English examples (for tone and form, not to copy):
 - "Cautious accumulator of detail"
 
 French examples (for tone and form, not to copy):
-- "Lent, absorbé, en quête de structure"
-- "Prudent mais émotionnellement précis"
-- "Vif et porté par les sensations"
-- "Attentif, méfiant, très formel"
-- "Accumulateur prudent de détails"
+- "Le lent, absorbé, en quête de structure"
+- "La prudente mais émotionnellement précise"
+- "Le vif, porté par les sensations"
+- "L'attentif, méfiant, très formel"
+- "L'accumulateur prudent de détails"
 
 Viewer profile:
 

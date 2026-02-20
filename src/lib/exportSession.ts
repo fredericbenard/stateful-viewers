@@ -24,6 +24,7 @@ export interface ExportReflection {
 
 export interface ExportOptions {
   profileId?: string;
+  profileLabel?: string;
   sessionStartedAt?: string;
   visionProvider?: VisionProvider;
   locale?: OutputLocale;
@@ -55,6 +56,7 @@ export function exportAsMarkdown(
   lines.push(`exportedAt: ${exportedAt}`);
   lines.push(`galleryId: ${gallery.id}`);
   if (options?.profileId) lines.push(`profileId: ${options.profileId}`);
+  if (options?.profileLabel) lines.push(`profileLabel: ${JSON.stringify(options.profileLabel)}`);
   if (options?.sessionStartedAt)
     lines.push(`sessionStartedAt: ${options.sessionStartedAt}`);
   if (options?.locale) lines.push(`locale: ${options.locale}`);
@@ -80,6 +82,12 @@ export function exportAsMarkdown(
   if (profile || reflectionStyle || options?.initialState) {
     lines.push("## Viewer");
     lines.push("");
+    if (options?.profileLabel) {
+      lines.push("### Label");
+      lines.push("");
+      lines.push(options.profileLabel);
+      lines.push("");
+    }
     if (profile) {
       lines.push("### Profile");
       lines.push("");
@@ -174,6 +182,7 @@ export function exportAsJson(
   const sessionStartedAt = options?.sessionStartedAt ?? new Date().toISOString();
   const payload: Record<string, unknown> = {
     profileId: options?.profileId ?? "anonymous",
+    ...(options?.profileLabel && { profileLabel: options.profileLabel }),
     galleryId: gallery.id,
     sessionStartedAt,
     lastUpdatedAt,

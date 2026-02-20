@@ -1369,6 +1369,7 @@ function App() {
       (profileId && sessionStartedAtByKey[`${profileId}:${galleryId}`]) || new Date().toISOString();
     const options = {
       profileId: profileId ?? "anonymous",
+      ...(profileLabel && { profileLabel }),
       sessionStartedAt,
       visionProvider,
       locale,
