@@ -10,7 +10,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "scrape": "tsx scripts/scrape-galleries.ts",
-    "add-labels": "tsx scripts/add-profile-labels.ts"
+    "retrofit-labels": "tsx scripts/retrofit-labels.ts"
   },
   "dependencies": {
     "express": "^5.2.1",
