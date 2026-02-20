@@ -1,7 +1,7 @@
 import type { UiLocale } from "../i18n";
 
 type AboutSection = {
-  heading: string;
+  heading?: string;
   paragraphs?: string[];
   bullets?: { term: string; description?: string; refs?: string }[];
   note?: string;
@@ -11,12 +11,13 @@ export type AboutContent = {
   title: string;
   overview: AboutSection;
   researchPositioning: AboutSection;
+  systemStructure: AboutSection;
   viewerProfile: AboutSection;
   reflectionStyle: AboutSection;
   initialState: AboutSection;
   statefulReflections: AboutSection;
   summarizeTrajectory: AboutSection;
-  modelsAndFeatures: AboutSection;
+  whyThisMatters: AboutSection;
   images: {
     heading: string;
     paragraphs: {
@@ -32,7 +33,6 @@ export const ABOUT_CONTENT: Record<UiLocale, AboutContent> = {
   en: {
     title: "About Stateful Viewers",
     overview: {
-      heading: "Overview",
       paragraphs: [
         "Stateful Viewers is an art and research project that simulates a visitor walking through a gallery. A vision–language model reflects on images one at a time, carrying forward memory, attention, and affect so that each encounter subtly shapes how subsequent images are perceived.",
         "Rather than treating images as independent inputs, the system models viewing as a continuous, cumulative experience.",
@@ -40,17 +40,24 @@ export const ABOUT_CONTENT: Record<UiLocale, AboutContent> = {
       ],
     },
     researchPositioning: {
-      heading: "Research positioning",
+      heading: "Research Positioning",
       paragraphs: [
+        "The project sits at the intersection of art practice and computational modeling of aesthetic experience.",
         "Stateful Viewers draws on reception theory, phenomenology, and aesthetic psychology. It models a viewer's perceptual stance prior to viewing, maintains a stable expressive voice across images, and treats emotional response as something that unfolds over time.",
-        "The system operationalizes qualitative theories of aesthetic experience within a structured generative framework, without reducing experience to numerical scores or fixed emotion labels.",
+        "The system operationalizes qualitative theories of aesthetic experience within a generative framework, without reducing experience to numerical scores or fixed emotion labels.",
         "Where affective computing often asks what emotion is present, Stateful Viewers asks <em>what it is like to encounter this image, having already encountered the previous ones.</em>",
       ],
     },
-    viewerProfile: {
-      heading: "Viewer profile",
+    systemStructure: {
+      heading: "System Structure",
       paragraphs: [
-        "The viewer profile describes stable perceptual and interpretive dispositions — how this person characteristically attends to, processes, and makes meaning from visual art. It addresses 7 dimensions:",
+        "The system is structured around four interacting components that together produce a continuous experiential trajectory.",
+      ],
+    },
+    viewerProfile: {
+      heading: "Viewer Profile",
+      paragraphs: [
+        "The viewer profile describes stable perceptual and interpretive dispositions — how this person characteristically attends to, processes, and makes meaning from visual art. It is defined across seven dimensions:",
       ],
       bullets: [
         { term: "Tolerance for ambiguity", description: "comfort with uncertainty and open interpretation" },
@@ -63,9 +70,9 @@ export const ABOUT_CONTENT: Record<UiLocale, AboutContent> = {
       ],
     },
     reflectionStyle: {
-      heading: "Reflection style",
+      heading: "Reflection Style",
       paragraphs: [
-        "Independent of the profile, the reflection style defines how experience is expressed in language — the texture, rhythm, and habits of inner speech. It addresses 7 dimensions:",
+        "Independent of the profile, the reflection style defines how experience is expressed in language — the texture, rhythm, and habits of inner speech. It is defined across seven dimensions:",
       ],
       bullets: [
         { term: "Lexical register", description: "plain/conversational ↔ literary/poetic" },
@@ -78,9 +85,9 @@ export const ABOUT_CONTENT: Record<UiLocale, AboutContent> = {
       ],
     },
     initialState: {
-      heading: "Initial internal state",
+      heading: "Initial Internal State",
       paragraphs: [
-        "Before encountering any images, the system generates an initial internal state — a momentary snapshot of how the viewer arrives today. This uses the same 7-dimension schema that evolves throughout the visit:",
+        "Before encountering any images, the system generates an initial internal state — a momentary snapshot of how the viewer arrives at the gallery on this particular day. This state is expressed across the same seven dimensions that will evolve over time:",
       ],
       bullets: [
         { term: "Dominant mood", description: "e.g. calm, restless, melancholic, alert, wistful" },
@@ -93,24 +100,24 @@ export const ABOUT_CONTENT: Record<UiLocale, AboutContent> = {
       ],
     },
     statefulReflections: {
-      heading: "Stateful reflections",
+      heading: "Stateful Reflections",
       paragraphs: [
-        "Each reflection incorporates the viewer profile and reflection style, and evolves gradually unless an image is strongly disruptive. On the first image, the generated initial state provides the starting point; subsequent images carry forward the state from the previous reflection.",
-        "State is qualitative and expressed across the same 7 dimensions as the initial state (dominant mood, tension/ease, energy, openness, focus, meaning-making pressure, somatic activation).",
+        "Each reflection incorporates the viewer profile and reflection style, and evolves gradually unless an image is strongly disruptive. The first image begins from the initial internal state; each subsequent image carries forward the state from the previous reflection.",
+        "State is qualitative and expressed across the same seven dimensions (mood, tension/ease, energy, openness, focus, meaning-making pressure, and somatic activation), allowing subtle shifts to accumulate over time.",
       ],
     },
     summarizeTrajectory: {
-      heading: "Summarize trajectory",
+      heading: "Summarizing Trajectories",
       paragraphs: [
-        "Reflection sessions can be treated as experiential trajectories: ordered paths of internal state through a gallery. Use Summarize trajectory to get a short narrative summary of how the experience moved (e.g. gradual settling, oscillation, depletion). Analysis stays qualitative and phenomenological — no valence/arousal or sentiment scores.",
+        "Reflection sessions can be treated as experiential trajectories — ordered paths of internal state through a gallery. The system can generate short narrative summaries describing how the experience unfolds (e.g. gradual settling, oscillation, intensification, depletion).",
+        "Analysis remains qualitative and phenomenological, rather than reducing experience to valence/arousal axes or sentiment scores.",
       ],
     },
-    modelsAndFeatures: {
-      heading: "Models & features",
+    whyThisMatters: {
+      heading: "Why this matters",
       paragraphs: [
-        "Vision: LLaVA-1.6 7B (Ollama), GPT-5.2 (OpenAI), Gemini 3 Pro (Google), Claude Sonnet 4.5 (Anthropic). Profile, reflection style, and initial state are generated by the chosen provider. Variability is ensured by parametric hints that pin a random subset of dimensions and let the model resolve the rest.",
-        "The profile list is not filtered by LLM provider — you can load a profile generated by one provider and reflect with another. Exported data tracks the profile-generation LLM separately from the reflection LLM/VLM.",
-        "Walk-through mode, auto-advance, text-to-speech, auto voice-over, reflection history.",
+        "By modeling how perception evolves across a sequence of images, Stateful Viewers makes it possible to study, compare, and design trajectories of aesthetic experience — not just isolated reactions to individual works.",
+        "This opens a space for new forms of artistic experimentation, as well as computational investigations into how memory, attention, and affect shape interpretation over time.",
       ],
     },
     images: {
@@ -120,7 +127,7 @@ export const ABOUT_CONTENT: Record<UiLocale, AboutContent> = {
           beforeLink: "Images in this app are drawn from ",
           linkText: "fredericbenard.com",
           afterLink:
-            " (Film, Digital, and Current Work galleries). All images © 1990–2026 Frédéric Bénard. All rights reserved. These images are not part of the open-source repository and may not be copied, reused, or redistributed without permission.",
+            ". All images © 1990–2026 Frédéric Bénard. All rights reserved. These images are not part of the open-source repository and may not be copied, reused, or redistributed without permission.",
         },
       ],
       disclaimer:
@@ -130,32 +137,38 @@ export const ABOUT_CONTENT: Record<UiLocale, AboutContent> = {
   fr: {
     title: "À propos de Stateful Viewers",
     overview: {
-      heading: "Aperçu",
       paragraphs: [
         "Stateful Viewers est un projet d'art et de recherche qui simule la visite d'une galerie. Un modèle vision-langage réfléchit aux images une à une, en portant en lui mémoire, attention et affect, de sorte que chaque rencontre façonne subtilement la perception des images suivantes.",
         "Plutôt que de traiter les images comme des entrées indépendantes, le système modélise l'expérience du regard comme un processus continu et cumulatif.",
-        'Code source : <a href="https://github.com/fredericbenard/stateful-viewers">dépôt GitHub</a>.',
+        'Source code: <a href="https://github.com/fredericbenard/stateful-viewers">GitHub repository</a>.',
       ],
     },
     researchPositioning: {
       heading: "Positionnement de recherche",
       paragraphs: [
+        "Le projet se situe à l’intersection de la pratique artistique et de la modélisation computationnelle de l’expérience esthétique.",
         "Stateful Viewers s'appuie sur la théorie de la réception, la phénoménologie et la psychologie esthétique. Il modélise la posture perceptive du regardeur avant la rencontre avec l'image, maintient une voix expressive stable d'une image à l'autre, et considère la réponse émotionnelle comme un processus qui se déploie dans le temps.",
-        "Le système opérationnalise des théories qualitatives de l'expérience esthétique dans un cadre génératif structuré, sans réduire l'expérience à des scores numériques ni à des catégories émotionnelles fixes.",
+        "Le système opérationnalise des théories qualitatives de l’expérience esthétique dans un cadre génératif, sans réduire l’expérience à des scores numériques ni à des catégories émotionnelles fixes.",
         "Là où l'informatique affective demande souvent quelle émotion est présente, Stateful Viewers s'interroge sur <em>ce que signifie faire l'expérience de cette image, après avoir déjà fait l'expérience des précédentes.</em>",
+      ],
+    },
+    systemStructure: {
+      heading: "Structure du système",
+      paragraphs: [
+        "Le système est structuré autour de quatre composantes en interaction qui produisent ensemble une trajectoire expérientielle continue.",
       ],
     },
     viewerProfile: {
       heading: "Profil du regardeur",
       paragraphs: [
-        "Le profil décrit des dispositions perceptives et interprétatives stables — la manière dont cette personne porte habituellement attention aux images, les traite et en construit le sens. Il couvre 7 dimensions :",
+        "Le profil décrit des dispositions perceptives et interprétatives stables — la manière dont cette personne porte habituellement attention aux images, les traite et en construit le sens. Il est défini selon sept dimensions :",
       ],
       bullets: [
         { term: "Tolérance à l'ambiguïté", description: "confort avec l'incertitude et l'interprétation ouverte" },
         { term: "Style attentionnel", description: "absorbé/contemplatif ↔ balayant/fébrile" },
         { term: "Orientation incarnée", description: "somatique ↔ cognitive" },
         { term: "Posture interprétative", description: "littérale/descriptive ↔ symbolique/associative ↔ autobiographique" },
-        { term: "Conditionnement esthétique", description: "naïve ↔ fortement conditionné, avec formation artistique" },
+        { term: "Conditionnement esthétique", description: "naïf ↔ fortement conditionné, avec formation artistique" },
         { term: "Posture motivationnelle", description: "recherche de défi/nouveauté ↔ recherche de confort/familiarité" },
         { term: "Tendance à l'intégration mnésique", description: "intégrative/cumulative ↔ discrète/remise à zéro" },
       ],
@@ -163,7 +176,7 @@ export const ABOUT_CONTENT: Record<UiLocale, AboutContent> = {
     reflectionStyle: {
       heading: "Style de réflexion",
       paragraphs: [
-        "Indépendant du profil, le style de réflexion définit la manière dont l'expérience est exprimée en langage — la texture, le rythme et les habitudes du discours intérieur. Il couvre 7 dimensions :",
+        "Indépendant du profil, le style de réflexion définit la manière dont l’expérience est exprimée en langage — la texture, le rythme et les habitudes du discours intérieur. Il est défini selon sept dimensions :",
       ],
       bullets: [
         { term: "Registre lexical", description: "courant/conversationnel ↔ littéraire/poétique" },
@@ -178,7 +191,7 @@ export const ABOUT_CONTENT: Record<UiLocale, AboutContent> = {
     initialState: {
       heading: "État interne initial",
       paragraphs: [
-        "Avant toute rencontre avec les images, le système génère un état interne initial — un instantané de l'état intérieur du regardeur au moment où il entre dans la galerie. Cet état utilise le même schéma à 7 dimensions qui évolue tout au long de la visite :",
+        "Avant toute rencontre avec les images, le système génère un état interne initial — un instantané de l’état intérieur du regardeur au moment où il entre dans la galerie. Cet état est exprimé selon les mêmes sept dimensions qui évolueront tout au long de la visite :",
       ],
       bullets: [
         { term: "Humeur dominante", description: "ex. : calme, agité, mélancolique, alerte, nostalgique" },
@@ -193,22 +206,22 @@ export const ABOUT_CONTENT: Record<UiLocale, AboutContent> = {
     statefulReflections: {
       heading: "Réflexions avec état",
       paragraphs: [
-        "Chaque réflexion intègre le profil du regardeur et le style de réflexion, et évolue graduellement, sauf lorsqu'une image provoque une rupture marquante. Pour la première image, l'état initial généré sert de point de départ ; les images suivantes prolongent l'état issu de la réflexion précédente.",
-        "L'état est qualitatif et s'exprime selon les mêmes 7 dimensions que l'état initial (humeur dominante, tension/aisance, énergie, ouverture, focalisation, pression de sens, activation somatique).",
+        "Chaque réflexion intègre le profil du regardeur et le style de réflexion, et évolue graduellement, sauf lorsqu’une image provoque une rupture marquante. La première image prend appui sur l’état interne initial ; les images suivantes prolongent l’état issu de la réflexion précédente.",
+        "L’état est qualitatif et s’exprime selon les mêmes sept dimensions (humeur dominante, tension/aisance, énergie, ouverture, focalisation, pression de sens et activation somatique), ce qui permet à de fines variations de s’accumuler au fil du parcours.",
       ],
     },
     summarizeTrajectory: {
-      heading: "Résumer la trajectoire",
+      heading: "Résumé de trajectoire",
       paragraphs: [
-        "Les sessions de réflexion peuvent être considérées comme des trajectoires expérientielles : des parcours ordonnés de l'état interne à travers une galerie. La fonction « Résumer la trajectoire » permet d'obtenir un court résumé narratif de la manière dont l'expérience a évolué (par exemple : apaisement graduel, oscillation, épuisement). L'analyse reste qualitative et phénoménologique — pas de scores valence–arousal ni d'analyse de sentiment.",
+        "Les sessions de réflexion peuvent être considérées comme des trajectoires expérientielles — des parcours ordonnés de l’état interne à travers une galerie. La fonction « Résumer la trajectoire » permet d’obtenir un court résumé narratif de la manière dont l’expérience évolue (par exemple : apaisement graduel, oscillation, intensification, épuisement).",
+        "L’analyse demeure qualitative et phénoménologique, sans réduction à des axes valence–activation ni à des scores de sentiment.",
       ],
     },
-    modelsAndFeatures: {
-      heading: "Modèles et fonctionnalités",
+    whyThisMatters: {
+      heading: "Pourquoi cela compte",
       paragraphs: [
-        "Vision : LLaVA-1.6 7B (Ollama), GPT-5.2 (OpenAI), Gemini 3 Pro (Google), Claude Sonnet 4.5 (Anthropic). Le profil, le style de réflexion et l'état initial sont générés par le fournisseur choisi. La diversité est assurée par des indices paramétriques qui fixent un sous-ensemble aléatoire de dimensions et laissent le modèle résoudre le reste.",
-        "La liste des profils n'est pas filtrée par fournisseur — vous pouvez charger un profil généré par un fournisseur et réfléchir avec un autre. Les données exportées distinguent le LLM utilisé pour la génération du profil de celui utilisé pour les réflexions.",
-        "Mode parcours guidé, avancement automatique, synthèse vocale et lecture automatique, historique des réflexions.",
+        "En modélisant la manière dont la perception évolue à travers une séquence d’images, Stateful Viewers permet d’étudier, de comparer et de concevoir des trajectoires d’expérience esthétique — plutôt que de se limiter à des réactions isolées à des œuvres individuelles.",
+        "Cela ouvre un espace pour de nouvelles formes d’expérimentation artistique, ainsi que pour des recherches computationnelles sur le rôle de la mémoire, de l’attention et de l’affect dans la construction du sens au fil du temps.",
       ],
     },
     images: {
@@ -218,7 +231,7 @@ export const ABOUT_CONTENT: Record<UiLocale, AboutContent> = {
           beforeLink: "Les images de cette application proviennent de ",
           linkText: "fredericbenard.com",
           afterLink:
-            " (galeries Film, Numérique et Travaux récents). Toutes les images © 1990–2026 Frédéric Bénard. Tous droits réservés. Ces images ne font pas partie du dépôt open source et ne peuvent pas être copiées, réutilisées ou redistribuées sans autorisation.",
+            ". Toutes les images © 1990–2026 Frédéric Bénard. Tous droits réservés. Ces images ne font pas partie du dépôt open source et ne peuvent pas être copiées, réutilisées ou redistribuées sans autorisation.",
         },
       ],
       disclaimer:

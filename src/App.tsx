@@ -396,21 +396,21 @@ function App() {
   const [profileShort, setProfileShort] = useState(() => {
     try {
       return localStorage.getItem(STORAGE_KEYS.profileShort) || "";
-    } catch (e) {
+    } catch {
       return "";
     }
   });
   const [reflectionStyleShort, setReflectionStyleShort] = useState(() => {
     try {
       return localStorage.getItem(STORAGE_KEYS.reflectionStyleShort) || "";
-    } catch (e) {
+    } catch {
       return "";
     }
   });
   const [initialStateShort, setInitialStateShort] = useState(() => {
     try {
       return localStorage.getItem(STORAGE_KEYS.initialStateShort) || "";
-    } catch (e) {
+    } catch {
       return "";
     }
   });
@@ -1922,21 +1922,21 @@ function App() {
                   const about = ABOUT_CONTENT[locale];
                   type AboutBullet = { term: string; description?: string; refs?: string };
                   type AboutSection = {
-                    heading: string;
+                    heading?: string;
                     paragraphs?: string[];
                     bullets?: AboutBullet[];
                     note?: string;
                   };
-                  const renderSection = (section: AboutSection) => (
+                  const renderSection = (id: string, section: AboutSection) => (
                     <>
-                      <h3>{section.heading}</h3>
+                      {section.heading ? <h3>{section.heading}</h3> : null}
                       {section.paragraphs?.map((p, idx) => (
-                        <p key={`${section.heading}-p-${idx}`}>{renderInlineMarkup(p)}</p>
+                        <p key={`${id}-p-${idx}`}>{renderInlineMarkup(p)}</p>
                       ))}
                       {section.bullets && section.bullets.length > 0 && (
                         <ul>
                           {section.bullets.map((b, idx) => (
-                            <li key={`${section.heading}-b-${idx}`}>
+                            <li key={`${id}-b-${idx}`}>
                               <strong>{b.term}</strong>
                               {b.description ? ` — ${b.description}` : b.refs ? ` → ${b.refs}` : ""}
                             </li>
@@ -1948,14 +1948,15 @@ function App() {
                   );
                   return (
                     <>
-                      {renderSection(about.overview)}
-                      {renderSection(about.researchPositioning)}
-                      {renderSection(about.viewerProfile)}
-                      {renderSection(about.reflectionStyle)}
-                      {renderSection(about.initialState)}
-                      {renderSection(about.statefulReflections)}
-                      {renderSection(about.summarizeTrajectory)}
-                      {renderSection(about.modelsAndFeatures)}
+                      {renderSection("overview", about.overview)}
+                      {renderSection("researchPositioning", about.researchPositioning)}
+                      {renderSection("systemStructure", about.systemStructure)}
+                      {renderSection("viewerProfile", about.viewerProfile)}
+                      {renderSection("reflectionStyle", about.reflectionStyle)}
+                      {renderSection("initialState", about.initialState)}
+                      {renderSection("statefulReflections", about.statefulReflections)}
+                      {renderSection("summarizeTrajectory", about.summarizeTrajectory)}
+                      {renderSection("whyThisMatters", about.whyThisMatters)}
                       <h3>{about.images.heading}</h3>
                       {about.images.paragraphs.map((p, idx) => (
                         <p key={`images-p-${idx}`}>

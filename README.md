@@ -15,6 +15,12 @@ Stateful Viewers is an art and research project that simulates a visitor walking
 
 Rather than treating images as independent inputs, the system models viewing as a continuous, cumulative experience.
 
+### Architecture
+
+![Stateful Viewers architecture](docs/architecture.png)
+
+Each viewer has a **Profile** (perceptual dispositions), a **Reflection Style** (expressive voice), and an evolving **Internal State** (momentary inner condition). For each image, all three — plus the image itself — feed into a vision-language model, which produces a **Reflection** and an **Updated State** that carries forward to the next encounter.
+
 ## Features
 
 - **Viewer Profile Generation (v2)** -- Generate a viewer profile, independent reflection style, initial internal state, short descriptions for each, and a label -- all in a single flow. Variability is ensured by parametric hints that randomly pin 2-4 of 7 dimensions per schema and let the LLM resolve the rest.
@@ -201,6 +207,15 @@ Each reflection:
 - Uses the initial state for the first image, then carries forward the evolving state
 - Evolves gradually unless an image is strongly disruptive
 - Outputs structured `[REFLECTION]` and `[STATE]` blocks
+
+Conceptual architecture (showing the first few steps):
+
+- \(t_0\): initial internal state (generated once, before image 1)
+- For each image \(i \in \{1,2,3,\dots\}\):
+  - **Input**: Profile + Style + State(\(t_{i-1}\)) + Image(\(i\))
+  - **Output**: Reflection(\(i\)) + updated State(\(t_i\))
+
+This makes it natural to display the internal state as a timeline: \(t_0, t_1, t_2, t_3\) (after images 1–3).
 
 **Saved reflection sessions**
 When you reflect on images with a profile that was successfully saved **and** the dev server is running, each reflection auto-saves the full session to `data/reflections/<profileId>_<galleryId>_<sessionStartedAt>.json`. One file per (profile, gallery) run is updated in place after every new reflection. The file embeds gallery metadata, profile and reflection style text, all reflections so far, and last internal state.
