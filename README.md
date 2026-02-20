@@ -208,15 +208,6 @@ Each reflection:
 - Evolves gradually unless an image is strongly disruptive
 - Outputs structured `[REFLECTION]` and `[STATE]` blocks
 
-Conceptual architecture (showing the first few steps):
-
-- \(t_0\): initial internal state (generated once, before image 1)
-- For each image \(i \in \{1,2,3,\dots\}\):
-  - **Input**: Profile + Style + State(\(t_{i-1}\)) + Image(\(i\))
-  - **Output**: Reflection(\(i\)) + updated State(\(t_i\))
-
-This makes it natural to display the internal state as a timeline: \(t_0, t_1, t_2, t_3\) (after images 1–3).
-
 **Saved reflection sessions**
 When you reflect on images with a profile that was successfully saved **and** the dev server is running, each reflection auto-saves the full session to `data/reflections/<profileId>_<galleryId>_<sessionStartedAt>.json`. One file per (profile, gallery) run is updated in place after every new reflection. The file embeds gallery metadata, profile and reflection style text, all reflections so far, and last internal state.
 
