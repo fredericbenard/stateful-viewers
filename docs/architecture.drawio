@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="krbrnEzJA3eD8qaw8z07" name="Page-1">
-        <mxGraphModel dx="1055" dy="572" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="776" dy="537" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -49,7 +49,7 @@
                         <mxPoint x="300" y="356.36363636363626" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="21" value="Stateful reflection process" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
+                <mxCell id="21" value="Reflect on image" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
                     <mxGeometry x="240" y="224" width="80" height="80" as="geometry"/>
                 </mxCell>
                 <mxCell id="23" value="" style="endArrow=classic;html=1;" parent="1" source="21" target="13" edge="1">
@@ -64,7 +64,7 @@
                         <mxPoint x="348" y="310" as="targetPoint"/>
                     </mxGeometry>
                 </mxCell>
-                <mxCell id="25" value="Stateful reflection process" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
+                <mxCell id="25" value="&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;Reflect on image&lt;/span&gt;" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
                     <mxGeometry x="440" y="224" width="80" height="80" as="geometry"/>
                 </mxCell>
                 <mxCell id="26" value="" style="endArrow=classic;html=1;" parent="1" source="25" target="32" edge="1">
@@ -94,7 +94,7 @@
                 <mxCell id="32" value="Reflection on image 2" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
                     <mxGeometry x="437.5" y="500" width="85" height="50" as="geometry"/>
                 </mxCell>
-                <mxCell id="33" value="Stateful reflection process" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
+                <mxCell id="33" value="&lt;span style=&quot;color: rgb(0, 0, 0);&quot;&gt;Reflect on image&lt;/span&gt;" style="ellipse;whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
                     <mxGeometry x="640" y="224" width="80" height="80" as="geometry"/>
                 </mxCell>
                 <mxCell id="38" value="" style="endArrow=classic;html=1;" parent="1" source="33" target="15" edge="1">
