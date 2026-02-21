@@ -15,7 +15,7 @@ Stateful Viewers is an art and research project that simulates a visitor walking
 
 Rather than treating images as independent inputs, the system models viewing as a continuous, cumulative experience.
 
-### stateful-viewing-model
+### Stateful Viewing Model
 
 ![Stateful viewing model](docs/stateful-viewing-model.svg)
 
