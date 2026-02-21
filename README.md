@@ -19,7 +19,7 @@ Rather than treating images as independent inputs, the system models viewing as 
 
 ![Stateful viewing model](docs/stateful-viewing-model.svg)
 
-Each viewer has a **Profile** (perceptual dispositions), a **Reflection Style** (expressive voice), and an evolving **Internal State** (momentary inner condition). For each image, all three — plus the image itself — feed into a vision-language model, which produces a **Reflection** and an **Updated State** that carries forward to the next encounter.
+Each viewer has a **Profile** (perceptual dispositions), a **Reflection Style** (expressive voice), and an evolving **Internal State** (momentary inner condition). For each image, the model is conditioned on the image plus these viewer attributes, and outputs both a **Reflection** and an **Updated Internal State**. That updated state carries forward to the next image, creating a continuous experiential trajectory across encounters.
 
 ## Features
 
