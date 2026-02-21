@@ -47,6 +47,8 @@ export interface ReflectionSessionPayload {
   gallery: { id: string; name: string; era: string; description: string };
   profile: string;
   reflectionStyle: string;
+  /** Initial internal state before the first image (from the generated profile). */
+  initialState?: string;
   reflections: SessionReflection[];
   lastInternalState: string;
   /** Provider key for the LLM (profile/style generation) */
@@ -71,6 +73,7 @@ export interface SaveReflectionSessionParams {
   sessionStartedAt: string;
   profile: string;
   reflectionStyle: string;
+  initialState?: string;
   reflections: SessionReflection[];
   lastInternalState: string;
   provider: VisionProvider;
@@ -105,6 +108,7 @@ export async function saveReflectionSession(
     },
     profile: params.profile,
     reflectionStyle: params.reflectionStyle,
+    ...(params.initialState && { initialState: params.initialState }),
     reflections: params.reflections,
     lastInternalState: params.lastInternalState,
     llm: params.provider,

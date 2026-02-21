@@ -1275,6 +1275,7 @@ function App() {
         sessionStartedAt,
         profile: viewerProfile,
         reflectionStyle,
+        ...(initialState && { initialState }),
         reflections: sessionReflections,
         lastInternalState: newLastState,
         provider: visionProvider,
@@ -1476,6 +1477,7 @@ function App() {
           sessionStartedAt,
           profile: viewerProfile,
           reflectionStyle,
+          ...(initialState && { initialState }),
           reflections: reflections.map((r) => ({
             imageIndex: r.imageIndex,
             imageId: r.imageId,
