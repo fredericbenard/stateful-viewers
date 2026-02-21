@@ -17,7 +17,7 @@ Rather than treating images as independent inputs, the system models viewing as 
 
 ### Stateful Viewing Process
 
-![Stateful viewing process](docs/stateful-viewing-process.svg)
+![Stateful viewing process](docs/stateful-viewing-process.en.svg)
 
 Each viewer has a **Profile** (perceptual dispositions), a **Reflection Style** (expressive voice), and an evolving **Internal State** (momentary inner condition). For each image, the model is conditioned on the image plus these viewer attributes, and outputs both a **Reflection** and an **Updated Internal State**. That updated state carries forward to the next image, creating a continuous experiential trajectory across encounters.
 
