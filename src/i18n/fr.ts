@@ -123,6 +123,8 @@ export const fr = {
     hide: "Masquer",
     brief: "Bref",
     full: "Complet",
+    showFull: "Afficher le texte complet",
+    hideFull: "Masquer le texte complet",
     profileHeading: "Profil",
     reflectionStyleHeading: "Style de réflexion",
     initialStateHeading: "État initial",

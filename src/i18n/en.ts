@@ -123,6 +123,8 @@ export const en = {
     hide: "Hide",
     brief: "Brief",
     full: "Full",
+    showFull: "Show full",
+    hideFull: "Hide full",
     profileHeading: "Profile",
     reflectionStyleHeading: "Reflection style",
     initialStateHeading: "Initial state",
