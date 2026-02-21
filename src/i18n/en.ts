@@ -121,6 +121,8 @@ export const en = {
   viewerProfile: {
     show: "Show",
     hide: "Hide",
+    brief: "Brief",
+    full: "Full",
     profileHeading: "Profile",
     reflectionStyleHeading: "Reflection style",
     initialStateHeading: "Initial state",

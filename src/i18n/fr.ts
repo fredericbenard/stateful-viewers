@@ -121,7 +121,9 @@ export const fr = {
   viewerProfile: {
     show: "Afficher",
     hide: "Masquer",
-    profileHeading: "Profil du regardeur",
+    brief: "Bref",
+    full: "Complet",
+    profileHeading: "Profil",
     reflectionStyleHeading: "Style de réflexion",
     initialStateHeading: "État initial",
   },

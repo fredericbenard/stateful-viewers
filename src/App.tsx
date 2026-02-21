@@ -481,6 +481,9 @@ function App() {
     height: number;
   } | null>(null);
   const [profileExpanded, setProfileExpanded] = useState(false);
+  const [showFullProfileDescription, setShowFullProfileDescription] = useState(false);
+  const [showFullStyleDescription, setShowFullStyleDescription] = useState(false);
+  const [showFullInitialStateDescription, setShowFullInitialStateDescription] = useState(false);
   const [revealedSensitiveByImageKey, setRevealedSensitiveByImageKey] = useState<
     Record<string, boolean>
   >({});
@@ -491,6 +494,16 @@ function App() {
   const currentIndex = currentIndexByGallery[galleryId] ?? 0;
   const reflections = reflectionsByGallery[galleryId] ?? [];
   const lastInternalState = lastInternalStateByGallery[galleryId] ?? "";
+  const hasProfileBrief = Boolean(profileShort?.trim());
+  const hasProfileFull = Boolean(viewerProfile?.trim());
+  const showProfileFull = hasProfileFull && (!hasProfileBrief || showFullProfileDescription);
+  const hasStyleBrief = Boolean(reflectionStyleShort?.trim());
+  const hasStyleFull = Boolean(reflectionStyle?.trim());
+  const showStyleFull = hasStyleFull && (!hasStyleBrief || showFullStyleDescription);
+  const hasInitialStateBrief = Boolean(initialStateShort?.trim());
+  const hasInitialStateFull = Boolean(initialState?.trim());
+  const showInitialStateFull =
+    hasInitialStateFull && (!hasInitialStateBrief || showFullInitialStateDescription);
   const visibleProfiles = showOtherLanguageProfiles
     ? availableProfiles
     : availableProfiles.filter((p) => normalizeUiLocale(p.locale) === locale);
@@ -954,6 +967,9 @@ function App() {
     setReflectionStyleShort("");
     setInitialStateShort("");
     setProfileId(null);
+    setShowFullProfileDescription(false);
+    setShowFullStyleDescription(false);
+    setShowFullInitialStateDescription(false);
 
     setReflectionsByGallery({});
     setLastInternalStateByGallery({});
@@ -1135,6 +1151,9 @@ function App() {
         setProfileShort(profile.profileShort || "");
         setReflectionStyleShort(profile.reflectionStyleShort || "");
         setInitialStateShort(profile.initialStateShort || "");
+        setShowFullProfileDescription(false);
+        setShowFullStyleDescription(false);
+        setShowFullInitialStateDescription(false);
         setReflectionsByGallery({});
         setLastInternalStateByGallery({});
         setSelectedReflectionGeneratedAtByGallery({});
@@ -1155,6 +1174,14 @@ function App() {
     loadProfiles();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (!profileExpanded) {
+      setShowFullProfileDescription(false);
+      setShowFullStyleDescription(false);
+      setShowFullInitialStateDescription(false);
+    }
+  }, [profileExpanded]);
 
   const handleStartGallery = (galleryId: string) => {
     setSelectedGalleryId(galleryId);
@@ -1778,29 +1805,146 @@ function App() {
                         <div className="viewer-profile-id">{profileId}</div>
                       </div>
                     )}
-                    <h3 className="viewer-profile-label">
-                      {t(locale, "viewerProfile.profileHeading")}
-                    </h3>
-                    <p className="viewer-profile-text">
-                      {profileShort || viewerProfile}
+                    <div className="viewer-profile-section-header">
+                      <h3 className="viewer-profile-label">
+                        {t(locale, "viewerProfile.profileHeading")}
+                      </h3>
+                      {(hasProfileBrief || hasProfileFull) && (
+                        <div className="viewer-profile-segmented-toggle" role="group">
+                          <button
+                            type="button"
+                            className={`viewer-profile-segment-btn ${
+                              showProfileFull ? "" : "active"
+                            }`}
+                            aria-pressed={!showProfileFull}
+                            disabled={!hasProfileBrief}
+                            onClick={() => setShowFullProfileDescription(false)}
+                          >
+                            {t(locale, "viewerProfile.brief")}
+                          </button>
+                          <span className="viewer-profile-segment-divider" aria-hidden="true">
+                            |
+                          </span>
+                          <button
+                            type="button"
+                            className={`viewer-profile-segment-btn ${
+                              showProfileFull ? "active" : ""
+                            }`}
+                            aria-pressed={showProfileFull}
+                            disabled={!hasProfileFull}
+                            onClick={() => setShowFullProfileDescription(true)}
+                          >
+                            {t(locale, "viewerProfile.full")}
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                    <p
+                      className="viewer-profile-text"
+                    >
+                      {hasProfileBrief
+                        ? hasProfileFull
+                          ? showProfileFull
+                            ? viewerProfile
+                            : profileShort
+                          : profileShort
+                        : viewerProfile}
                     </p>
                     {(reflectionStyleShort || reflectionStyle) && (
                       <>
-                        <h3 className="viewer-profile-label">
-                          {t(locale, "viewerProfile.reflectionStyleHeading")}
-                        </h3>
-                        <p className="viewer-profile-text">
-                          {reflectionStyleShort || reflectionStyle}
+                        <div className="viewer-profile-section-header">
+                          <h3 className="viewer-profile-label">
+                            {t(locale, "viewerProfile.reflectionStyleHeading")}
+                          </h3>
+                          {(hasStyleBrief || hasStyleFull) && (
+                            <div className="viewer-profile-segmented-toggle" role="group">
+                              <button
+                                type="button"
+                                className={`viewer-profile-segment-btn ${
+                                  showStyleFull ? "" : "active"
+                                }`}
+                                aria-pressed={!showStyleFull}
+                                disabled={!hasStyleBrief}
+                                onClick={() => setShowFullStyleDescription(false)}
+                              >
+                                {t(locale, "viewerProfile.brief")}
+                              </button>
+                              <span className="viewer-profile-segment-divider" aria-hidden="true">
+                                |
+                              </span>
+                              <button
+                                type="button"
+                                className={`viewer-profile-segment-btn ${
+                                  showStyleFull ? "active" : ""
+                                }`}
+                                aria-pressed={showStyleFull}
+                                disabled={!hasStyleFull}
+                                onClick={() => setShowFullStyleDescription(true)}
+                              >
+                                {t(locale, "viewerProfile.full")}
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                        <p
+                          className="viewer-profile-text"
+                        >
+                          {hasStyleBrief
+                            ? hasStyleFull
+                              ? showStyleFull
+                                ? reflectionStyle
+                                : reflectionStyleShort
+                              : reflectionStyleShort
+                            : reflectionStyle}
                         </p>
                       </>
                     )}
                     {(initialStateShort || initialState) && (
                       <>
-                        <h3 className="viewer-profile-label">
-                          {t(locale, "viewerProfile.initialStateHeading")}
-                        </h3>
-                        <p className="viewer-profile-text">
-                          {initialStateShort || initialState}
+                        <div className="viewer-profile-section-header">
+                          <h3 className="viewer-profile-label">
+                            {t(locale, "viewerProfile.initialStateHeading")}
+                          </h3>
+                          {(hasInitialStateBrief || hasInitialStateFull) && (
+                            <div className="viewer-profile-segmented-toggle" role="group">
+                              <button
+                                type="button"
+                                className={`viewer-profile-segment-btn ${
+                                  showInitialStateFull ? "" : "active"
+                                }`}
+                                aria-pressed={!showInitialStateFull}
+                                disabled={!hasInitialStateBrief}
+                                onClick={() => setShowFullInitialStateDescription(false)}
+                              >
+                                {t(locale, "viewerProfile.brief")}
+                              </button>
+                              <span className="viewer-profile-segment-divider" aria-hidden="true">
+                                |
+                              </span>
+                              <button
+                                type="button"
+                                className={`viewer-profile-segment-btn ${
+                                  showInitialStateFull ? "active" : ""
+                                }`}
+                                aria-pressed={showInitialStateFull}
+                                disabled={!hasInitialStateFull}
+                                onClick={() => setShowFullInitialStateDescription(true)}
+                              >
+                                {t(locale, "viewerProfile.full")}
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                        <p
+                          className="viewer-profile-text"
+                        >
+                          {hasInitialStateBrief
+                            ? hasInitialStateFull
+                              ? showInitialStateFull
+                                ? initialState
+                                : initialStateShort
+                              : initialStateShort
+                            : initialState}
                         </p>
                       </>
                     )}
