@@ -1,0 +1,51 @@
+# Evaluation criteria for style label prompt variants.
+#
+# Goal: short, scan-friendly, voice-specific labels (not about perception/content).
+
+criteria:
+  - id: brevity
+    name: "Brevity"
+    description: >
+      Is the label compact and easy to scan?
+    scoring_prompt: >
+      1 = Long, sentence-like, or cluttered.
+      2 = Wordy; feels like a summary.
+      3 = Reasonably short (3–6 words).
+      4 = Short (2–4 words) and scan-friendly.
+      5 = Very short (1–3 words) without losing meaning.
+
+  - id: voice_specificity
+    name: "Voice specificity"
+    description: >
+      Does the label describe the *voice* of inner speech (cadence, register,
+      texture, intimacy, fragmentation, metaphor habit), not what is perceived?
+    scoring_prompt: >
+      1 = Mostly about perception/content; not voice.
+      2 = Mixed; only faintly voice-related.
+      3 = Voice-related but generic.
+      4 = Clearly voice-specific and grounded.
+      5 = Precisely captures the distinctive voice signature.
+
+  - id: interestingness
+    name: "Interestingness"
+    description: >
+      Is the label vivid and distinctive without becoming poetic or gimmicky?
+    scoring_prompt: >
+      1 = Flat / generic.
+      2 = Slightly descriptive but forgettable.
+      3 = Adequate; some distinctiveness.
+      4 = Distinctive and memorable while staying plain-language.
+      5 = Strikingly distinctive without being poetic, abstract, or weird.
+
+  - id: rule_compliance
+    name: "Rule compliance"
+    description: >
+      Does it follow the prompt's formatting rules (no preamble/quotes, no
+      dimension-jargon, no articles, etc.)?
+    scoring_prompt: >
+      1 = Multiple rule violations.
+      2 = One major rule violation.
+      3 = Minor rule violation or borderline.
+      4 = Fully compliant.
+      5 = Fully compliant and cleanly formatted.
+

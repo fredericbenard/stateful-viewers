@@ -21,6 +21,14 @@ data/*
 data/profiles/*
 !data/profiles/public/
 !data/profiles/public/**
+!data/styles/
+data/styles/*
+!data/styles/public/
+!data/styles/public/**
+!data/states/
+data/states/*
+!data/states/public/
+!data/states/public/**
 
 # Binary assets (HF Spaces rejects binaries in Git; host elsewhere if needed)
 public/app-icon-orig.png

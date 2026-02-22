@@ -1,0 +1,12 @@
+experiment_id: stateful_reflection_length_variations
+provider: openai
+model: gpt-5.2
+temperature: 0.7
+max_tokens: 1024
+images:
+  - id: park_ave_doors
+    source: https://fredericbenard.com/images/analog/galleries/new_work/full/r069_f011.jpg
+    caption: Patterned metal double doors, 5739 Park Ave, Montreal, Quebec, 2025
+profile: artifacts/profile.txt
+style: artifacts/style.txt
+initial_state: artifacts/initial_state.txt

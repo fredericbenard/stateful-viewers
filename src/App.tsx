@@ -9,7 +9,9 @@ import {
   getViewerProfileUserPrompt,
   getReflectionStyleUserPrompt,
   getInitialStateUserPrompt,
-  getProfileLabelUserPrompt,
+  getProfileLabelFromProfileUserPrompt,
+  getStyleLabelUserPrompt,
+  getStateLabelUserPrompt,
   getShortProfileUserPrompt,
   getShortStyleUserPrompt,
   getShortStateUserPrompt,
@@ -24,6 +26,10 @@ import { useSpeech } from "./hooks/useSpeech";
 import { exportAsMarkdown, exportAsJson, downloadFile } from "./lib/exportSession";
 import { saveGeneratedProfile } from "./lib/saveProfile";
 import { listProfiles, loadProfile, type ProfileSummary } from "./lib/loadProfile";
+import { saveGeneratedStyle } from "./lib/saveStyle";
+import { listStyles, loadStyle, type StyleSummary } from "./lib/loadStyle";
+import { saveGeneratedState } from "./lib/saveState";
+import { listStates, loadState, type StateSummary } from "./lib/loadState";
 import {
   saveReflectionSession,
   getModelLabels,
@@ -70,6 +76,44 @@ function truncateAtWord(text: string, maxLength: number): string {
     return truncated.slice(0, lastSpace) + "…";
   }
   return truncated + "…";
+}
+
+function getSpeakableReflectionOnlyText(content: string): string {
+  const parsed = parseReflection(content);
+  // Prefer the extracted reflection block (never include updated internal state).
+  let text = (parsed.reaction || "").trim() || content.trim();
+
+  // Safety: if the model didn't follow the expected format, strip any obvious state section.
+  text = text.replace(/^\s*\*{0,2}\[REFLECTION\]\*{0,2}\s*:?\s*/i, "");
+  text = text.split(/\n?\s*\*{0,2}\[STATE\]\*{0,2}\s*:?\s*/i)[0] ?? text;
+  text = text.split(/\n?\s*Internal state after this image:\s*/i)[0] ?? text;
+
+  return text.trim();
+}
+
+function renderTextWithAnimatedEllipsis(text: string): ReactNode {
+  const trimmed = text.trimEnd();
+  const endsWithThreeDots = trimmed.endsWith("...");
+  const endsWithEllipsisChar = trimmed.endsWith("…");
+
+  if (!endsWithThreeDots && !endsWithEllipsisChar) return text;
+
+  const base = endsWithThreeDots
+    ? trimmed.slice(0, -3)
+    : trimmed.slice(0, -1);
+  const trailingWhitespace = text.slice(trimmed.length);
+
+  return (
+    <>
+      {base}
+      <span className="loading-dots" aria-hidden="true">
+        <span>.</span>
+        <span>.</span>
+        <span>.</span>
+      </span>
+      {trailingWhitespace}
+    </>
+  );
 }
 
 function renderInlineMarkup(text: string) {
@@ -193,9 +237,17 @@ const STORAGE_KEYS = {
   reflectionStyleShort: "stateful-viewers:reflectionStyleShort",
   initialStateShort: "stateful-viewers:initialStateShort",
   profileId: "stateful-viewers:profileId",
+  styleId: "stateful-viewers:styleId",
+  stateId: "stateful-viewers:stateId",
   profileLabel: "stateful-viewers:profileLabel",
+  styleLabel: "stateful-viewers:styleLabel",
+  stateLabel: "stateful-viewers:stateLabel",
   profileLlm: "stateful-viewers:profileLlm",
   profileLlmModelLabel: "stateful-viewers:profileLlmModelLabel",
+  styleLlm: "stateful-viewers:styleLlm",
+  styleLlmModelLabel: "stateful-viewers:styleLlmModelLabel",
+  stateLlm: "stateful-viewers:stateLlm",
+  stateLlmModelLabel: "stateful-viewers:stateLlmModelLabel",
   locale: "stateful-viewers:locale",
   selectedGalleryId: "stateful-viewers:selectedGalleryId",
   currentIndexByGallery: "stateful-viewers:currentIndexByGallery",
@@ -422,11 +474,43 @@ function App() {
       return null;
     }
   });
+  const [styleId, setStyleId] = useState<string | null>(() => {
+    try {
+      return localStorage.getItem(STORAGE_KEYS.styleId);
+    } catch (e) {
+      console.warn("Failed to restore styleId from localStorage:", e);
+      return null;
+    }
+  });
+  const [stateId, setStateId] = useState<string | null>(() => {
+    try {
+      return localStorage.getItem(STORAGE_KEYS.stateId);
+    } catch (e) {
+      console.warn("Failed to restore stateId from localStorage:", e);
+      return null;
+    }
+  });
   const [profileLabel, setProfileLabel] = useState<string | null>(() => {
     try {
       return localStorage.getItem(STORAGE_KEYS.profileLabel);
     } catch (e) {
       console.warn("Failed to restore profileLabel from localStorage:", e);
+      return null;
+    }
+  });
+  const [styleLabel, setStyleLabel] = useState<string | null>(() => {
+    try {
+      return localStorage.getItem(STORAGE_KEYS.styleLabel);
+    } catch (e) {
+      console.warn("Failed to restore styleLabel from localStorage:", e);
+      return null;
+    }
+  });
+  const [stateLabel, setStateLabel] = useState<string | null>(() => {
+    try {
+      return localStorage.getItem(STORAGE_KEYS.stateLabel);
+    } catch (e) {
+      console.warn("Failed to restore stateLabel from localStorage:", e);
       return null;
     }
   });
@@ -444,6 +528,34 @@ function App() {
       return null;
     }
   });
+  const [styleLlm, setStyleLlm] = useState<string | null>(() => {
+    try {
+      return localStorage.getItem(STORAGE_KEYS.styleLlm);
+    } catch {
+      return null;
+    }
+  });
+  const [styleLlmModelLabel, setStyleLlmModelLabel] = useState<string | null>(() => {
+    try {
+      return localStorage.getItem(STORAGE_KEYS.styleLlmModelLabel);
+    } catch {
+      return null;
+    }
+  });
+  const [stateLlm, setStateLlm] = useState<string | null>(() => {
+    try {
+      return localStorage.getItem(STORAGE_KEYS.stateLlm);
+    } catch {
+      return null;
+    }
+  });
+  const [stateLlmModelLabel, setStateLlmModelLabel] = useState<string | null>(() => {
+    try {
+      return localStorage.getItem(STORAGE_KEYS.stateLlmModelLabel);
+    } catch {
+      return null;
+    }
+  });
   const [sessionStartedAtByKey, setSessionStartedAtByKey] = useState<
     Record<string, string>
   >(() => {
@@ -457,7 +569,9 @@ function App() {
     }
     return {};
   });
-  const [isGeneratingViewer, setIsGeneratingViewer] = useState(false);
+  const [isGeneratingProfile, setIsGeneratingProfile] = useState(false);
+  const [isGeneratingStyle, setIsGeneratingStyle] = useState(false);
+  const [isGeneratingState, setIsGeneratingState] = useState(false);
   const [generationStatus, setGenerationStatus] = useState<GenerationStatusKey | null>(null);
   const [generationError, setGenerationError] = useState<string | null>(null);
   const [showAbout, setShowAbout] = useState(false);
@@ -474,16 +588,21 @@ function App() {
   const [availableProfiles, setAvailableProfiles] = useState<ProfileSummary[]>([]);
   const [isLoadingProfiles, setIsLoadingProfiles] = useState(false);
   const [showProfileSelector, setShowProfileSelector] = useState(false);
-  const [showOtherLanguageProfiles, setShowOtherLanguageProfiles] = useState(false);
+  const [availableStyles, setAvailableStyles] = useState<StyleSummary[]>([]);
+  const [isLoadingStyles, setIsLoadingStyles] = useState(false);
+  const [showStyleSelector, setShowStyleSelector] = useState(false);
+  const [availableStates, setAvailableStates] = useState<StateSummary[]>([]);
+  const [isLoadingStates, setIsLoadingStates] = useState(false);
+  const [showStateSelector, setShowStateSelector] = useState(false);
+  // We intentionally do not filter profiles/styles/states by locale: allow mixing across languages.
   const [showImageModal, setShowImageModal] = useState(false);
   const [modalImageNaturalSize, setModalImageNaturalSize] = useState<{
     width: number;
     height: number;
   } | null>(null);
   const [profileExpanded, setProfileExpanded] = useState(false);
-  const [showFullProfileDescription, setShowFullProfileDescription] = useState(false);
-  const [showFullStyleDescription, setShowFullStyleDescription] = useState(false);
-  const [showFullInitialStateDescription, setShowFullInitialStateDescription] = useState(false);
+  const [styleExpanded, setStyleExpanded] = useState(false);
+  const [stateExpanded, setStateExpanded] = useState(false);
   const [revealedSensitiveByImageKey, setRevealedSensitiveByImageKey] = useState<
     Record<string, boolean>
   >({});
@@ -494,19 +613,25 @@ function App() {
   const currentIndex = currentIndexByGallery[galleryId] ?? 0;
   const reflections = reflectionsByGallery[galleryId] ?? [];
   const lastInternalState = lastInternalStateByGallery[galleryId] ?? "";
-  const hasProfileBrief = Boolean(profileShort?.trim());
-  const hasProfileFull = Boolean(viewerProfile?.trim());
-  const hasStyleBrief = Boolean(reflectionStyleShort?.trim());
-  const hasStyleFull = Boolean(reflectionStyle?.trim());
-  const hasInitialStateBrief = Boolean(initialStateShort?.trim());
-  const hasInitialStateFull = Boolean(initialState?.trim());
-  const visibleProfiles = showOtherLanguageProfiles
-    ? availableProfiles
-    : availableProfiles.filter((p) => normalizeUiLocale(p.locale) === locale);
+  const isGeneratingAny = isGeneratingProfile || isGeneratingStyle || isGeneratingState;
+  const isGeneratingUi = isGeneratingAny || generationStatus != null;
+  const visibleProfiles = availableProfiles;
+  const visibleStyles = availableStyles;
+  const visibleStates = availableStates;
   const sortedAvailableProfiles = [...visibleProfiles].sort((a, b) => {
     const labelA = (a.label || t(locale, "sidebar.untitledProfile")).toLocaleLowerCase();
     const labelB = (b.label || t(locale, "sidebar.untitledProfile")).toLocaleLowerCase();
     return labelA.localeCompare(labelB);
+  });
+  const sortedAvailableStyles = [...visibleStyles].sort((a, b) => {
+    const aLabel = (a.reflectionStyleShort || "").toLocaleLowerCase();
+    const bLabel = (b.reflectionStyleShort || "").toLocaleLowerCase();
+    return aLabel.localeCompare(bLabel);
+  });
+  const sortedAvailableStates = [...visibleStates].sort((a, b) => {
+    const aLabel = (a.initialStateShort || "").toLocaleLowerCase();
+    const bLabel = (b.initialStateShort || "").toLocaleLowerCase();
+    return aLabel.localeCompare(bLabel);
   });
   const selectedReflectionGeneratedAt =
     selectedReflectionGeneratedAtByGallery[galleryId];
@@ -530,13 +655,17 @@ function App() {
           : "selected";
   const onboardingHint = selectedProviderNeedsApiKey
     ? t(locale, "onboarding.nextStepAddApiKey", { provider: providerLabel })
-    : isGeneratingViewer
+    : isGeneratingUi
       ? t(locale, "onboarding.generatingProfile")
       : !viewerProfile?.trim()
         ? t(locale, "onboarding.nextStepGenerateOrLoadProfile")
-        : !selectedGallery
-          ? t(locale, "onboarding.nextStepSelectGallery")
-          : "";
+        : !reflectionStyle?.trim()
+          ? t(locale, "onboarding.nextStepGenerateOrLoadStyle")
+          : !initialState?.trim()
+            ? t(locale, "onboarding.nextStepGenerateOrLoadState")
+            : !selectedGallery
+              ? t(locale, "onboarding.nextStepSelectGallery")
+              : "";
 
   const getImageKey = (gallery: Gallery | null, image: GalleryImage | null): string | null => {
     if (!gallery || !image) return null;
@@ -709,6 +838,30 @@ function App() {
 
   useEffect(() => {
     try {
+      if (styleId) {
+        localStorage.setItem(STORAGE_KEYS.styleId, styleId);
+      } else {
+        localStorage.removeItem(STORAGE_KEYS.styleId);
+      }
+    } catch (e) {
+      console.warn("Failed to save styleId to localStorage:", e);
+    }
+  }, [styleId]);
+
+  useEffect(() => {
+    try {
+      if (stateId) {
+        localStorage.setItem(STORAGE_KEYS.stateId, stateId);
+      } else {
+        localStorage.removeItem(STORAGE_KEYS.stateId);
+      }
+    } catch (e) {
+      console.warn("Failed to save stateId to localStorage:", e);
+    }
+  }, [stateId]);
+
+  useEffect(() => {
+    try {
       if (profileLabel) {
         localStorage.setItem(STORAGE_KEYS.profileLabel, profileLabel);
       } else {
@@ -718,6 +871,30 @@ function App() {
       console.warn("Failed to save profileLabel to localStorage:", e);
     }
   }, [profileLabel]);
+
+  useEffect(() => {
+    try {
+      if (styleLabel) {
+        localStorage.setItem(STORAGE_KEYS.styleLabel, styleLabel);
+      } else {
+        localStorage.removeItem(STORAGE_KEYS.styleLabel);
+      }
+    } catch (e) {
+      console.warn("Failed to save styleLabel to localStorage:", e);
+    }
+  }, [styleLabel]);
+
+  useEffect(() => {
+    try {
+      if (stateLabel) {
+        localStorage.setItem(STORAGE_KEYS.stateLabel, stateLabel);
+      } else {
+        localStorage.removeItem(STORAGE_KEYS.stateLabel);
+      }
+    } catch (e) {
+      console.warn("Failed to save stateLabel to localStorage:", e);
+    }
+  }, [stateLabel]);
 
   useEffect(() => {
     try {
@@ -738,6 +915,46 @@ function App() {
       }
     } catch { /* noop */ }
   }, [profileLlmModelLabel]);
+
+  useEffect(() => {
+    try {
+      if (styleLlm) {
+        localStorage.setItem(STORAGE_KEYS.styleLlm, styleLlm);
+      } else {
+        localStorage.removeItem(STORAGE_KEYS.styleLlm);
+      }
+    } catch { /* noop */ }
+  }, [styleLlm]);
+
+  useEffect(() => {
+    try {
+      if (styleLlmModelLabel) {
+        localStorage.setItem(STORAGE_KEYS.styleLlmModelLabel, styleLlmModelLabel);
+      } else {
+        localStorage.removeItem(STORAGE_KEYS.styleLlmModelLabel);
+      }
+    } catch { /* noop */ }
+  }, [styleLlmModelLabel]);
+
+  useEffect(() => {
+    try {
+      if (stateLlm) {
+        localStorage.setItem(STORAGE_KEYS.stateLlm, stateLlm);
+      } else {
+        localStorage.removeItem(STORAGE_KEYS.stateLlm);
+      }
+    } catch { /* noop */ }
+  }, [stateLlm]);
+
+  useEffect(() => {
+    try {
+      if (stateLlmModelLabel) {
+        localStorage.setItem(STORAGE_KEYS.stateLlmModelLabel, stateLlmModelLabel);
+      } else {
+        localStorage.removeItem(STORAGE_KEYS.stateLlmModelLabel);
+      }
+    } catch { /* noop */ }
+  }, [stateLlmModelLabel]);
 
   useEffect(() => {
     try {
@@ -941,7 +1158,7 @@ function App() {
       .join(" ");
   };
 
-  const handleGenerateViewer = async () => {
+  const ensureProviderReady = async (): Promise<boolean> => {
     const keys = getApiKeys();
     const needsKey =
       (visionProvider === "openai" && !keys.openai?.trim()) ||
@@ -950,38 +1167,44 @@ function App() {
     if (needsKey) {
       setGenerationError(t(locale, "errors.apiKeyRequired"));
       setShowApiKeysModal(true);
-      return;
+      return false;
     }
+    const apiReachable = await checkApiHealth();
+    if (!apiReachable) {
+      setGenerationError(t(locale, "errors.serverNotResponding"));
+      return false;
+    }
+    return true;
+  };
 
-    setIsGeneratingViewer(true);
-    setGenerationStatus("generatingProfile");
-    setGenerationError(null);
-    setViewerProfile("");
-    setReflectionStyle("");
-    setInitialState("");
-    setProfileShort("");
-    setReflectionStyleShort("");
-    setInitialStateShort("");
-    setProfileId(null);
-    setShowFullProfileDescription(false);
-    setShowFullStyleDescription(false);
-    setShowFullInitialStateDescription(false);
-
+  const resetExperienceAfterViewerChange = () => {
     setReflectionsByGallery({});
     setLastInternalStateByGallery({});
     setSelectedReflectionGeneratedAtByGallery({});
     setWalkThroughActive(false);
+    setNarrativeSummary(null);
+    setNarrativeSummaryError(null);
+    setNarrativeSummaryLocale(null);
+    setNarrativeSummaryGeneratedAt(null);
+  };
+
+  const handleGenerateProfile = async () => {
+    setGenerationError(null);
+    setGenerationStatus("generatingProfile");
+    setIsGeneratingProfile(true);
+    setViewerProfile("");
+    setProfileShort("");
+    setProfileId(null);
+    setProfileLabel(null);
+    resetExperienceAfterViewerChange();
 
     try {
-      const apiReachable = await checkApiHealth();
-      if (!apiReachable) {
-        setGenerationError(t(locale, "errors.serverNotResponding"));
-        setIsGeneratingViewer(false);
+      if (!(await ensureProviderReady())) {
+        setIsGeneratingProfile(false);
         setGenerationStatus(null);
         return;
       }
 
-      // 1. Generate profile
       const profileResult = await generateText(
         visionProvider,
         VIEWER_PROFILE_PROMPT,
@@ -992,14 +1215,90 @@ function App() {
         setGenerationError(
           t(locale, "errors.failedGenerateProfile", { error: profileResult.error })
         );
-        setIsGeneratingViewer(false);
+        setIsGeneratingProfile(false);
         setGenerationStatus(null);
         return;
       }
       const cleanedProfile = cleanGeneratedText(profileResult.content);
 
-      // 2. Generate reflective style (independent of profile in v2)
-      setGenerationStatus("generatingReflectionStyle");
+      setGenerationStatus("generatingLabel");
+      const labelResult = await generateText(
+        visionProvider,
+        PROFILE_LABEL_PROMPT,
+        getProfileLabelFromProfileUserPrompt(cleanedProfile, locale),
+        locale
+      );
+      let cleanedLabel: string | undefined;
+      if (!labelResult.error && labelResult.content) {
+        cleanedLabel = normalizeLabelSentenceCase(
+          cleanGeneratedText(labelResult.content).trim()
+        );
+      }
+
+      setGenerationStatus("generatingSummaries");
+      const shortProfileRes = await generateText(
+        visionProvider,
+        SHORT_DESCRIPTION_PROMPT,
+        getShortProfileUserPrompt(cleanedProfile, locale),
+        locale
+      );
+      const shortProfile = shortProfileRes.error
+        ? ""
+        : cleanGeneratedText(shortProfileRes.content).trim();
+
+      setGenerationStatus("saving");
+      const savedId = await saveGeneratedProfile({
+        locale,
+        profileRaw: profileResult.content,
+        profileCleaned: cleanedProfile,
+        profileShort: shortProfile || undefined,
+        labelCleaned: cleanedLabel,
+        provider: visionProvider,
+      });
+
+      const labels = getModelLabels(visionProvider);
+      setViewerProfile(cleanedProfile);
+      setProfileLabel(cleanedLabel || null);
+      setProfileLlm(visionProvider);
+      setProfileLlmModelLabel(labels.llm);
+      setProfileShort(shortProfile);
+
+      if (savedId) {
+        setProfileId(savedId);
+        console.info(`Profile saved to data/profiles/${savedId}.json`);
+        loadProfiles();
+      } else {
+        setGenerationError(t(locale, "errors.failedSaveProfile"));
+      }
+
+      setShowProfileSelector(false);
+      setGenerationStatus(null);
+      setIsGeneratingProfile(false);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      setGenerationError(t(locale, "errors.unexpectedError", { error: errorMessage }));
+      setIsGeneratingProfile(false);
+      setGenerationStatus(null);
+    }
+  };
+
+  const handleGenerateStyle = async () => {
+    setGenerationError(null);
+    setGenerationStatus("generatingReflectionStyle");
+    setIsGeneratingStyle(true);
+    setReflectionStyle("");
+    setReflectionStyleShort("");
+    setStyleId(null);
+    setStyleLabel(null);
+    resetExperienceAfterViewerChange();
+
+    try {
+      if (!(await ensureProviderReady())) {
+        setIsGeneratingStyle(false);
+        setGenerationStatus(null);
+        return;
+      }
+
       const styleResult = await generateText(
         visionProvider,
         REFLECTION_STYLE_PROMPT,
@@ -1010,14 +1309,90 @@ function App() {
         setGenerationError(
           t(locale, "errors.failedGenerateReflectionStyle", { error: styleResult.error })
         );
-        setIsGeneratingViewer(false);
+        setIsGeneratingStyle(false);
         setGenerationStatus(null);
         return;
       }
       const cleanedStyle = cleanGeneratedText(styleResult.content);
 
-      // 3. Generate initial state
-      setGenerationStatus("generatingInitialState");
+      setGenerationStatus("generatingLabel");
+      const labelResult = await generateText(
+        visionProvider,
+        PROFILE_LABEL_PROMPT,
+        getStyleLabelUserPrompt(cleanedStyle, locale),
+        locale
+      );
+      let cleanedLabel: string | undefined;
+      if (!labelResult.error && labelResult.content) {
+        cleanedLabel = normalizeLabelSentenceCase(
+          cleanGeneratedText(labelResult.content).trim()
+        );
+      }
+
+      setGenerationStatus("generatingSummaries");
+      const shortStyleRes = await generateText(
+        visionProvider,
+        SHORT_DESCRIPTION_PROMPT,
+        getShortStyleUserPrompt(cleanedStyle, locale),
+        locale
+      );
+      const shortStyle = shortStyleRes.error
+        ? ""
+        : cleanGeneratedText(shortStyleRes.content).trim();
+
+      setGenerationStatus("saving");
+      const savedId = await saveGeneratedStyle({
+        locale,
+        styleRaw: styleResult.content,
+        styleCleaned: cleanedStyle,
+        reflectionStyleShort: shortStyle || undefined,
+        labelCleaned: cleanedLabel,
+        provider: visionProvider,
+      });
+
+      const labels = getModelLabels(visionProvider);
+      setReflectionStyle(cleanedStyle);
+      setReflectionStyleShort(shortStyle);
+      setStyleLabel(cleanedLabel || null);
+      setStyleLlm(visionProvider);
+      setStyleLlmModelLabel(labels.llm);
+
+      if (savedId) {
+        setStyleId(savedId);
+        console.info(`Style saved to data/styles/${savedId}.json`);
+        loadStyles();
+      } else {
+        setGenerationError(t(locale, "errors.failedSaveStyle"));
+      }
+
+      setShowStyleSelector(false);
+      setGenerationStatus(null);
+      setIsGeneratingStyle(false);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      setGenerationError(t(locale, "errors.unexpectedError", { error: errorMessage }));
+      setIsGeneratingStyle(false);
+      setGenerationStatus(null);
+    }
+  };
+
+  const handleGenerateState = async () => {
+    setGenerationError(null);
+    setGenerationStatus("generatingInitialState");
+    setIsGeneratingState(true);
+    setInitialState("");
+    setInitialStateShort("");
+    setStateId(null);
+    setStateLabel(null);
+    resetExperienceAfterViewerChange();
+
+    try {
+      if (!(await ensureProviderReady())) {
+        setIsGeneratingState(false);
+        setGenerationStatus(null);
+        return;
+      }
+
       const stateResult = await generateText(
         visionProvider,
         INITIAL_STATE_PROMPT,
@@ -1028,18 +1403,17 @@ function App() {
         setGenerationError(
           t(locale, "errors.failedGenerateInitialState", { error: stateResult.error })
         );
-        setIsGeneratingViewer(false);
+        setIsGeneratingState(false);
         setGenerationStatus(null);
         return;
       }
       const cleanedState = cleanGeneratedText(stateResult.content);
 
-      // 4. Generate label
       setGenerationStatus("generatingLabel");
       const labelResult = await generateText(
         visionProvider,
         PROFILE_LABEL_PROMPT,
-        getProfileLabelUserPrompt(cleanedProfile, cleanedStyle, locale),
+        getStateLabelUserPrompt(cleanedState, locale),
         locale
       );
       let cleanedLabel: string | undefined;
@@ -1049,62 +1423,49 @@ function App() {
         );
       }
 
-      // 5. Generate short descriptions
       setGenerationStatus("generatingSummaries");
-      const [shortProfileRes, shortStyleRes, shortStateRes] = await Promise.all([
-        generateText(visionProvider, SHORT_DESCRIPTION_PROMPT, getShortProfileUserPrompt(cleanedProfile, locale), locale),
-        generateText(visionProvider, SHORT_DESCRIPTION_PROMPT, getShortStyleUserPrompt(cleanedStyle, locale), locale),
-        generateText(visionProvider, SHORT_DESCRIPTION_PROMPT, getShortStateUserPrompt(cleanedState, locale), locale),
-      ]);
-      const shortProfile = shortProfileRes.error ? "" : cleanGeneratedText(shortProfileRes.content).trim();
-      const shortStyle = shortStyleRes.error ? "" : cleanGeneratedText(shortStyleRes.content).trim();
-      const shortState = shortStateRes.error ? "" : cleanGeneratedText(shortStateRes.content).trim();
+      const shortStateRes = await generateText(
+        visionProvider,
+        SHORT_DESCRIPTION_PROMPT,
+        getShortStateUserPrompt(cleanedState, locale),
+        locale
+      );
+      const shortState = shortStateRes.error
+        ? ""
+        : cleanGeneratedText(shortStateRes.content).trim();
 
-      // 6. Save
       setGenerationStatus("saving");
-      const savedId = await saveGeneratedProfile({
+      const savedId = await saveGeneratedState({
         locale,
-        profileRaw: profileResult.content,
-        profileCleaned: cleanedProfile,
-        styleRaw: styleResult.content,
-        styleCleaned: cleanedStyle,
         initialStateRaw: stateResult.content,
         initialStateCleaned: cleanedState,
-        profileShort: shortProfile || undefined,
-        reflectionStyleShort: shortStyle || undefined,
         initialStateShort: shortState || undefined,
         labelCleaned: cleanedLabel,
         provider: visionProvider,
       });
 
-      const applyState = () => {
-        const labels = getModelLabels(visionProvider);
-        setViewerProfile(cleanedProfile);
-        setReflectionStyle(cleanedStyle);
-        setInitialState(cleanedState);
-        setProfileLabel(cleanedLabel || null);
-        setProfileLlm(visionProvider);
-        setProfileLlmModelLabel(labels.llm);
-        setProfileShort(shortProfile);
-        setReflectionStyleShort(shortStyle);
-        setInitialStateShort(shortState);
-      };
+      const labels = getModelLabels(visionProvider);
+      setInitialState(cleanedState);
+      setInitialStateShort(shortState);
+      setStateLabel(cleanedLabel || null);
+      setStateLlm(visionProvider);
+      setStateLlmModelLabel(labels.llm);
 
       if (savedId) {
-        setProfileId(savedId);
-        applyState();
-        console.info(`Profile saved to data/profiles/${savedId}.json`);
-        loadProfiles();
+        setStateId(savedId);
+        console.info(`State saved to data/states/${savedId}.json`);
+        loadStates();
       } else {
-        applyState();
+        setGenerationError(t(locale, "errors.failedSaveState"));
       }
 
+      setShowStateSelector(false);
       setGenerationStatus(null);
-      setIsGeneratingViewer(false);
+      setIsGeneratingState(false);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);
       setGenerationError(t(locale, "errors.unexpectedError", { error: errorMessage }));
-      setIsGeneratingViewer(false);
+      setIsGeneratingState(false);
       setGenerationStatus(null);
     }
   };
@@ -1132,6 +1493,32 @@ function App() {
     }
   };
 
+  const loadStyles = async () => {
+    setIsLoadingStyles(true);
+    try {
+      const styles = await listStyles();
+      setAvailableStyles(styles);
+    } catch (error) {
+      console.error("Failed to load styles:", error);
+      setAvailableStyles([]);
+    } finally {
+      setIsLoadingStyles(false);
+    }
+  };
+
+  const loadStates = async () => {
+    setIsLoadingStates(true);
+    try {
+      const states = await listStates();
+      setAvailableStates(states);
+    } catch (error) {
+      console.error("Failed to load states:", error);
+      setAvailableStates([]);
+    } finally {
+      setIsLoadingStates(false);
+    }
+  };
+
   const handleLoadProfile = async (profileId: string) => {
     setIsLoadingProfiles(true);
     try {
@@ -1139,21 +1526,11 @@ function App() {
       if (profile) {
         setProfileId(profile.id);
         setViewerProfile(profile.profile);
-        setReflectionStyle(profile.reflectionStyle);
-        setInitialState(profile.initialState || "");
         setProfileLabel(profile.label || null);
         setProfileLlm(profile.llm || null);
         setProfileLlmModelLabel(profile.llmModelLabel || profile.modelLabel || null);
         setProfileShort(profile.profileShort || "");
-        setReflectionStyleShort(profile.reflectionStyleShort || "");
-        setInitialStateShort(profile.initialStateShort || "");
-        setShowFullProfileDescription(false);
-        setShowFullStyleDescription(false);
-        setShowFullInitialStateDescription(false);
-        setReflectionsByGallery({});
-        setLastInternalStateByGallery({});
-        setSelectedReflectionGeneratedAtByGallery({});
-        setWalkThroughActive(false);
+        resetExperienceAfterViewerChange();
         setShowProfileSelector(false);
         console.info(`Loaded profile ${profile.id}`);
       } else {
@@ -1166,18 +1543,60 @@ function App() {
     }
   };
 
-  useEffect(() => {
-    loadProfiles();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const handleLoadStyle = async (id: string) => {
+    setIsLoadingStyles(true);
+    try {
+      const style = await loadStyle(id);
+      if (style) {
+        setStyleId(style.id);
+        setStyleLabel(style.label || null);
+        setReflectionStyle(style.reflectionStyle);
+        setReflectionStyleShort(style.reflectionStyleShort || "");
+        setStyleLlm(style.llm || null);
+        setStyleLlmModelLabel(style.llmModelLabel || style.modelLabel || null);
+        resetExperienceAfterViewerChange();
+        setShowStyleSelector(false);
+        console.info(`Loaded style ${style.id}`);
+      } else {
+        console.error("Failed to load style");
+      }
+    } catch (error) {
+      console.error("Error loading style:", error);
+    } finally {
+      setIsLoadingStyles(false);
+    }
+  };
+
+  const handleLoadState = async (id: string) => {
+    setIsLoadingStates(true);
+    try {
+      const state = await loadState(id);
+      if (state) {
+        setStateId(state.id);
+        setStateLabel(state.label || null);
+        setInitialState(state.initialState);
+        setInitialStateShort(state.initialStateShort || "");
+        setStateLlm(state.llm || null);
+        setStateLlmModelLabel(state.llmModelLabel || state.modelLabel || null);
+        resetExperienceAfterViewerChange();
+        setShowStateSelector(false);
+        console.info(`Loaded state ${state.id}`);
+      } else {
+        console.error("Failed to load state");
+      }
+    } catch (error) {
+      console.error("Error loading state:", error);
+    } finally {
+      setIsLoadingStates(false);
+    }
+  };
 
   useEffect(() => {
-    if (!profileExpanded) {
-      setShowFullProfileDescription(false);
-      setShowFullStyleDescription(false);
-      setShowFullInitialStateDescription(false);
-    }
-  }, [profileExpanded]);
+    loadProfiles();
+    loadStyles();
+    loadStates();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleStartGallery = (galleryId: string) => {
     setSelectedGalleryId(galleryId);
@@ -1192,7 +1611,14 @@ function App() {
   };
 
   const handleReflectOnCurrent = async () => {
-    if (!currentImage || !selectedGallery || !viewerProfile.trim()) return;
+    if (
+      !currentImage ||
+      !selectedGallery ||
+      !viewerProfile.trim() ||
+      !reflectionStyle.trim() ||
+      !initialState.trim()
+    )
+      return;
 
     const keys = getApiKeys();
     const needsKey =
@@ -1316,11 +1742,7 @@ function App() {
 
     if (autoVoiceOver && result.content && !result.error) {
       setSpeechCompleteForWalkThrough(false);
-      const parsed = parseReflection(result.content);
-      const speechText = parsed.internalState
-        ? `${parsed.reaction} ${t(locale, "reflection.myCurrentState")} ${parsed.internalState}`
-        : result.content;
-      speak(speechText, {
+      speak(getSpeakableReflectionOnlyText(result.content), {
         rate: ttsRate,
         voice: ttsVoice || undefined,
         lang: locale,
@@ -1393,12 +1815,20 @@ function App() {
       (profileId && sessionStartedAtByKey[`${profileId}:${galleryId}`]) || new Date().toISOString();
     const options = {
       profileId: profileId ?? "anonymous",
+      ...(styleId && { styleId }),
+      ...(stateId && { stateId }),
       ...(profileLabel && { profileLabel }),
+      ...(styleLabel && { styleLabel }),
+      ...(stateLabel && { stateLabel }),
       sessionStartedAt,
       visionProvider,
       locale,
       ...(profileLlm && { profileLlm }),
       ...(profileLlmModelLabel && { profileLlmModelLabel }),
+      ...(styleLlm && { styleLlm }),
+      ...(styleLlmModelLabel && { styleLlmModelLabel }),
+      ...(stateLlm && { stateLlm }),
+      ...(stateLlmModelLabel && { stateLlmModelLabel }),
       ...(initialState && { initialState }),
       ...(profileShort && { profileShort }),
       ...(reflectionStyleShort && { reflectionStyleShort }),
@@ -1633,9 +2063,20 @@ function App() {
           {!isSidebarCollapsed && (
             <>
           <div className="sidebar-section sidebar-section-models">
-            {onboardingHint && (
-              <p className="experience-panel-hint sidebar-guidance-keys">
-                {onboardingHint}
+            {(generationStatus || onboardingHint) && (
+              <p className="experience-panel-hint sidebar-guidance-keys" role="status" aria-live="polite">
+                {generationStatus ? (
+                  <>
+                    {t(locale, `status.${generationStatus}`)}
+                    <span className="loading-dots" aria-hidden="true">
+                      <span>.</span>
+                      <span>.</span>
+                      <span>.</span>
+                    </span>
+                  </>
+                ) : (
+                  renderTextWithAnimatedEllipsis(onboardingHint)
+                )}
               </p>
             )}
             <h2>{t(locale, "sidebar.models")}</h2>
@@ -1697,43 +2138,78 @@ function App() {
             )}
           </div>
           <div className="sidebar-section">
-            <h2>{t(locale, "sidebar.viewer")}</h2>
-            <div className="viewer-actions-row">
-              <button
-                className="generate-viewer-btn"
-                onClick={() => !isGeneratingViewer && handleGenerateViewer()}
-                disabled={isGeneratingViewer}
-              >
-                {isGeneratingViewer
-                  ? t(locale, "sidebar.generating")
-                  : t(locale, "sidebar.generateProfile")}
-              </button>
-              <button
-                className="load-profile-btn"
-                onClick={() => setShowProfileSelector(!showProfileSelector)}
-                disabled={isLoadingProfiles}
-                title={isLoadingProfiles ? t(locale, "sidebar.loadingProfiles") : undefined}
-              >
-                {showProfileSelector
-                  ? t(locale, "sidebar.hideProfiles")
-                  : t(locale, "sidebar.loadProfile")}
-              </button>
-            </div>
+            <div className="viewer-artifact-group">
+              <div className="viewer-artifact-group-header">
+                <div className="viewer-artifact-group-title">
+                  {t(locale, "viewerProfile.profileHeading")}
+                </div>
+                <div className="viewer-artifact-actions">
+                  <button
+                    className="load-profile-btn viewer-artifact-btn-primary"
+                    onClick={() => setShowProfileSelector(!showProfileSelector)}
+                    disabled={isLoadingProfiles || isGeneratingUi}
+                    title={isLoadingProfiles ? t(locale, "sidebar.loadingProfiles") : undefined}
+                  >
+                    {showProfileSelector
+                      ? t(locale, "sidebar.hide")
+                      : t(locale, "sidebar.load")}
+                  </button>
+                  <button
+                    className="generate-viewer-btn viewer-artifact-btn-secondary"
+                    onClick={() => !isGeneratingUi && handleGenerateProfile()}
+                    disabled={isGeneratingUi}
+                  >
+                    {isGeneratingProfile
+                      ? t(locale, "sidebar.generating")
+                      : t(locale, "sidebar.generate")}
+                  </button>
+                </div>
+              </div>
+
+            {(profileShort || viewerProfile) && (
+              <div className={`viewer-profile-block ${profileExpanded ? "expanded" : ""}`}>
+                <div className="viewer-profile-summary">
+                  <div className="viewer-profile-summary-row">
+                    <div className="viewer-profile-label-header">
+                      {profileLabel || t(locale, "viewerProfile.profileHeading")}
+                    </div>
+                    <button
+                      type="button"
+                      className="viewer-profile-toggle viewer-profile-toggle-ghost"
+                      data-expanded={profileExpanded ? "true" : "false"}
+                      onClick={() => setProfileExpanded((e) => !e)}
+                    >
+                      <span className="viewer-profile-toggle-chevron" aria-hidden="true">
+                        ▸
+                      </span>
+                      {profileExpanded ? t(locale, "viewerProfile.hide") : t(locale, "viewerProfile.show")}
+                    </button>
+                  </div>
+                </div>
+                {profileExpanded && (
+                  <div className="viewer-profile-full">
+                    {profileShort?.trim() && (
+                      <p className="viewer-profile-text viewer-profile-text-summary">
+                        {profileShort}
+                      </p>
+                    )}
+                    <p className="viewer-profile-text viewer-profile-text-full">
+                      {viewerProfile?.trim() ? viewerProfile : profileShort}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+
             {showProfileSelector && (
               <div className="profile-loader-section">
-                <label className="profile-language-filter">
-                  <input
-                    type="checkbox"
-                    checked={showOtherLanguageProfiles}
-                    onChange={(e) => setShowOtherLanguageProfiles(e.target.checked)}
-                  />
-                  {t(locale, "sidebar.showOtherLanguages")}
-                </label>
                 <div className="profile-list">
                   {isLoadingProfiles ? (
-                    <div className="loading-profiles">{t(locale, "sidebar.loadingProfiles")}</div>
+                    <div className="loading-profiles">
+                      {renderTextWithAnimatedEllipsis(t(locale, "sidebar.loadingProfiles"))}
+                    </div>
                   ) : availableProfiles.length === 0 ? (
-                    <div className="no-profiles">{t(locale, "sidebar.noProfilesForProvider")}</div>
+                    <div className="no-profiles">{t(locale, "sidebar.noProfiles")}</div>
                   ) : (
                       <ul className="profile-selector-list">
                         {sortedAvailableProfiles.map((profile) => (
@@ -1748,11 +2224,6 @@ function App() {
                               <div className="profile-selector-label">
                                 {profile.label || t(locale, "sidebar.untitledProfile")}
                               </div>
-                              {profile.locale && (
-                                <div className="profile-locale-badge">
-                                  {normalizeUiLocale(profile.locale).toUpperCase()}
-                                </div>
-                              )}
                             </button>
                           </li>
                         ))}
@@ -1761,169 +2232,210 @@ function App() {
                 </div>
               </div>
             )}
-            {generationStatus && (
-              <div className="generation-status">
-                {t(locale, `status.${generationStatus}`)}
-                <span className="loading-dots">
-                  <span>.</span>
-                  <span>.</span>
-                  <span>.</span>
-                </span>
-                {generationStatus === "generatingProfile" && (
-                  <div className="generation-status-hint">
-                    {t(locale, "status.firstUseHint")}
-                  </div>
-                )}
+
+            </div>
+
+            <div className="viewer-artifact-group">
+              <div className="viewer-artifact-group-header">
+                <div className="viewer-artifact-group-title">
+                  {t(locale, "viewerProfile.reflectionStyleHeading")}
+                </div>
+                <div className="viewer-artifact-actions">
+                  <button
+                    className="load-profile-btn viewer-artifact-btn-primary"
+                    onClick={() => setShowStyleSelector(!showStyleSelector)}
+                    disabled={isLoadingStyles || isGeneratingUi}
+                    title={isLoadingStyles ? t(locale, "sidebar.loadingStyles") : undefined}
+                  >
+                    {showStyleSelector
+                      ? t(locale, "sidebar.hide")
+                      : t(locale, "sidebar.load")}
+                  </button>
+                  <button
+                    className="generate-viewer-btn viewer-artifact-btn-secondary"
+                    onClick={() => !isGeneratingUi && handleGenerateStyle()}
+                    disabled={isGeneratingUi}
+                  >
+                    {isGeneratingStyle
+                      ? t(locale, "sidebar.generating")
+                      : t(locale, "sidebar.generate")}
+                  </button>
+                </div>
               </div>
-            )}
-            {viewerProfile && (
-              <div className={`viewer-profile-block ${profileExpanded ? "expanded" : ""}`}>
+
+            {(reflectionStyleShort || reflectionStyle) && (
+              <div className={`viewer-profile-block ${styleExpanded ? "expanded" : ""}`}>
                 <div className="viewer-profile-summary">
-                    <div className="viewer-profile-summary-row">
-                    {profileLabel && (
-                      <div className="viewer-profile-label-header">{profileLabel}</div>
-                    )}
+                  <div className="viewer-profile-summary-row">
+                    <div className="viewer-profile-label-header">
+                      {styleLabel || t(locale, "viewerProfile.reflectionStyleHeading")}
+                    </div>
                     <button
                       type="button"
-                      className="viewer-profile-toggle history-toggle-btn"
-                      onClick={() => setProfileExpanded((e) => !e)}
+                      className="viewer-profile-toggle viewer-profile-toggle-ghost"
+                      data-expanded={styleExpanded ? "true" : "false"}
+                      onClick={() => setStyleExpanded((e) => !e)}
                     >
-                      {profileExpanded
-                        ? t(locale, "viewerProfile.hide")
-                        : t(locale, "viewerProfile.show")}
+                      <span className="viewer-profile-toggle-chevron" aria-hidden="true">
+                        ▸
+                      </span>
+                      {styleExpanded ? t(locale, "viewerProfile.hide") : t(locale, "viewerProfile.show")}
                     </button>
                   </div>
                 </div>
-                {profileExpanded && (
+                {styleExpanded && (
                   <div className="viewer-profile-full">
-                    {profileId && (
-                      <div className="viewer-profile-meta">
-                        <div className="viewer-profile-id">{profileId}</div>
-                      </div>
+                    {reflectionStyleShort?.trim() && (
+                      <p className="viewer-profile-text viewer-profile-text-summary">
+                        {reflectionStyleShort}
+                      </p>
                     )}
-                    <div className="viewer-profile-section-header">
-                      <h3 className="viewer-profile-label">
-                        {t(locale, "viewerProfile.profileHeading")}
-                      </h3>
-                      {hasProfileBrief && hasProfileFull && (
-                        <button
-                          type="button"
-                          className="viewer-profile-plus-btn"
-                          aria-expanded={showFullProfileDescription}
-                          aria-label={
-                            showFullProfileDescription
-                              ? t(locale, "viewerProfile.hideFull")
-                              : t(locale, "viewerProfile.showFull")
-                          }
-                          title={
-                            showFullProfileDescription
-                              ? t(locale, "viewerProfile.hideFull")
-                              : t(locale, "viewerProfile.showFull")
-                          }
-                          onClick={() => setShowFullProfileDescription((v) => !v)}
-                        >
-                          {showFullProfileDescription ? "−" : "+"}
-                        </button>
-                      )}
-                    </div>
-                    {hasProfileBrief ? (
-                      <>
-                        <p className="viewer-profile-text">{profileShort}</p>
-                        {showFullProfileDescription && hasProfileFull && (
-                          <p className="viewer-profile-text viewer-profile-text-full">
-                            {viewerProfile}
-                          </p>
-                        )}
-                      </>
-                    ) : (
-                      <p className="viewer-profile-text">{viewerProfile}</p>
-                    )}
-                    {(reflectionStyleShort || reflectionStyle) && (
-                      <>
-                        <div className="viewer-profile-section-header">
-                          <h3 className="viewer-profile-label">
-                            {t(locale, "viewerProfile.reflectionStyleHeading")}
-                          </h3>
-                          {hasStyleBrief && hasStyleFull && (
-                            <button
-                              type="button"
-                              className="viewer-profile-plus-btn"
-                              aria-expanded={showFullStyleDescription}
-                              aria-label={
-                                showFullStyleDescription
-                                  ? t(locale, "viewerProfile.hideFull")
-                                  : t(locale, "viewerProfile.showFull")
-                              }
-                              title={
-                                showFullStyleDescription
-                                  ? t(locale, "viewerProfile.hideFull")
-                                  : t(locale, "viewerProfile.showFull")
-                              }
-                              onClick={() => setShowFullStyleDescription((v) => !v)}
-                            >
-                              {showFullStyleDescription ? "−" : "+"}
-                            </button>
-                          )}
-                        </div>
-                        {hasStyleBrief ? (
-                          <>
-                            <p className="viewer-profile-text">{reflectionStyleShort}</p>
-                            {showFullStyleDescription && hasStyleFull && (
-                              <p className="viewer-profile-text viewer-profile-text-full">
-                                {reflectionStyle}
-                              </p>
-                            )}
-                          </>
-                        ) : (
-                          <p className="viewer-profile-text">{reflectionStyle}</p>
-                        )}
-                      </>
-                    )}
-                    {(initialStateShort || initialState) && (
-                      <>
-                        <div className="viewer-profile-section-header">
-                          <h3 className="viewer-profile-label">
-                            {t(locale, "viewerProfile.initialStateHeading")}
-                          </h3>
-                          {hasInitialStateBrief && hasInitialStateFull && (
-                            <button
-                              type="button"
-                              className="viewer-profile-plus-btn"
-                              aria-expanded={showFullInitialStateDescription}
-                              aria-label={
-                                showFullInitialStateDescription
-                                  ? t(locale, "viewerProfile.hideFull")
-                                  : t(locale, "viewerProfile.showFull")
-                              }
-                              title={
-                                showFullInitialStateDescription
-                                  ? t(locale, "viewerProfile.hideFull")
-                                  : t(locale, "viewerProfile.showFull")
-                              }
-                              onClick={() => setShowFullInitialStateDescription((v) => !v)}
-                            >
-                              {showFullInitialStateDescription ? "−" : "+"}
-                            </button>
-                          )}
-                        </div>
-                        {hasInitialStateBrief ? (
-                          <>
-                            <p className="viewer-profile-text">{initialStateShort}</p>
-                            {showFullInitialStateDescription && hasInitialStateFull && (
-                              <p className="viewer-profile-text viewer-profile-text-full">
-                                {initialState}
-                              </p>
-                            )}
-                          </>
-                        ) : (
-                          <p className="viewer-profile-text">{initialState}</p>
-                        )}
-                      </>
-                    )}
+                    <p className="viewer-profile-text viewer-profile-text-full">
+                      {reflectionStyle?.trim() ? reflectionStyle : reflectionStyleShort}
+                    </p>
                   </div>
                 )}
               </div>
             )}
+
+            {showStyleSelector && (
+              <div className="profile-loader-section">
+                <div className="profile-list">
+                  {isLoadingStyles ? (
+                    <div className="loading-profiles">
+                      {renderTextWithAnimatedEllipsis(t(locale, "sidebar.loadingStyles"))}
+                    </div>
+                  ) : availableStyles.length === 0 ? (
+                    <div className="no-profiles">{t(locale, "sidebar.noStyles")}</div>
+                  ) : (
+                    <ul className="profile-selector-list">
+                      {sortedAvailableStyles.map((style) => (
+                        <li key={style.id}>
+                          <button
+                            className={`profile-selector-item ${
+                              style.id === styleId ? "active" : ""
+                            }`}
+                            onClick={() => handleLoadStyle(style.id)}
+                            disabled={isLoadingStyles}
+                          >
+                            <div className="profile-selector-label">
+                              {style.label
+                                ? style.label
+                                : style.reflectionStyleShort
+                                  ? truncateAtWord(style.reflectionStyleShort, 72)
+                                  : t(locale, "sidebar.untitledStyle")}
+                            </div>
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </div>
+            )}
+
+            </div>
+
+            <div className="viewer-artifact-group">
+              <div className="viewer-artifact-group-header">
+                <div className="viewer-artifact-group-title">
+                  {t(locale, "viewerProfile.initialStateHeading")}
+                </div>
+                <div className="viewer-artifact-actions">
+                  <button
+                    className="load-profile-btn viewer-artifact-btn-primary"
+                    onClick={() => setShowStateSelector(!showStateSelector)}
+                    disabled={isLoadingStates || isGeneratingUi}
+                    title={isLoadingStates ? t(locale, "sidebar.loadingStates") : undefined}
+                  >
+                    {showStateSelector
+                      ? t(locale, "sidebar.hide")
+                      : t(locale, "sidebar.load")}
+                  </button>
+                  <button
+                    className="generate-viewer-btn viewer-artifact-btn-secondary"
+                    onClick={() => !isGeneratingUi && handleGenerateState()}
+                    disabled={isGeneratingUi}
+                  >
+                    {isGeneratingState
+                      ? t(locale, "sidebar.generating")
+                      : t(locale, "sidebar.generate")}
+                  </button>
+                </div>
+              </div>
+
+            {(initialStateShort || initialState) && (
+              <div className={`viewer-profile-block ${stateExpanded ? "expanded" : ""}`}>
+                <div className="viewer-profile-summary">
+                  <div className="viewer-profile-summary-row">
+                    <div className="viewer-profile-label-header">
+                      {stateLabel || t(locale, "viewerProfile.initialStateHeading")}
+                    </div>
+                    <button
+                      type="button"
+                      className="viewer-profile-toggle viewer-profile-toggle-ghost"
+                      data-expanded={stateExpanded ? "true" : "false"}
+                      onClick={() => setStateExpanded((e) => !e)}
+                    >
+                      <span className="viewer-profile-toggle-chevron" aria-hidden="true">
+                        ▸
+                      </span>
+                      {stateExpanded ? t(locale, "viewerProfile.hide") : t(locale, "viewerProfile.show")}
+                    </button>
+                  </div>
+                </div>
+                {stateExpanded && (
+                  <div className="viewer-profile-full">
+                    {initialStateShort?.trim() && (
+                      <p className="viewer-profile-text viewer-profile-text-summary">
+                        {initialStateShort}
+                      </p>
+                    )}
+                    <p className="viewer-profile-text viewer-profile-text-full">
+                      {initialState?.trim() ? initialState : initialStateShort}
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {showStateSelector && (
+              <div className="profile-loader-section">
+                <div className="profile-list">
+                  {isLoadingStates ? (
+                    <div className="loading-profiles">
+                      {renderTextWithAnimatedEllipsis(t(locale, "sidebar.loadingStates"))}
+                    </div>
+                  ) : availableStates.length === 0 ? (
+                    <div className="no-profiles">{t(locale, "sidebar.noStates")}</div>
+                  ) : (
+                    <ul className="profile-selector-list">
+                      {sortedAvailableStates.map((state) => (
+                        <li key={state.id}>
+                          <button
+                            className={`profile-selector-item ${
+                              state.id === stateId ? "active" : ""
+                            }`}
+                            onClick={() => handleLoadState(state.id)}
+                            disabled={isLoadingStates}
+                          >
+                            <div className="profile-selector-label">
+                              {state.label
+                                ? state.label
+                                : state.initialStateShort
+                                  ? truncateAtWord(state.initialStateShort, 72)
+                                  : t(locale, "sidebar.untitledState")}
+                            </div>
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </div>
+            )}
+
+            </div>
           </div>
           <h2>{t(locale, "sidebar.galleries")}</h2>
           <ul className="gallery-list">
@@ -2318,7 +2830,7 @@ function App() {
                     {!onboardingHint &&
                       (isLoading ? (
                         <p className="experience-panel-hint">
-                          {t(locale, "reflection.reflectingHint")}
+                          {renderTextWithAnimatedEllipsis(t(locale, "reflection.reflectingHint"))}
                         </p>
                       ) : walkThroughActive || reflections.length === 0 ? (
                         <p className="experience-panel-hint">
@@ -2348,6 +2860,8 @@ function App() {
                           !currentImage ||
                           isLoading ||
                           !viewerProfile.trim() ||
+                          !reflectionStyle.trim() ||
+                          !initialState.trim() ||
                           walkThroughActive
                         }
                       >
@@ -2362,7 +2876,9 @@ function App() {
                           disabled={
                             !selectedGallery ||
                             isLoading ||
-                            !viewerProfile.trim()
+                            !viewerProfile.trim() ||
+                            !reflectionStyle.trim() ||
+                            !initialState.trim()
                           }
                         >
                           {t(locale, "reflection.startWalkthrough")}
@@ -2450,11 +2966,7 @@ function App() {
                           if (isSpeaking) {
                             stop();
                           } else {
-                            const parsed = parseReflection(currentReflection.content);
-                            const speechText = parsed.internalState
-                              ? `${parsed.reaction} ${t(locale, "reflection.myCurrentState")} ${parsed.internalState}`
-                              : currentReflection.content;
-                            speak(speechText, {
+                            speak(getSpeakableReflectionOnlyText(currentReflection.content), {
                               rate: ttsRate,
                               voice: ttsVoice || undefined,
                               lang: locale,

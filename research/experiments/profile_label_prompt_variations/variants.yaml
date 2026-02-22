@@ -1,0 +1,305 @@
+variants:
+  # ---------------------------------------------------------------------------
+  # Base prompt (verbatim structure from src/prompts.ts:getProfileLabelFromProfileUserPrompt)
+  # ---------------------------------------------------------------------------
+
+  - id: v00_base_high_ambiguity
+    name: "v00 base (high ambiguity input)"
+    system_prompt: |
+      You write concise descriptive tags for fictional gallery visitors. You are precise, honest, and concrete.
+    user_prompt: |
+      Given the following viewer profile, write a short descriptive tag that captures how this person engages with art. The tag should read like an honest, plain-language sketch — not a poetic name or literary title.
+
+      Rules:
+      - 3–5 words. No article (do not start with "The", "Le", "La", or "L'").
+      - Describe the person's viewing attitude, pace, or emotional stance — what makes them distinctive.
+      - Use plain, concrete language. No psychology jargon or dimension names (ambiguity, symbolic, cognitive, somatic, kinesthetic, etc.).
+      - Prefer adjectives and participles that convey behavior you could observe: how they move, where they look, what they linger on, how they react.
+      - Sentence case (capitalize first word only).
+      - Output only the tag. No preamble, no quotes, no markdown.
+
+      LANGUAGE: Write the tag entirely in English. Do NOT use an article (do not start with "The").
+
+      Output language: English. The provided inputs may include mixed English/French; do not translate the inputs. Write only your new output in English.
+
+      English examples (for tone and form, not to copy):
+      - "Slow, absorbed, pattern-seeking"
+      - "Guarded but emotionally precise"
+      - "Eager and structurally minded"
+      - "Lingering, wary, deeply formal"
+      - "Brisk and sensation-driven"
+      - "Cautious accumulator of detail"
+
+      French examples (for tone and form, not to copy):
+      - "Lent, absorbé, en quête de structure"
+      - "Prudent mais émotionnellement précis"
+      - "Vif et porté par les sensations"
+      - "Attentif, méfiant, très formel"
+      - "Accumulateur prudent de détails"
+
+      Viewer profile:
+
+      They have a high tolerance for ambiguity and are comfortable letting meaning remain unresolved, returning to uncertainty rather than forcing a single takeaway. Their attention style is absorbed and dwelling: they tend to linger, re-scan internal relationships, and sit with an image until its structure starts to feel legible on its own terms. Their embodied orientation is more cognitive than somatic, with perception routed through naming patterns, comparing formal choices, and tracking how elements organize attention, while bodily sensation stays in the background. Their interpretive posture is primarily symbolic and associative, looking for metaphor, visual logic, and cultural echoes, with occasional autobiographical flashes that arrive suddenly and then recede. Their aesthetic conditioning is high, shaped by long exposure to experimental cinema, contemporary photography, and modern painting where withholding explanation is normal and productive. Motivationally they strongly seek challenge and novelty, preferring work that disrupts expectation, complicates first impressions, and asks for active re-reading. They welcome friction and are willing to risk misunderstanding as part of the experience rather than a problem to solve. Their pace through a sequence is deliberate, but they will circle back mentally, revising earlier interpretations as new cues accumulate. In memory they are strongly integrative and accumulative, naturally weaving successive encounters into a continuous thread of themes, motifs, and evolving questions. When a personal memory does surface, they fold it into that larger pattern as one more symbol, not as the final anchor of meaning.
+
+      Describe this visitor:
+
+  - id: v00_base_low_ambiguity
+    name: "v00 base (low ambiguity input)"
+    system_prompt: |
+      You write concise descriptive tags for fictional gallery visitors. You are precise, honest, and concrete.
+    user_prompt: |
+      Given the following viewer profile, write a short descriptive tag that captures how this person engages with art. The tag should read like an honest, plain-language sketch — not a poetic name or literary title.
+
+      Rules:
+      - 3–5 words. No article (do not start with "The", "Le", "La", or "L'").
+      - Describe the person's viewing attitude, pace, or emotional stance — what makes them distinctive.
+      - Use plain, concrete language. No psychology jargon or dimension names (ambiguity, symbolic, cognitive, somatic, kinesthetic, etc.).
+      - Prefer adjectives and participles that convey behavior you could observe: how they move, where they look, what they linger on, how they react.
+      - Sentence case (capitalize first word only).
+      - Output only the tag. No preamble, no quotes, no markdown.
+
+      LANGUAGE: Write the tag entirely in English. Do NOT use an article (do not start with "The").
+
+      Output language: English. The provided inputs may include mixed English/French; do not translate the inputs. Write only your new output in English.
+
+      English examples (for tone and form, not to copy):
+      - "Slow, absorbed, pattern-seeking"
+      - "Guarded but emotionally precise"
+      - "Eager and structurally minded"
+      - "Lingering, wary, deeply formal"
+      - "Brisk and sensation-driven"
+      - "Cautious accumulator of detail"
+
+      French examples (for tone and form, not to copy):
+      - "Lent, absorbé, en quête de structure"
+      - "Prudent mais émotionnellement précis"
+      - "Vif et porté par les sensations"
+      - "Attentif, méfiant, très formel"
+      - "Accumulateur prudent de détails"
+
+      Viewer profile:
+
+      They have low tolerance for ambiguity and look for a clear takeaway, preferring interpretations that settle into a definite meaning rather than staying open-ended. Their attention style is moderately scanning: they take in the overall scene quickly, then pause only when a detail offers an obvious clue about what’s going on. Their embodied orientation is balanced between somatic and cognitive, registering mood and physical reaction while also translating what they feel into simple labels and comparisons. Their interpretive posture leans literal and descriptive, with occasional symbolic readings drawn from familiar storytelling cues rather than abstract formal systems. Their aesthetic conditioning is moderate, shaped by popular cinema and illustration; they’re used to images that guide the viewer and signal intention, and they can handle some restraint as long as there’s a recognizable anchor. Motivationally they lean toward comfort and familiarity, seeking reassurance, coherence, and a sense of being “in on it” rather than being pushed into uncertainty. When confronted with unresolved elements, they try to resolve them by choosing the most plausible narrative and moving on once it fits. They tend to rely on genre-like expectations—what a scene usually implies, how characters or spaces usually function—to stabilize meaning. Across a sequence, their memory integration tendency is mildly integrative: they look for a continuing thread or recurring motif, but if they can’t find one quickly, they reset and treat each work as its own self-contained moment. They leave with a few distilled impressions and a tidy summary, more than a layered web of associations.
+
+      Describe this visitor:
+
+  # ---------------------------------------------------------------------------
+  # Shorter / "more interesting" variants (same two inputs, stricter form rules)
+  # ---------------------------------------------------------------------------
+
+  - id: v01_2to3_words_no_commas_high
+    name: "v01 2–3 words, no commas (high ambiguity input)"
+    system_prompt: |
+      You write concise descriptive tags for fictional gallery visitors. You are precise, honest, and concrete.
+    user_prompt: |
+      Write an ultra-short tag for this visitor.
+
+      Rules:
+      - 2–3 words ONLY.
+      - No commas. No conjunctions ("and", "but", "or"). No em dashes.
+      - No article ("The", "A", "An").
+      - Plain language: no theory, no dimension names, no art jargon.
+      - Make it interesting by choosing 1 strong, specific behavior + 1 emotional stance.
+      - Output only the tag. No preamble, no quotes, no markdown.
+
+      LANGUAGE: English only.
+
+      Output language: English. The provided inputs may include mixed English/French; do not translate the inputs. Write only your new output in English.
+
+      Viewer profile:
+      They have a high tolerance for ambiguity and are comfortable letting meaning remain unresolved, returning to uncertainty rather than forcing a single takeaway. Their attention style is absorbed and dwelling: they tend to linger, re-scan internal relationships, and sit with an image until its structure starts to feel legible on its own terms. Their embodied orientation is more cognitive than somatic, with perception routed through naming patterns, comparing formal choices, and tracking how elements organize attention, while bodily sensation stays in the background. Their interpretive posture is primarily symbolic and associative, looking for metaphor, visual logic, and cultural echoes, with occasional autobiographical flashes that arrive suddenly and then recede. Their aesthetic conditioning is high, shaped by long exposure to experimental cinema, contemporary photography, and modern painting where withholding explanation is normal and productive. Motivationally they strongly seek challenge and novelty, preferring work that disrupts expectation, complicates first impressions, and asks for active re-reading. They welcome friction and are willing to risk misunderstanding as part of the experience rather than a problem to solve. Their pace through a sequence is deliberate, but they will circle back mentally, revising earlier interpretations as new cues accumulate. In memory they are strongly integrative and accumulative, naturally weaving successive encounters into a continuous thread of themes, motifs, and evolving questions. When a personal memory does surface, they fold it into that larger pattern as one more symbol, not as the final anchor of meaning.
+
+      Tag:
+
+  - id: v01_2to3_words_no_commas_low
+    name: "v01 2–3 words, no commas (low ambiguity input)"
+    system_prompt: |
+      You write concise descriptive tags for fictional gallery visitors. You are precise, honest, and concrete.
+    user_prompt: |
+      Write an ultra-short tag for this visitor.
+
+      Rules:
+      - 2–3 words ONLY.
+      - No commas. No conjunctions ("and", "but", "or"). No em dashes.
+      - No article ("The", "A", "An").
+      - Plain language: no theory, no dimension names, no art jargon.
+      - Make it interesting by choosing 1 strong, specific behavior + 1 emotional stance.
+      - Output only the tag. No preamble, no quotes, no markdown.
+
+      LANGUAGE: English only.
+
+      Output language: English. The provided inputs may include mixed English/French; do not translate the inputs. Write only your new output in English.
+
+      Viewer profile:
+      They have low tolerance for ambiguity and look for a clear takeaway, preferring interpretations that settle into a definite meaning rather than staying open-ended. Their attention style is moderately scanning: they take in the overall scene quickly, then pause only when a detail offers an obvious clue about what’s going on. Their embodied orientation is balanced between somatic and cognitive, registering mood and physical reaction while also translating what they feel into simple labels and comparisons. Their interpretive posture leans literal and descriptive, with occasional symbolic readings drawn from familiar storytelling cues rather than abstract formal systems. Their aesthetic conditioning is moderate, shaped by popular cinema and illustration; they’re used to images that guide the viewer and signal intention, and they can handle some restraint as long as there’s a recognizable anchor. Motivationally they lean toward comfort and familiarity, seeking reassurance, coherence, and a sense of being “in on it” rather than being pushed into uncertainty. When confronted with unresolved elements, they try to resolve them by choosing the most plausible narrative and moving on once it fits. They tend to rely on genre-like expectations—what a scene usually implies, how characters or spaces usually function—to stabilize meaning. Across a sequence, their memory integration tendency is mildly integrative: they look for a continuing thread or recurring motif, but if they can’t find one quickly, they reset and treat each work as its own self-contained moment. They leave with a few distilled impressions and a tidy summary, more than a layered web of associations.
+
+      Tag:
+
+  - id: v02_exactly_2_words_high
+    name: "v02 exactly 2 words (high ambiguity input)"
+    system_prompt: |
+      You write concise descriptive tags for fictional gallery visitors. You are precise, honest, and concrete.
+    user_prompt: |
+      Write a tag for this visitor.
+
+      Rules:
+      - EXACTLY 2 words.
+      - No commas, no punctuation, no conjunctions.
+      - No article ("The", "A", "An").
+      - Plain, concrete language: describe observable viewing behavior.
+      - Output only the 2-word tag.
+
+      Output language: English. The provided inputs may include mixed English/French; do not translate the inputs. Write only your new output in English.
+
+      Viewer profile:
+      They have a high tolerance for ambiguity and are comfortable letting meaning remain unresolved, returning to uncertainty rather than forcing a single takeaway. Their attention style is absorbed and dwelling: they tend to linger, re-scan internal relationships, and sit with an image until its structure starts to feel legible on its own terms. Their embodied orientation is more cognitive than somatic, with perception routed through naming patterns, comparing formal choices, and tracking how elements organize attention, while bodily sensation stays in the background. Their interpretive posture is primarily symbolic and associative, looking for metaphor, visual logic, and cultural echoes, with occasional autobiographical flashes that arrive suddenly and then recede. Their aesthetic conditioning is high, shaped by long exposure to experimental cinema, contemporary photography, and modern painting where withholding explanation is normal and productive. Motivationally they strongly seek challenge and novelty, preferring work that disrupts expectation, complicates first impressions, and asks for active re-reading. They welcome friction and are willing to risk misunderstanding as part of the experience rather than a problem to solve. Their pace through a sequence is deliberate, but they will circle back mentally, revising earlier interpretations as new cues accumulate. In memory they are strongly integrative and accumulative, naturally weaving successive encounters into a continuous thread of themes, motifs, and evolving questions. When a personal memory does surface, they fold it into that larger pattern as one more symbol, not as the final anchor of meaning.
+
+      Tag:
+
+  - id: v02_exactly_2_words_low
+    name: "v02 exactly 2 words (low ambiguity input)"
+    system_prompt: |
+      You write concise descriptive tags for fictional gallery visitors. You are precise, honest, and concrete.
+    user_prompt: |
+      Write a tag for this visitor.
+
+      Rules:
+      - EXACTLY 2 words.
+      - No commas, no punctuation, no conjunctions.
+      - No article ("The", "A", "An").
+      - Plain, concrete language: describe observable viewing behavior.
+      - Output only the 2-word tag.
+
+      Output language: English. The provided inputs may include mixed English/French; do not translate the inputs. Write only your new output in English.
+
+      Viewer profile:
+      They have low tolerance for ambiguity and look for a clear takeaway, preferring interpretations that settle into a definite meaning rather than staying open-ended. Their attention style is moderately scanning: they take in the overall scene quickly, then pause only when a detail offers an obvious clue about what’s going on. Their embodied orientation is balanced between somatic and cognitive, registering mood and physical reaction while also translating what they feel into simple labels and comparisons. Their interpretive posture leans literal and descriptive, with occasional symbolic readings drawn from familiar storytelling cues rather than abstract formal systems. Their aesthetic conditioning is moderate, shaped by popular cinema and illustration; they’re used to images that guide the viewer and signal intention, and they can handle some restraint as long as there’s a recognizable anchor. Motivationally they lean toward comfort and familiarity, seeking reassurance, coherence, and a sense of being “in on it” rather than being pushed into uncertainty. When confronted with unresolved elements, they try to resolve them by choosing the most plausible narrative and moving on once it fits. They tend to rely on genre-like expectations—what a scene usually implies, how characters or spaces usually function—to stabilize meaning. Across a sequence, their memory integration tendency is mildly integrative: they look for a continuing thread or recurring motif, but if they can’t find one quickly, they reset and treat each work as its own self-contained moment. They leave with a few distilled impressions and a tidy summary, more than a layered web of associations.
+
+      Tag:
+
+  - id: v03_hyphen_compound_plus_noun_high
+    name: "v03 hyphen-compound + noun (high ambiguity input)"
+    system_prompt: |
+      You write concise descriptive tags for fictional gallery visitors. You are precise, honest, and concrete.
+    user_prompt: |
+      Write a short tag in the form: <hyphenated compound> <noun>.
+
+      Rules:
+      - EXACTLY 2 words.
+      - First word MUST be hyphenated (e.g., "pattern-hunting").
+      - Second word MUST be a plain noun for a person (e.g., "linger-er" is not allowed; use "linger" only if it's a noun). Prefer "viewer", "reader", "seeker", "scanner", "revisitor", "listener".
+      - No article. No commas. No extra punctuation.
+      - Output only the tag.
+
+      Output language: English. The provided inputs may include mixed English/French; do not translate the inputs. Write only your new output in English.
+
+      Viewer profile:
+      They have a high tolerance for ambiguity and are comfortable letting meaning remain unresolved, returning to uncertainty rather than forcing a single takeaway. Their attention style is absorbed and dwelling: they tend to linger, re-scan internal relationships, and sit with an image until its structure starts to feel legible on its own terms. Their embodied orientation is more cognitive than somatic, with perception routed through naming patterns, comparing formal choices, and tracking how elements organize attention, while bodily sensation stays in the background. Their interpretive posture is primarily symbolic and associative, looking for metaphor, visual logic, and cultural echoes, with occasional autobiographical flashes that arrive suddenly and then recede. Their aesthetic conditioning is high, shaped by long exposure to experimental cinema, contemporary photography, and modern painting where withholding explanation is normal and productive. Motivationally they strongly seek challenge and novelty, preferring work that disrupts expectation, complicates first impressions, and asks for active re-reading. They welcome friction and are willing to risk misunderstanding as part of the experience rather than a problem to solve. Their pace through a sequence is deliberate, but they will circle back mentally, revising earlier interpretations as new cues accumulate. In memory they are strongly integrative and accumulative, naturally weaving successive encounters into a continuous thread of themes, motifs, and evolving questions. When a personal memory does surface, they fold it into that larger pattern as one more symbol, not as the final anchor of meaning.
+
+      Tag:
+
+  - id: v03_hyphen_compound_plus_noun_low
+    name: "v03 hyphen-compound + noun (low ambiguity input)"
+    system_prompt: |
+      You write concise descriptive tags for fictional gallery visitors. You are precise, honest, and concrete.
+    user_prompt: |
+      Write a short tag in the form: <hyphenated compound> <noun>.
+
+      Rules:
+      - EXACTLY 2 words.
+      - First word MUST be hyphenated (e.g., "meaning-settling").
+      - Second word MUST be a plain noun for a person (e.g., "viewer", "scanner", "reader", "seeker").
+      - No article. No commas. No extra punctuation.
+      - Output only the tag.
+
+      Output language: English. The provided inputs may include mixed English/French; do not translate the inputs. Write only your new output in English.
+
+      Viewer profile:
+      They have low tolerance for ambiguity and look for a clear takeaway, preferring interpretations that settle into a definite meaning rather than staying open-ended. Their attention style is moderately scanning: they take in the overall scene quickly, then pause only when a detail offers an obvious clue about what’s going on. Their embodied orientation is balanced between somatic and cognitive, registering mood and physical reaction while also translating what they feel into simple labels and comparisons. Their interpretive posture leans literal and descriptive, with occasional symbolic readings drawn from familiar storytelling cues rather than abstract formal systems. Their aesthetic conditioning is moderate, shaped by popular cinema and illustration; they’re used to images that guide the viewer and signal intention, and they can handle some restraint as long as there’s a recognizable anchor. Motivationally they lean toward comfort and familiarity, seeking reassurance, coherence, and a sense of being “in on it” rather than being pushed into uncertainty. When confronted with unresolved elements, they try to resolve them by choosing the most plausible narrative and moving on once it fits. They tend to rely on genre-like expectations—what a scene usually implies, how characters or spaces usually function—to stabilize meaning. Across a sequence, their memory integration tendency is mildly integrative: they look for a continuing thread or recurring motif, but if they can’t find one quickly, they reset and treat each work as its own self-contained moment. They leave with a few distilled impressions and a tidy summary, more than a layered web of associations.
+
+      Tag:
+
+  - id: v04_participle_first_high
+    name: "v04 participle-first (high ambiguity input)"
+    system_prompt: |
+      You write concise descriptive tags for fictional gallery visitors. You are precise, honest, and concrete.
+    user_prompt: |
+      Write a short tag for this visitor.
+
+      Rules:
+      - EXACTLY 3 words.
+      - First word MUST be a present participle ending in "-ing" (e.g., "Lingering", "Revisiting", "Circling").
+      - No commas. No conjunctions.
+      - No article. Plain language only.
+      - Output only the tag.
+
+      Output language: English. The provided inputs may include mixed English/French; do not translate the inputs. Write only your new output in English.
+
+      Viewer profile:
+      They have a high tolerance for ambiguity and are comfortable letting meaning remain unresolved, returning to uncertainty rather than forcing a single takeaway. Their attention style is absorbed and dwelling: they tend to linger, re-scan internal relationships, and sit with an image until its structure starts to feel legible on its own terms. Their embodied orientation is more cognitive than somatic, with perception routed through naming patterns, comparing formal choices, and tracking how elements organize attention, while bodily sensation stays in the background. Their interpretive posture is primarily symbolic and associative, looking for metaphor, visual logic, and cultural echoes, with occasional autobiographical flashes that arrive suddenly and then recede. Their aesthetic conditioning is high, shaped by long exposure to experimental cinema, contemporary photography, and modern painting where withholding explanation is normal and productive. Motivationally they strongly seek challenge and novelty, preferring work that disrupts expectation, complicates first impressions, and asks for active re-reading. They welcome friction and are willing to risk misunderstanding as part of the experience rather than a problem to solve. Their pace through a sequence is deliberate, but they will circle back mentally, revising earlier interpretations as new cues accumulate. In memory they are strongly integrative and accumulative, naturally weaving successive encounters into a continuous thread of themes, motifs, and evolving questions. When a personal memory does surface, they fold it into that larger pattern as one more symbol, not as the final anchor of meaning.
+
+      Tag:
+
+  - id: v04_participle_first_low
+    name: "v04 participle-first (low ambiguity input)"
+    system_prompt: |
+      You write concise descriptive tags for fictional gallery visitors. You are precise, honest, and concrete.
+    user_prompt: |
+      Write a short tag for this visitor.
+
+      Rules:
+      - EXACTLY 3 words.
+      - First word MUST be a present participle ending in "-ing" (e.g., "Scanning", "Settling", "Checking").
+      - No commas. No conjunctions.
+      - No article. Plain language only.
+      - Output only the tag.
+
+      Output language: English. The provided inputs may include mixed English/French; do not translate the inputs. Write only your new output in English.
+
+      Viewer profile:
+      They have low tolerance for ambiguity and look for a clear takeaway, preferring interpretations that settle into a definite meaning rather than staying open-ended. Their attention style is moderately scanning: they take in the overall scene quickly, then pause only when a detail offers an obvious clue about what’s going on. Their embodied orientation is balanced between somatic and cognitive, registering mood and physical reaction while also translating what they feel into simple labels and comparisons. Their interpretive posture leans literal and descriptive, with occasional symbolic readings drawn from familiar storytelling cues rather than abstract formal systems. Their aesthetic conditioning is moderate, shaped by popular cinema and illustration; they’re used to images that guide the viewer and signal intention, and they can handle some restraint as long as there’s a recognizable anchor. Motivationally they lean toward comfort and familiarity, seeking reassurance, coherence, and a sense of being “in on it” rather than being pushed into uncertainty. When confronted with unresolved elements, they try to resolve them by choosing the most plausible narrative and moving on once it fits. They tend to rely on genre-like expectations—what a scene usually implies, how characters or spaces usually function—to stabilize meaning. Across a sequence, their memory integration tendency is mildly integrative: they look for a continuing thread or recurring motif, but if they can’t find one quickly, they reset and treat each work as its own self-contained moment. They leave with a few distilled impressions and a tidy summary, more than a layered web of associations.
+
+      Tag:
+
+  - id: v05_max_18_chars_high
+    name: "v05 max 18 characters (high ambiguity input)"
+    system_prompt: |
+      You write concise descriptive tags for fictional gallery visitors. You are precise, honest, and concrete.
+    user_prompt: |
+      Write a tag for this visitor.
+
+      Rules:
+      - Maximum length: 18 characters total (including spaces).
+      - 1–3 words.
+      - No commas. No article. No quotes.
+      - Plain language, behavior-based.
+      - Output only the tag.
+
+      Output language: English. The provided inputs may include mixed English/French; do not translate the inputs. Write only your new output in English.
+
+      Viewer profile:
+      They have a high tolerance for ambiguity and are comfortable letting meaning remain unresolved, returning to uncertainty rather than forcing a single takeaway. Their attention style is absorbed and dwelling: they tend to linger, re-scan internal relationships, and sit with an image until its structure starts to feel legible on its own terms. Their embodied orientation is more cognitive than somatic, with perception routed through naming patterns, comparing formal choices, and tracking how elements organize attention, while bodily sensation stays in the background. Their interpretive posture is primarily symbolic and associative, looking for metaphor, visual logic, and cultural echoes, with occasional autobiographical flashes that arrive suddenly and then recede. Their aesthetic conditioning is high, shaped by long exposure to experimental cinema, contemporary photography, and modern painting where withholding explanation is normal and productive. Motivationally they strongly seek challenge and novelty, preferring work that disrupts expectation, complicates first impressions, and asks for active re-reading. They welcome friction and are willing to risk misunderstanding as part of the experience rather than a problem to solve. Their pace through a sequence is deliberate, but they will circle back mentally, revising earlier interpretations as new cues accumulate. In memory they are strongly integrative and accumulative, naturally weaving successive encounters into a continuous thread of themes, motifs, and evolving questions. When a personal memory does surface, they fold it into that larger pattern as one more symbol, not as the final anchor of meaning.
+
+      Tag:
+
+  - id: v05_max_18_chars_low
+    name: "v05 max 18 characters (low ambiguity input)"
+    system_prompt: |
+      You write concise descriptive tags for fictional gallery visitors. You are precise, honest, and concrete.
+    user_prompt: |
+      Write a tag for this visitor.
+
+      Rules:
+      - Maximum length: 18 characters total (including spaces).
+      - 1–3 words.
+      - No commas. No article. No quotes.
+      - Plain language, behavior-based.
+      - Output only the tag.
+
+      Output language: English. The provided inputs may include mixed English/French; do not translate the inputs. Write only your new output in English.
+
+      Viewer profile:
+      They have low tolerance for ambiguity and look for a clear takeaway, preferring interpretations that settle into a definite meaning rather than staying open-ended. Their attention style is moderately scanning: they take in the overall scene quickly, then pause only when a detail offers an obvious clue about what’s going on. Their embodied orientation is balanced between somatic and cognitive, registering mood and physical reaction while also translating what they feel into simple labels and comparisons. Their interpretive posture leans literal and descriptive, with occasional symbolic readings drawn from familiar storytelling cues rather than abstract formal systems. Their aesthetic conditioning is moderate, shaped by popular cinema and illustration; they’re used to images that guide the viewer and signal intention, and they can handle some restraint as long as there’s a recognizable anchor. Motivationally they lean toward comfort and familiarity, seeking reassurance, coherence, and a sense of being “in on it” rather than being pushed into uncertainty. When confronted with unresolved elements, they try to resolve them by choosing the most plausible narrative and moving on once it fits. They tend to rely on genre-like expectations—what a scene usually implies, how characters or spaces usually function—to stabilize meaning. Across a sequence, their memory integration tendency is mildly integrative: they look for a continuing thread or recurring motif, but if they can’t find one quickly, they reset and treat each work as its own self-contained moment. They leave with a few distilled impressions and a tidy summary, more than a layered web of associations.
+
+      Tag:
+

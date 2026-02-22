@@ -14,9 +14,15 @@ Step-by-step guide. Do each step in order.
 | All | `/api/ollama/*` | On HF: returns 503 (no local Ollama). |
 | All | `/images/*` | Proxy to `https://www.fredericbenard.com`. |
 | POST | `/api/save-profile` | Body: JSON `{ id, ... }`. Writes to `data/profiles/<id>.json`. |
+| POST | `/api/save-style` | Body: JSON `{ id, ... }`. Writes to `data/styles/<id>.json`. |
+| POST | `/api/save-state` | Body: JSON `{ id, ... }`. Writes to `data/states/<id>.json`. |
 | POST | `/api/save-reflection-session` | Body: JSON `{ profileId, galleryId, sessionStartedAt, ... }`. Writes to `data/reflections/`. |
-| GET | `/api/list-profiles?llm=<provider>` | Returns `{ profiles: [...] }` from `data/profiles/` (including `public/`). |
+| GET | `/api/list-profiles` | Returns `{ profiles: [...] }` from `data/profiles/` (including `public/`). |
+| GET | `/api/list-styles` | Returns `{ styles: [...] }` from `data/styles/` (including `public/`), plus fallback extraction from `data/profiles/`. |
+| GET | `/api/list-states` | Returns `{ states: [...] }` from `data/states/` (including `public/`), plus fallback extraction from `data/profiles/`. |
 | GET | `/api/load-profile?id=<id>` | Returns `{ profile }` from `data/profiles/` or `data/profiles/public/`. |
+| GET | `/api/load-style?id=<id>` | Returns `{ style }` from `data/styles/` / `data/styles/public/`, or falls back to extracting from `data/profiles/`. |
+| GET | `/api/load-state?id=<id>` | Returns `{ state }` from `data/states/` / `data/states/public/`, or falls back to extracting from `data/profiles/`. |
 
 Static SPA: serve `dist/` for all other routes (fallback to `index.html`). Health: `GET/POST /api/health` returns `{ ok: true }`.
 

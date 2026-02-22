@@ -1,7 +1,5 @@
 /**
- * Save generated viewer profile + reflection style + initial state to data/profiles/<uuid>.json
- * v2: profiles include profile, style, and initial state as independent stages,
- * plus short (LLM-summarized) descriptions for user-facing display.
+ * Save generated viewer profile to data/profiles/<uuid>.json
  */
 
 import type { VisionProvider } from "../api/vision";
@@ -24,18 +22,17 @@ export interface SavedProfilePayload {
   profile: string;
   /** Short LLM-summarized description of the profile (user-facing). */
   profileShort?: string;
-  reflectionStyle: string;
-  /** Short LLM-summarized description of the reflective style (user-facing). */
-  reflectionStyleShort?: string;
-  /** Initial internal state (v2: same 7-dimension schema as evolving state). */
-  initialState?: string;
-  /** Short LLM-summarized description of the initial state (user-facing). */
-  initialStateShort?: string;
   /** Raw LLM output for profile (before cleaning) */
   rawProfile?: string;
-  /** Raw LLM output for reflection style (before cleaning) */
+  /**
+   * Legacy fields kept for backward compatibility with older combined profile payloads.
+   * New app versions persist these as separate artifacts in data/styles and data/states.
+   */
+  reflectionStyle?: string;
+  reflectionStyleShort?: string;
+  initialState?: string;
+  initialStateShort?: string;
   rawReflectionStyle?: string;
-  /** Raw LLM output for initial state (before cleaning) */
   rawInitialState?: string;
 }
 
@@ -43,13 +40,7 @@ export interface SaveProfileParams {
   locale: OutputLocale;
   profileRaw: string;
   profileCleaned: string;
-  styleRaw: string;
-  styleCleaned: string;
-  initialStateRaw: string;
-  initialStateCleaned: string;
   profileShort?: string;
-  reflectionStyleShort?: string;
-  initialStateShort?: string;
   labelCleaned?: string;
   provider: VisionProvider;
 }
@@ -76,13 +67,7 @@ export async function saveGeneratedProfile(
     }),
     profile: params.profileCleaned,
     ...(params.profileShort && { profileShort: params.profileShort }),
-    reflectionStyle: params.styleCleaned,
-    ...(params.reflectionStyleShort && { reflectionStyleShort: params.reflectionStyleShort }),
-    initialState: params.initialStateCleaned,
-    ...(params.initialStateShort && { initialStateShort: params.initialStateShort }),
     rawProfile: params.profileRaw,
-    rawReflectionStyle: params.styleRaw,
-    rawInitialState: params.initialStateRaw,
   };
 
   try {

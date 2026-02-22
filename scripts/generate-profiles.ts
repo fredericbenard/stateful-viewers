@@ -1,13 +1,13 @@
 /**
- * Generate v2 public profiles (EN + FR)
+ * Generate v2 public profiles (EN, optional FR)
  *
  * Run: npx tsx scripts/generate-profiles.ts [count]
  *
- * Requires OPENAI_API_KEY in .env or environment.
+ * Generates [count] EN profiles (default 1) with parametric hints, then
+ * optionally translates each to FR when `--translate-fr` is provided.
  *
- * Generates [count] EN profiles (default 4) with parametric hints, then
- * translates each to FR. Each profile includes: profile, style, initial
- * state, short descriptions for each, and a label.
+ * Output format is profile-only (no embedded style/state):
+ * - data/profiles/public/<id>.json
  */
 
 import { config } from "dotenv";
@@ -20,27 +20,25 @@ import crypto from "node:crypto";
 import { callLlm, type LlmProvider } from "./lib/llm.ts";
 import {
   VIEWER_PROFILE_PROMPT,
-  VIEWER_PROFILE_USER_SPEC,
-  REFLECTION_STYLE_PROMPT,
-  REFLECTION_STYLE_USER_SPEC,
-  INITIAL_STATE_PROMPT,
-  INITIAL_STATE_USER_SPEC,
   PROFILE_LABEL_PROMPT,
   SHORT_DESCRIPTION_PROMPT,
-  outputLanguageInstruction,
-  generateProfileHint,
-  generateStyleHint,
-  generateStateHint,
-  getProfileLabelUserPrompt,
+  getViewerProfileUserPrompt,
+  getProfileLabelFromProfileUserPrompt,
   getShortProfileUserPrompt,
-  getShortStyleUserPrompt,
-  getShortStateUserPrompt,
   type OutputLocale,
 } from "../src/prompts.ts";
+import {
+  cleanText,
+  hasCliFlag,
+  normalizeLabelSentenceCase,
+  parseGenerateCli,
+  TRANSLATE_EN_TO_FR_SYSTEM_PROMPT,
+  sleep,
+} from "./lib/publicGen.ts";
 
 const PUBLIC_DIR = path.join(process.cwd(), "data", "profiles", "public");
 
-interface GeneratedProfile {
+interface GeneratedProfilePayload {
   id: string;
   generatedAt: string;
   locale: OutputLocale;
@@ -49,121 +47,7 @@ interface GeneratedProfile {
   label: string;
   profile: string;
   profileShort: string;
-  reflectionStyle: string;
-  reflectionStyleShort: string;
-  initialState: string;
-  initialStateShort: string;
-}
-
-function getCliFlagValue(flag: string): string | undefined {
-  const argv = process.argv.slice(2);
-  for (let i = 0; i < argv.length; i++) {
-    const a = argv[i];
-    if (a === flag) return argv[i + 1];
-    if (a.startsWith(`${flag}=`)) return a.slice(flag.length + 1);
-  }
-  return undefined;
-}
-
-function hasCliFlag(flag: string): boolean {
-  const argv = process.argv.slice(2);
-  return argv.includes(flag) || argv.some((a) => a.startsWith(`${flag}=`));
-}
-
-function parseCli(): {
-  count: number;
-  llmProvider: LlmProvider;
-  model: string;
-  temperature: number;
-  maxTokens: number;
-} {
-  if (hasCliFlag("--help") || hasCliFlag("-h")) {
-    console.log(
-      [
-        "Generate v2 public profiles (EN + FR).",
-        "",
-        "Usage:",
-        "  npx tsx scripts/generate-profiles.ts [count] [--llm <openai|anthropic|gemini|ollama>] [--model <model>] [--temperature <n>] [--max-tokens <n>]",
-        "",
-        "Examples:",
-        "  npx tsx scripts/generate-profiles.ts 4",
-        "  npx tsx scripts/generate-profiles.ts 8 --llm openai --model gpt-5.2",
-        "  npx tsx scripts/generate-profiles.ts 6 --llm anthropic --model claude-sonnet-4-5-20250929",
-        "  npx tsx scripts/generate-profiles.ts 6 --llm gemini --model gemini-3-pro-preview",
-        "  npx tsx scripts/generate-profiles.ts 2 --llm ollama --model llama3.1:8b-instruct-q5_K_M",
-        "  npx tsx scripts/generate-profiles.ts 4 --llm gemini --max-tokens 2048",
-        "",
-        "Env vars (depending on --llm):",
-        "  OPENAI_API_KEY",
-        "  ANTHROPIC_API_KEY",
-        "  GOOGLE_API_KEY",
-        "  OLLAMA_BASE_URL (optional; default http://localhost:11434)",
-      ].join("\n")
-    );
-    process.exit(0);
-  }
-
-  const argv = process.argv.slice(2);
-  const countArg = argv.find((a) => /^\d+$/.test(a));
-  const count = Math.max(1, parseInt(countArg ?? "4", 10) || 4);
-
-  const llmRaw = (getCliFlagValue("--llm") ?? "openai").toLowerCase();
-  const llmProvider: LlmProvider =
-    llmRaw === "anthropic"
-      ? "anthropic"
-      : llmRaw === "gemini"
-        ? "gemini"
-        : llmRaw === "ollama"
-          ? "ollama"
-          : "openai";
-
-  const defaultModel =
-    llmProvider === "openai"
-      ? "gpt-5.2"
-      : llmProvider === "anthropic"
-        ? "claude-sonnet-4-5-20250929"
-        : llmProvider === "gemini"
-          ? "gemini-3-pro-preview"
-          : "llama3.1:8b-instruct-q5_K_M";
-  const model = getCliFlagValue("--model") ?? defaultModel;
-
-  const temperatureRaw = getCliFlagValue("--temperature");
-  const temperature = Number.isFinite(Number(temperatureRaw))
-    ? Math.max(0, Math.min(2, Number(temperatureRaw)))
-    : 0.95;
-
-  const maxTokensRaw = getCliFlagValue("--max-tokens");
-  const maxTokens = Number.isFinite(Number(maxTokensRaw))
-    ? Math.max(64, Math.min(8192, Math.floor(Number(maxTokensRaw))))
-    : llmProvider === "gemini"
-      ? 4096
-      : 1024;
-
-  return { count, llmProvider, model, temperature, maxTokens };
-}
-
-function cleanText(text: string): string {
-  let cleaned = text.trim();
-  cleaned = cleaned.replace(/\*\*([^*]+)\*\*/g, "$1");
-  const introPatterns = [
-    /^(Here is|Here's) (the |a )?(profile|style|state|label|summary)[:\s]*\n?/i,
-    /^(The|This) (profile|style|state|label) (is|:)[:\s]*\n?/i,
-  ];
-  for (const p of introPatterns) cleaned = cleaned.replace(p, "");
-  if ((cleaned.startsWith('"') && cleaned.endsWith('"')) ||
-      (cleaned.startsWith("'") && cleaned.endsWith("'"))) {
-    cleaned = cleaned.slice(1, -1).trim();
-  }
-  return cleaned.trim();
-}
-
-function normalizeLabelSentenceCase(label: string): string {
-  const cleaned = label.trim().replace(/\s+/g, " ");
-  if (!cleaned) return cleaned;
-  const words = cleaned.split(" ");
-  return words
-    .map((w, i) => i === 0 ? w.charAt(0).toUpperCase() + w.slice(1).toLowerCase() : w.toLowerCase())
-    .join(" ");
+  rawProfile?: string;
 }
 
 async function generateOneProfile(
@@ -172,9 +56,8 @@ async function generateOneProfile(
   model: string,
   temperature: number,
   maxTokens: number,
-  sourceProfile?: GeneratedProfile
-): Promise<GeneratedProfile> {
-  const langInstr = outputLanguageInstruction(locale);
+  sourceProfile?: GeneratedProfilePayload
+): Promise<GeneratedProfilePayload> {
 
   const callText = (
     systemPrompt: string,
@@ -191,70 +74,41 @@ async function generateOneProfile(
     });
 
   let profile: string;
-  let style: string;
-  let state: string;
-
+  let rawProfile: string;
+  let profileShort: string;
   if (sourceProfile && locale === "fr") {
-    const translateSys = "You are a professional translator. Translate the following text from English to French. Preserve the tone, register, and style. Output only the translation.";
     console.log(`  Translating profile to FR...`);
-    profile = await callText(translateSys, sourceProfile.profile);
-    console.log(`  Translating style to FR...`);
-    style = await callText(translateSys, sourceProfile.reflectionStyle);
-    console.log(`  Translating initial state to FR...`);
-    state = await callText(translateSys, sourceProfile.initialState);
+    rawProfile = await callText(TRANSLATE_EN_TO_FR_SYSTEM_PROMPT, sourceProfile.profile);
+    profile = cleanText(rawProfile);
+    console.log(`  Translating profile short to FR...`);
+    profileShort = cleanText(
+      await callText(TRANSLATE_EN_TO_FR_SYSTEM_PROMPT, sourceProfile.profileShort)
+    );
   } else {
-    const profileHint = generateProfileHint();
-    const styleHint = generateStyleHint();
-    const stateHint = generateStateHint();
-    console.log(`  Profile hint: ${profileHint}`);
-    console.log(`  Style hint: ${styleHint}`);
-    console.log(`  State hint: ${stateHint}`);
-
     console.log(`  Generating profile...`);
-    profile = cleanText(await callText(
+    rawProfile = await callText(
       VIEWER_PROFILE_PROMPT,
-      `${VIEWER_PROFILE_USER_SPEC}\n\n${langInstr}\n\n${profileHint}`,
-    ));
+      getViewerProfileUserPrompt(locale),
+    );
+    profile = cleanText(rawProfile);
 
-    console.log(`  Generating style...`);
-    style = cleanText(await callText(
-      REFLECTION_STYLE_PROMPT,
-      `${REFLECTION_STYLE_USER_SPEC}\n\n${langInstr}\n\n${styleHint}`,
-    ));
-
-    console.log(`  Generating initial state...`);
-    state = cleanText(await callText(
-      INITIAL_STATE_PROMPT,
-      `${INITIAL_STATE_USER_SPEC}\n\n${langInstr}\n\n${stateHint}`,
-    ));
+    console.log(`  Generating profile short...`);
+    profileShort = cleanText(
+      await callText(
+        SHORT_DESCRIPTION_PROMPT,
+        getShortProfileUserPrompt(profile, locale),
+        llmProvider === "gemini" ? maxTokens : 256
+      )
+    );
   }
 
   console.log(`  Generating label...`);
   const labelRaw = await callText(
     PROFILE_LABEL_PROMPT,
-    getProfileLabelUserPrompt(profile, style, locale),
+    getProfileLabelFromProfileUserPrompt(profile, locale),
     llmProvider === "gemini" ? maxTokens : 64
   );
   const label = normalizeLabelSentenceCase(cleanText(labelRaw));
-
-  console.log(`  Generating short descriptions...`);
-  const [profileShortRaw, styleShortRaw, stateShortRaw] = await Promise.all([
-    callText(
-      SHORT_DESCRIPTION_PROMPT,
-      getShortProfileUserPrompt(profile, locale),
-      llmProvider === "gemini" ? maxTokens : 256
-    ),
-    callText(
-      SHORT_DESCRIPTION_PROMPT,
-      getShortStyleUserPrompt(style, locale),
-      llmProvider === "gemini" ? maxTokens : 256
-    ),
-    callText(
-      SHORT_DESCRIPTION_PROMPT,
-      getShortStateUserPrompt(state, locale),
-      llmProvider === "gemini" ? maxTokens : 128
-    ),
-  ]);
 
   return {
     id: crypto.randomUUID(),
@@ -264,25 +118,37 @@ async function generateOneProfile(
     llmModelLabel: model,
     label,
     profile,
-    profileShort: cleanText(profileShortRaw),
-    reflectionStyle: style,
-    reflectionStyleShort: cleanText(styleShortRaw),
-    initialState: state,
-    initialStateShort: cleanText(stateShortRaw),
+    profileShort,
+    rawProfile,
   };
 }
 
 async function main() {
-  const { count, llmProvider, model, temperature, maxTokens } = parseCli();
+  const translateFr = hasCliFlag("--translate-fr");
+  const { count, llmProvider, model, temperature, maxTokens } = parseGenerateCli({
+    helpHeader: "Generate v2 public profiles (EN, optional FR).",
+    usageLine:
+      "npx tsx scripts/generate-profiles.ts [count] [--translate-fr] [--llm <openai|anthropic|gemini|ollama>] [--model <model>] [--temperature <n>] [--max-tokens <n>]",
+    examples: [
+      "npx tsx scripts/generate-profiles.ts",
+      "npx tsx scripts/generate-profiles.ts 2 --translate-fr",
+      "npx tsx scripts/generate-profiles.ts 8 --llm openai --model gpt-5.2",
+      "npx tsx scripts/generate-profiles.ts 6 --llm anthropic --model claude-sonnet-4-5-20250929",
+      "npx tsx scripts/generate-profiles.ts 6 --llm gemini --model gemini-3-pro-preview",
+      "npx tsx scripts/generate-profiles.ts 2 --llm ollama --model llama3.1:8b-instruct-q5_K_M",
+      "npx tsx scripts/generate-profiles.ts 4 --llm gemini --max-tokens 2048",
+    ],
+    defaultCount: 1,
+  });
   console.log(
-    `Generating ${count} v2 public profiles (EN + FR) with ${llmProvider}/${model} (temperature=${temperature}, maxTokens=${maxTokens})...\n`,
+    `Generating ${count} v2 public profiles (EN${translateFr ? " + FR" : ""}) with ${llmProvider}/${model} (temperature=${temperature}, maxTokens=${maxTokens})...\n`,
   );
 
   if (!fs.existsSync(PUBLIC_DIR)) {
     fs.mkdirSync(PUBLIC_DIR, { recursive: true });
   }
 
-  const enProfiles: GeneratedProfile[] = [];
+  const enProfiles: GeneratedProfilePayload[] = [];
 
   for (let i = 0; i < count; i++) {
     console.log(`\n=== EN Profile ${i + 1}/${count} ===`);
@@ -293,26 +159,32 @@ async function main() {
     fs.writeFileSync(filePath, JSON.stringify(profile, null, 2), "utf-8");
     console.log(`  Saved: ${filePath}`);
     console.log(`  Label: ${profile.label}`);
+    await sleep(250);
   }
 
-  for (let i = 0; i < count; i++) {
-    console.log(`\n=== FR Profile ${i + 1}/${count} (translating from EN) ===`);
-    const frProfile = await generateOneProfile(
-      "fr",
-      llmProvider,
-      model,
-      temperature,
-      maxTokens,
-      enProfiles[i]
-    );
+  if (translateFr) {
+    for (let i = 0; i < count; i++) {
+      console.log(`\n=== FR Profile ${i + 1}/${count} (translating from EN) ===`);
+      const frProfile = await generateOneProfile(
+        "fr",
+        llmProvider,
+        model,
+        temperature,
+        maxTokens,
+        enProfiles[i]
+      );
 
-    const filePath = path.join(PUBLIC_DIR, `${frProfile.id}.json`);
-    fs.writeFileSync(filePath, JSON.stringify(frProfile, null, 2), "utf-8");
-    console.log(`  Saved: ${filePath}`);
-    console.log(`  Label: ${frProfile.label}`);
+      const filePath = path.join(PUBLIC_DIR, `${frProfile.id}.json`);
+      fs.writeFileSync(filePath, JSON.stringify(frProfile, null, 2), "utf-8");
+      console.log(`  Saved: ${filePath}`);
+      console.log(`  Label: ${frProfile.label}`);
+      await sleep(250);
+    }
   }
 
-  console.log(`\n\nDone! Generated ${count} EN + ${count} FR profiles in data/profiles/public/`);
+  console.log(
+    `\n\nDone! Generated ${count} EN${translateFr ? ` + ${count} FR` : ""} profile(s) in data/profiles/public/`
+  );
 }
 
 main().catch((err) => {

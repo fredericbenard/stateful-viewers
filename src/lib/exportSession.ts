@@ -24,7 +24,11 @@ export interface ExportReflection {
 
 export interface ExportOptions {
   profileId?: string;
+  styleId?: string;
+  stateId?: string;
   profileLabel?: string;
+  styleLabel?: string;
+  stateLabel?: string;
   sessionStartedAt?: string;
   visionProvider?: VisionProvider;
   locale?: OutputLocale;
@@ -32,6 +36,14 @@ export interface ExportOptions {
   profileLlm?: string;
   /** Human-readable label for the profile-generation LLM. */
   profileLlmModelLabel?: string;
+  /** LLM provider used to generate the reflection style (may differ from profileLlm). */
+  styleLlm?: string;
+  /** Human-readable label for the style-generation LLM. */
+  styleLlmModelLabel?: string;
+  /** LLM provider used to generate the initial state (may differ from profileLlm). */
+  stateLlm?: string;
+  /** Human-readable label for the state-generation LLM. */
+  stateLlmModelLabel?: string;
   trajectorySummary?: string;
   trajectorySummaryLocale?: OutputLocale;
   trajectorySummaryGeneratedAt?: string;
@@ -54,10 +66,10 @@ export function exportAsMarkdown(
   const H = isFr
     ? {
         viewer: "Regardeur",
-        label: "Étiquette",
         profile: "Profil",
+        label: "Étiquette",
         reflectionStyle: "Style de réflexion",
-        initialState: "État initial",
+        state: "État",
         image: "Image",
         internalStateLabel: "État interne",
         lastInternalState: "Dernier état interne",
@@ -65,10 +77,10 @@ export function exportAsMarkdown(
       }
     : {
         viewer: "Viewer",
-        label: "Label",
         profile: "Profile",
+        label: "Label",
         reflectionStyle: "Reflection style",
-        initialState: "Initial state",
+        state: "State",
         image: "Image",
         internalStateLabel: "Internal state",
         lastInternalState: "Last internal state",
@@ -80,13 +92,25 @@ export function exportAsMarkdown(
   lines.push(`exportedAt: ${exportedAt}`);
   lines.push(`galleryId: ${gallery.id}`);
   if (options?.profileId) lines.push(`profileId: ${options.profileId}`);
+  if (options?.styleId) lines.push(`styleId: ${options.styleId}`);
+  if (options?.stateId) lines.push(`stateId: ${options.stateId}`);
   if (options?.profileLabel) lines.push(`profileLabel: ${JSON.stringify(options.profileLabel)}`);
+  if (options?.styleLabel) lines.push(`styleLabel: ${JSON.stringify(options.styleLabel)}`);
+  if (options?.stateLabel) lines.push(`stateLabel: ${JSON.stringify(options.stateLabel)}`);
   if (options?.sessionStartedAt)
     lines.push(`sessionStartedAt: ${options.sessionStartedAt}`);
   if (options?.locale) lines.push(`locale: ${options.locale}`);
   if (options?.profileLlm) {
     lines.push(`profileLlm: ${options.profileLlm}`);
     if (options.profileLlmModelLabel) lines.push(`profileLlmModelLabel: ${options.profileLlmModelLabel}`);
+  }
+  if (options?.styleLlm) {
+    lines.push(`styleLlm: ${options.styleLlm}`);
+    if (options.styleLlmModelLabel) lines.push(`styleLlmModelLabel: ${options.styleLlmModelLabel}`);
+  }
+  if (options?.stateLlm) {
+    lines.push(`stateLlm: ${options.stateLlm}`);
+    if (options.stateLlmModelLabel) lines.push(`stateLlmModelLabel: ${options.stateLlmModelLabel}`);
   }
   if (options?.visionProvider) {
     const labels = getModelLabels(options.visionProvider);
@@ -103,43 +127,56 @@ export function exportAsMarkdown(
   lines.push(gallery.description);
   lines.push("");
 
-  if (profile || reflectionStyle || options?.initialState) {
+  if (
+    profile ||
+    reflectionStyle ||
+    options?.initialState ||
+    options?.profileLabel ||
+    options?.styleLabel ||
+    options?.stateLabel
+  ) {
     lines.push(`## ${H.viewer}`);
     lines.push("");
-    if (options?.profileLabel) {
-      lines.push(`### ${H.label}`);
-      lines.push("");
-      lines.push(options.profileLabel);
-      lines.push("");
-    }
-    if (profile) {
+    if (profile || options?.profileLabel) {
       lines.push(`### ${H.profile}`);
       lines.push("");
+      if (options?.profileLabel) {
+        lines.push(`**${H.label}:** ${options.profileLabel}`);
+        lines.push("");
+      }
       if (options?.profileShort) {
         lines.push(`*${options.profileShort}*`);
         lines.push("");
       }
-      lines.push(profile);
+      if (profile) lines.push(profile);
       lines.push("");
     }
-    if (reflectionStyle) {
+    if (reflectionStyle || options?.styleLabel) {
       lines.push(`### ${H.reflectionStyle}`);
       lines.push("");
+      if (options?.styleLabel) {
+        lines.push(`**${H.label}:** ${options.styleLabel}`);
+        lines.push("");
+      }
       if (options?.reflectionStyleShort) {
         lines.push(`*${options.reflectionStyleShort}*`);
         lines.push("");
       }
-      lines.push(reflectionStyle);
+      if (reflectionStyle) lines.push(reflectionStyle);
       lines.push("");
     }
-    if (options?.initialState) {
-      lines.push(`### ${H.initialState}`);
+    if (options?.initialState || options?.stateLabel) {
+      lines.push(`### ${H.state}`);
       lines.push("");
+      if (options?.stateLabel) {
+        lines.push(`**${H.label}:** ${options.stateLabel}`);
+        lines.push("");
+      }
       if (options?.initialStateShort) {
         lines.push(`*${options.initialStateShort}*`);
         lines.push("");
       }
-      lines.push(options.initialState);
+      if (options?.initialState) lines.push(options.initialState);
       lines.push("");
     }
   }
@@ -206,7 +243,11 @@ export function exportAsJson(
   const sessionStartedAt = options?.sessionStartedAt ?? new Date().toISOString();
   const payload: Record<string, unknown> = {
     profileId: options?.profileId ?? "anonymous",
+    ...(options?.styleId && { styleId: options.styleId }),
+    ...(options?.stateId && { stateId: options.stateId }),
     ...(options?.profileLabel && { profileLabel: options.profileLabel }),
+    ...(options?.styleLabel && { styleLabel: options.styleLabel }),
+    ...(options?.stateLabel && { stateLabel: options.stateLabel }),
     galleryId: gallery.id,
     sessionStartedAt,
     lastUpdatedAt,
@@ -219,6 +260,10 @@ export function exportAsJson(
     },
     ...(options?.profileLlm && { profileLlm: options.profileLlm }),
     ...(options?.profileLlmModelLabel && { profileLlmModelLabel: options.profileLlmModelLabel }),
+    ...(options?.styleLlm && { styleLlm: options.styleLlm }),
+    ...(options?.styleLlmModelLabel && { styleLlmModelLabel: options.styleLlmModelLabel }),
+    ...(options?.stateLlm && { stateLlm: options.stateLlm }),
+    ...(options?.stateLlmModelLabel && { stateLlmModelLabel: options.stateLlmModelLabel }),
     profile: profile ?? "",
     ...(options?.profileShort && { profileShort: options.profileShort }),
     reflectionStyle: reflectionStyle ?? "",

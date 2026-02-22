@@ -93,6 +93,7 @@ def parse_reflection_and_state(text: str) -> tuple[str, str]:
 def run_gallery_walk(
     config: ExperimentConfig,
     images: list[ImageInput],
+    variant_id: str,
     system_prompt: str,
     user_prompt_template: str,
     profile: str,
@@ -155,7 +156,7 @@ def run_gallery_walk(
                 )
 
             result = RunResult(
-                prompt_variant_id=f"reflection/{image.id}",
+                prompt_variant_id=f"{variant_id}/{image.id}",
                 image_id=image.id,
                 provider=config.provider,
                 model=config.model,
@@ -198,18 +199,26 @@ def _build_prompts_for_eval(
     assembled_prompts: list[str],
     system_prompt: str,
     images: list[ImageInput],
+    assembled_prompt_records: list[dict] | None = None,
 ) -> list[PromptVariant]:
     """Build PromptVariant objects with sequence context for the judge."""
     image_index = {img.id: i for i, img in enumerate(images)}
     prompts: list[PromptVariant] = []
-    for result, assembled_prompt in zip(results, assembled_prompts):
-        idx = image_index.get(result.image_id, 0)
+    records = assembled_prompt_records
+    if records is not None and len(records) != len(results):
+        records = None
+
+    for i, (result, assembled_prompt) in enumerate(zip(results, assembled_prompts)):
+        img_idx = image_index.get(result.image_id, 0)
+        sys_prompt = system_prompt
+        if records is not None:
+            sys_prompt = records[i].get("system_prompt", system_prompt)
         prompts.append(PromptVariant(
             id=result.prompt_variant_id,
             name=f"Stateful reflection ({result.image_id})",
-            system_prompt=system_prompt,
+            system_prompt=sys_prompt,
             user_prompt=assembled_prompt,
-            judge_context=_build_sequence_context(images, idx),
+            judge_context=_build_sequence_context(images, img_idx),
         ))
     return prompts
 
@@ -236,6 +245,7 @@ def save_run(
     artifacts: dict[str, str],
     assembled_prompts: list[str] | None = None,
     system_prompt: str = "",
+    assembled_prompt_records: list[dict] | None = None,
 ) -> Path:
     """Save results, artifacts, and assembled prompts to a timestamped output directory."""
     timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H-%M-%S")
@@ -252,7 +262,10 @@ def save_run(
         json.dumps([r.to_dict() for r in results], indent=2, ensure_ascii=False) + "\n"
     )
 
-    if assembled_prompts is not None:
+    prompt_records: list[dict] | None = None
+    if assembled_prompt_records is not None:
+        prompt_records = assembled_prompt_records
+    elif assembled_prompts is not None:
         prompt_records = [
             {
                 "result_id": r.id,
@@ -262,6 +275,8 @@ def save_run(
             }
             for r, p in zip(results, assembled_prompts)
         ]
+
+    if prompt_records is not None:
         (run_dir / "assembled_prompts.json").write_text(
             json.dumps(prompt_records, indent=2, ensure_ascii=False) + "\n"
         )
@@ -290,10 +305,13 @@ def show_run(run_dir: Path) -> None:
 
     if results_path.is_file():
         results_raw = json.loads(results_path.read_text())
-        console.print(f"\n[bold]Trajectory ({len(results_raw)} images):[/bold]\n")
+        console.print(f"\n[bold]Responses ({len(results_raw)} run(s)):[/bold]\n")
         for i, r in enumerate(results_raw):
             reflection, state = parse_reflection_and_state(r["raw_response"])
-            console.print(f"[bold cyan]Image {i + 1}: {r['image_id']}[/bold cyan]")
+            console.print(
+                f"[bold cyan]{r.get('prompt_variant_id','?')}[/bold cyan] "
+                f"[dim]({r.get('image_id','?')})[/dim]"
+            )
             console.print(f"[dim]({r['latency_ms']}ms, {r.get('token_usage', {}).get('completion_tokens', '?')} tokens)[/dim]")
             console.print(f"\n{reflection}\n")
             console.print(f"[dim]State: {state}[/dim]\n")
@@ -303,20 +321,25 @@ def show_run(run_dir: Path) -> None:
         scores_raw = json.loads(scores_path.read_text())
         criterion_ids = sorted({s["criterion_id"] for s in scores_raw})
         table = Table(title="Evaluation Scores", show_lines=True)
-        table.add_column("Image", style="bold")
+        table.add_column("Variant", style="bold")
+        table.add_column("Image", style="dim")
         for cid in criterion_ids:
             table.add_column(cid, justify="center")
 
-        result_map = {r["id"]: r["image_id"] for r in json.loads(results_path.read_text())}
-        image_scores: dict[str, dict[str, list[int]]] = {}
+        results_list = json.loads(results_path.read_text())
+        result_map = {
+            r["id"]: (r.get("prompt_variant_id", "?"), r.get("image_id", "?"))
+            for r in results_list
+        }
+        group_scores: dict[tuple[str, str], dict[str, list[int]]] = {}
         for s in scores_raw:
-            img_id = result_map.get(s["run_result_id"], "?")
-            image_scores.setdefault(img_id, {}).setdefault(s["criterion_id"], []).append(s["score"])
+            group = result_map.get(s["run_result_id"], ("?", "?"))
+            group_scores.setdefault(group, {}).setdefault(s["criterion_id"], []).append(s["score"])
 
-        for img_id in sorted(image_scores.keys()):
-            row = [img_id]
+        for (variant_id, img_id) in sorted(group_scores.keys()):
+            row = [variant_id, img_id]
             for cid in criterion_ids:
-                vals = image_scores[img_id].get(cid, [])
+                vals = group_scores[(variant_id, img_id)].get(cid, [])
                 if vals:
                     avg = sum(vals) / len(vals)
                     row.append(f"{avg:.1f}")
@@ -437,18 +460,58 @@ def main() -> None:
         f"state: {len(initial_state)} chars)"
     )
 
-    results, assembled_prompts = run_gallery_walk(
-        config=config,
-        images=config.images,
-        system_prompt=system_prompt,
-        user_prompt_template=user_prompt_template,
-        profile=profile,
-        style=style,
-        initial_state=initial_state,
-        provider=provider,
-    )
+    variants_path = exp_dir / "variants.yaml"
+    variants: list[dict] = []
+    if variants_path.is_file():
+        variants_raw = yaml.safe_load(variants_path.read_text()) or {}
+        for v in variants_raw.get("variants", []):
+            variants.append({
+                "id": v["id"],
+                "name": v.get("name", v["id"]),
+                "system_prompt": (v.get("system_prompt") or system_prompt).strip(),
+                "user_prompt_template": (v.get("user_prompt_template") or user_prompt_template).strip(),
+            })
+        if not variants:
+            console.print(f"[red]variants.yaml present but no variants found in {exp_dir.name}.[/red]")
+            sys.exit(1)
+    else:
+        variants = [{
+            "id": "base",
+            "name": "Base",
+            "system_prompt": system_prompt,
+            "user_prompt_template": user_prompt_template,
+        }]
 
-    if not results:
+    all_results: list[RunResult] = []
+    all_assembled_prompts: list[str] = []
+    assembled_prompt_records: list[dict] = []
+
+    for v in variants:
+        console.print(f"[bold]Variant:[/bold] {v['id']} — {v['name']}")
+        results, assembled_prompts = run_gallery_walk(
+            config=config,
+            images=config.images,
+            variant_id=v["id"],
+            system_prompt=v["system_prompt"],
+            user_prompt_template=v["user_prompt_template"],
+            profile=profile,
+            style=style,
+            initial_state=initial_state,
+            provider=provider,
+        )
+        all_results.extend(results)
+        all_assembled_prompts.extend(assembled_prompts)
+        assembled_prompt_records.extend([
+            {
+                "result_id": r.id,
+                "prompt_variant_id": r.prompt_variant_id,
+                "system_prompt": v["system_prompt"],
+                "user_prompt": p,
+            }
+            for r, p in zip(results, assembled_prompts)
+        ])
+
+    if not all_results:
         console.print("[red]No results generated.[/red]")
         sys.exit(1)
 
@@ -457,13 +520,24 @@ def main() -> None:
         "style": style,
         "initial_state": initial_state,
     }
-    run_dir = save_run(config, results, artifacts, assembled_prompts, system_prompt)
+    run_dir = save_run(
+        config,
+        all_results,
+        artifacts,
+        assembled_prompts=all_assembled_prompts,
+        system_prompt=system_prompt,
+        assembled_prompt_records=assembled_prompt_records,
+    )
     save_manifest(run_dir)
 
     prompts_for_eval = _build_prompts_for_eval(
-        results, assembled_prompts, system_prompt, config.images,
+        all_results,
+        all_assembled_prompts,
+        system_prompt,
+        config.images,
+        assembled_prompt_records=assembled_prompt_records,
     )
-    scaffold_human_ratings(run_dir, results, criteria)
+    scaffold_human_ratings(run_dir, all_results, criteria)
 
     if args.evaluate:
         judge_provider_name = args.judge_provider or config.provider
@@ -474,7 +548,7 @@ def main() -> None:
         image_map = _build_image_map(config.images)
 
         scores, judge_prompts = evaluate_results(
-            results,
+            all_results,
             prompts_for_eval,
             criteria,
             judge,

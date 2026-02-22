@@ -378,55 +378,89 @@ export function getInitialStateUserPrompt(locale: OutputLocale): string {
 
 export const PROFILE_LABEL_PROMPT = `You write concise descriptive tags for fictional gallery visitors. You are precise, honest, and concrete.`;
 
-export function getProfileLabelUserPrompt(
+export function getProfileLabelFromProfileUserPrompt(
   viewerProfile: string,
+  locale: OutputLocale
+): string {
+  const langBlock =
+    locale === "fr"
+      ? `LANGUAGE: Write the tag entirely in French. Do NOT mix English and French.`
+      : `LANGUAGE: Write the tag entirely in English. Do NOT mix English and French.`;
+
+  return `Write a tag for this visitor.
+
+Rules:
+- Maximum length: 18 characters total (including spaces).
+- 1–3 words.
+- No commas. No punctuation. No quotes.
+- No article ("The", "A", "An", "Le", "La", or "L'").
+- Plain language, behavior-based.
+- Output only the tag.
+
+${langBlock}
+
+${outputLanguageInstruction(locale)}
+
+Viewer profile:
+${viewerProfile}
+
+Tag:`;
+}
+
+export function getStyleLabelUserPrompt(
   reflectionStyle: string,
   locale: OutputLocale
 ): string {
   const langBlock =
     locale === "fr"
       ? `LANGUAGE: Write the tag entirely in French. Do NOT mix English and French.`
-      : `LANGUAGE: Write the tag entirely in English. Do NOT use an article (do not start with "The").`;
-  const articleRule = `- 3–5 words. No article (do not start with "The", "Le", "La", or "L'").`;
+      : `LANGUAGE: Write the tag entirely in English. Do NOT mix English and French.`;
 
-  return `Given the following viewer profile and reflective style, write a short descriptive tag that captures how this person engages with art. The tag should read like an honest, plain-language sketch — not a poetic name or literary title.
+  return `Write a tag for this inner voice.
 
 Rules:
-${articleRule}
-- Describe the person's viewing attitude, pace, or emotional stance — what makes them distinctive.
-- Use plain, concrete language. No psychology jargon or dimension names (ambiguity, symbolic, cognitive, somatic, kinesthetic, etc.).
-- Prefer adjectives and participles that convey behavior you could observe: how they move, where they look, what they linger on, how they react.
-- Sentence case (capitalize first word only).
-- Output only the tag. No preamble, no quotes, no markdown.
+- EXACTLY 2 words.
+- No commas, no punctuation, no conjunctions.
+- No article ("The", "A", "An", "Le", "La", or "L'").
+- Must describe voice qualities, not content.
+- Output only the 2-word tag.
 
 ${langBlock}
 
 ${outputLanguageInstruction(locale)}
 
-English examples (for tone and form, not to copy):
-- "Slow, absorbed, pattern-seeking"
-- "Guarded but emotionally precise"
-- "Eager and structurally minded"
-- "Lingering, wary, deeply formal"
-- "Brisk and sensation-driven"
-- "Cautious accumulator of detail"
-
-French examples (for tone and form, not to copy):
-- "Lent, absorbé, en quête de structure"
-- "Prudent mais émotionnellement précis"
-- "Vif et porté par les sensations"
-- "Attentif, méfiant, très formel"
-- "Accumulateur prudent de détails"
-
-Viewer profile:
-
-${viewerProfile}
-
 Reflective style:
-
 ${reflectionStyle}
 
-Describe this visitor:`;
+Tag:`;
+}
+
+export function getStateLabelUserPrompt(
+  initialState: string,
+  locale: OutputLocale
+): string {
+  const langBlock =
+    locale === "fr"
+      ? `LANGUAGE: Write the tag entirely in French. Do NOT mix English and French.`
+      : `LANGUAGE: Write the tag entirely in English. Do NOT mix English and French.`;
+
+  return `Write an arrival tag.
+
+Rules:
+- EXACTLY 2 words.
+- No commas, no punctuation, no conjunctions.
+- No article ("The", "A", "An", "Le", "La", or "L'").
+- Must sound like an arrival state (mood/energy/tension/openness/focus).
+- Output only the 2-word tag.
+
+${langBlock}
+
+${outputLanguageInstruction(locale)}
+
+Initial state:
+${initialState}
+
+Tag:`;
 }
 
 // ---------------------------------------------------------------------------
@@ -516,59 +550,11 @@ Output format — follow this EXACTLY:
 
 [REFLECTION]
 
-(4–8 sentences: your emotional response to this image, shaped by your profile, style, and current state)
+(4–6 sentences: your emotional response to this image, shaped by your profile, style, and current state)
 
 [STATE]
 
 (2–4 sentences: your updated internal state after this encounter, covering the 7 dimensions above — state what changed and what persisted)
-
-CRITICAL REQUIREMENTS:
-- [REFLECTION] on its own line, blank line, then reflection text
-- [STATE] on its own line, blank line, then state text
-- Use exactly [REFLECTION] and [STATE] as tags — no markdown, no asterisks, no colons
-- Develop the reflection fully: explore nuances and layers, do not settle for generic phrases`;
-
-const STATEFUL_PROMPT_FALLBACK = `You are walking through a gallery, encountering images one at a time.
-
-You have an internal state that evolves as you move through the gallery.
-Each image subtly alters this state rather than replacing it.
-
-For this image:
-- Look at the image carefully.
-- Describe the emotional reaction it evokes in you.
-- Let this reaction be influenced by your current internal state.
-- Update your internal state based on this encounter.
-
-Focus on:
-- emotional response and resonance as the primary register
-- visual details only as anchors for feeling, not as inventory
-- tension, accumulation, or fatigue building across the visit
-- how what came before lingers in how you see this
-
-Avoid:
-- cataloguing visual elements without connecting them to feeling
-- generic "contemplation" language — be specific to this encounter
-
-Internal state schema:
-- dominant mood
-- underlying tension or ease
-- energy and engagement (absorbed ↔ fatigued)
-- emotional openness (guarded ↔ receptive)
-- attentional focus (narrow ↔ diffuse)
-- meaning-making pressure (need-to-resolve ↔ letting-be)
-- somatic activation (numb ↔ vivid)
-
-All dimensions are qualitative. Changes should be gradual unless the image is strongly disruptive.
-
-Output format — follow this EXACTLY:
-
-[REFLECTION]
-
-(4–8 sentences describing the emotional response in detail)
-
-[STATE]
-
-(2–4 sentences describing your updated internal state)
 
 CRITICAL REQUIREMENTS:
 - [REFLECTION] on its own line, blank line, then reflection text
@@ -581,15 +567,12 @@ export function getStatefulPrompt(
   reflectionStyle: string,
   locale: OutputLocale
 ): string {
-  if (!profile.trim() && !reflectionStyle.trim()) {
-    return `${outputLanguageInstruction(locale)}\n\n${STATEFUL_PROMPT_FALLBACK}`;
+  if (!profile.trim() || !reflectionStyle.trim()) {
+    throw new Error("getStatefulPrompt requires a non-empty profile and reflection style.");
   }
-  const profileBlock = profile.trim()
-    ? `\n\nVisitor profile:\n${profile}\n`
-    : "";
-  const styleBlock = reflectionStyle.trim()
-    ? `\n\nReflective style:\n${reflectionStyle}\n`
-    : "";
+
+  const profileBlock = `\n\nVisitor profile:\n${profile}\n`;
+  const styleBlock = `\n\nReflective style:\n${reflectionStyle}\n`;
   return `${outputLanguageInstruction(locale)}\n\n${STATEFUL_PROMPT_BASE}${profileBlock}${styleBlock}`;
 }
 

@@ -1,0 +1,333 @@
+variants:
+  # ---------------------------------------------------------------------------
+  # Base prompt (verbatim structure from src/prompts.ts:getStyleLabelUserPrompt)
+  # ---------------------------------------------------------------------------
+
+  - id: v00_base_high
+    name: "v00 base (high style input)"
+    system_prompt: |
+      You write concise descriptive tags for fictional gallery visitors. You are precise, honest, and concrete.
+    user_prompt: |
+      Given the following reflective style, write a short descriptive tag that captures the *voice* of the inner speech. The tag should read like an honest, plain-language sketch — not a poetic name or literary title.
+
+      Rules:
+      - 3–5 words. No article (do not start with "The", "Le", "La", or "L'").
+      - Describe the voice you could recognize in writing: cadence, register, texture, intimacy, fragmentation, metaphor habit, etc.
+      - Do NOT describe what the viewer perceives, believes, or attends to (that belongs to the profile).
+      - Use plain, concrete language. No psychology jargon or dimension names (lexical register, metaphor density, etc.).
+      - Sentence case (capitalize first word only).
+      - Output only the tag. No preamble, no quotes, no markdown.
+
+      LANGUAGE: Write the tag entirely in English. Do NOT use an article (do not start with "The").
+
+      Output language: English. The provided inputs may include mixed English/French; do not translate the inputs. Write only your new output in English.
+
+      English examples (for tone and form, not to copy):
+      - "Lyrical, tactile, intimate"
+      - "Terse, wary, clipped"
+      - "Steady, precise, quietly emotional"
+
+      French examples (for tone and form, not to copy):
+      - "Lyrisme tactile, intime"
+      - "Bref, méfiant, haché"
+      - "Stable, précis, sobrement ému"
+
+      Reflective style:
+
+      My inner phrasing runs in a literary, slightly ceremonial diction—precise where it can be, lavish where it must be—sometimes borrowing an archaic turn of phrase as though old rooms still lend their grammar.
+      Emotion is rarely named outright; it leaks through tone, through the tilt of a clause, through the way a word is chosen and then quietly replaced.
+      The voice holds mostly steady, like a practiced breath, yet it will briefly stutter into fragments when something presses close, then gather itself again into a measured cadence.
+      Language drifts freely among senses: a thought may arrive as colorless hush, as skin-prickle, as a remembered timbre, as a taste of metal, sliding from one register to another without apology.
+      I speak in the first person, intimate and confessional, as if the mind were a small chapel where my own footsteps are plainly mine.
+      Metaphor is a frequent instrument—comparisons, veils, weather, and thresholds—used not to decorate but to carry what literal speech cannot hold.
+      The pacing is expansive and flowing, favoring long sentences with inner turns and afterthoughts, though I allow short, spare lines to fall like stones when emphasis is needed.
+      Even when I am uncertain, I choose a deliberate music: clauses braided together, pauses placed with care, so the inward monologue feels less like chatter and more like a quiet litany.
+
+      Describe this voice:
+
+  - id: v00_base_low
+    name: "v00 base (low style input)"
+    system_prompt: |
+      You write concise descriptive tags for fictional gallery visitors. You are precise, honest, and concrete.
+    user_prompt: |
+      Given the following reflective style, write a short descriptive tag that captures the *voice* of the inner speech. The tag should read like an honest, plain-language sketch — not a poetic name or literary title.
+
+      Rules:
+      - 3–5 words. No article (do not start with "The", "Le", "La", or "L'").
+      - Describe the voice you could recognize in writing: cadence, register, texture, intimacy, fragmentation, metaphor habit, etc.
+      - Do NOT describe what the viewer perceives, believes, or attends to (that belongs to the profile).
+      - Use plain, concrete language. No psychology jargon or dimension names (lexical register, metaphor density, etc.).
+      - Sentence case (capitalize first word only).
+      - Output only the tag. No preamble, no quotes, no markdown.
+
+      LANGUAGE: Write the tag entirely in English. Do NOT use an article (do not start with "The").
+
+      Output language: English. The provided inputs may include mixed English/French; do not translate the inputs. Write only your new output in English.
+
+      English examples (for tone and form, not to copy):
+      - "Lyrical, tactile, intimate"
+      - "Terse, wary, clipped"
+      - "Steady, precise, quietly emotional"
+
+      French examples (for tone and form, not to copy):
+      - "Lyrisme tactile, intime"
+      - "Bref, méfiant, haché"
+      - "Stable, précis, sobrement ému"
+
+      Reflective style:
+
+      My inner voice uses mostly plain, conversational words, but I’ll sometimes reach for a sharper, more exact term when it fits, like I’m trying to get the sentence to sit correctly in my mouth. I rarely name emotions outright; instead I let them leak through the way my thoughts angle, the small hesitations, the warmth or tightness implied by what I choose to say. The rhythm is generally steady and composed, but under pressure it can crack—half-sentences, a sudden restart, a blunt admission that slips in before I smooth it over. I speak from the body as much as from the mind, leaning on kinesthetic language—breath, weight, pulse, skin—then letting other senses thread in when they help the feeling land. I stay close to myself in first person, intimate and immediate, using “I” and “my” as anchors rather than stepping back into impersonal observation. Metaphor is moderate: I’ll use a few grounded comparisons drawn from everyday textures and motions, but I don’t drown the thought in poetry. My pacing tends toward flowing, medium-long sentences that carry me forward, with occasional short, clipped fragments when something presses too hard to phrase. Even then, I circle back, rejoin the thread, and try again in a calmer register, as if the steadiness is something I actively maintain.
+
+      Describe this voice:
+
+  # ---------------------------------------------------------------------------
+  # Shorter / "more interesting" variants (stricter form rules)
+  # ---------------------------------------------------------------------------
+
+  - id: v01_2to3_words_no_commas_high
+    name: "v01 2–3 words, no commas (high style input)"
+    system_prompt: |
+      You write concise descriptive tags for fictional gallery visitors. You are precise, honest, and concrete.
+    user_prompt: |
+      Write an ultra-short tag for this inner voice.
+
+      Rules:
+      - 2–3 words ONLY.
+      - No commas. No conjunctions ("and", "but", "or"). No em dashes.
+      - No article ("The", "A", "An").
+      - Describe only voice qualities (cadence/register/texture/intimacy/fragmentation/metaphor habit).
+      - Avoid poetic titles; keep it plain-language and recognizable.
+      - Output only the tag.
+
+      Output language: English.
+
+      Reflective style:
+      My inner phrasing runs in a literary, slightly ceremonial diction—precise where it can be, lavish where it must be—sometimes borrowing an archaic turn of phrase as though old rooms still lend their grammar.
+      Emotion is rarely named outright; it leaks through tone, through the tilt of a clause, through the way a word is chosen and then quietly replaced.
+      The voice holds mostly steady, like a practiced breath, yet it will briefly stutter into fragments when something presses close, then gather itself again into a measured cadence.
+      Language drifts freely among senses: a thought may arrive as colorless hush, as skin-prickle, as a remembered timbre, as a taste of metal, sliding from one register to another without apology.
+      I speak in the first person, intimate and confessional, as if the mind were a small chapel where my own footsteps are plainly mine.
+      Metaphor is a frequent instrument—comparisons, veils, weather, and thresholds—used not to decorate but to carry what literal speech cannot hold.
+      The pacing is expansive and flowing, favoring long sentences with inner turns and afterthoughts, though I allow short, spare lines to fall like stones when emphasis is needed.
+      Even when I am uncertain, I choose a deliberate music: clauses braided together, pauses placed with care, so the inward monologue feels less like chatter and more like a quiet litany.
+
+      Tag:
+
+  - id: v01_2to3_words_no_commas_low
+    name: "v01 2–3 words, no commas (low style input)"
+    system_prompt: |
+      You write concise descriptive tags for fictional gallery visitors. You are precise, honest, and concrete.
+    user_prompt: |
+      Write an ultra-short tag for this inner voice.
+
+      Rules:
+      - 2–3 words ONLY.
+      - No commas. No conjunctions ("and", "but", "or"). No em dashes.
+      - No article ("The", "A", "An").
+      - Describe only voice qualities (cadence/register/texture/intimacy/fragmentation/metaphor habit).
+      - Avoid poetic titles; keep it plain-language and recognizable.
+      - Output only the tag.
+
+      Output language: English.
+
+      Reflective style:
+      My inner voice uses mostly plain, conversational words, but I’ll sometimes reach for a sharper, more exact term when it fits, like I’m trying to get the sentence to sit correctly in my mouth. I rarely name emotions outright; instead I let them leak through the way my thoughts angle, the small hesitations, the warmth or tightness implied by what I choose to say. The rhythm is generally steady and composed, but under pressure it can crack—half-sentences, a sudden restart, a blunt admission that slips in before I smooth it over. I speak from the body as much as from the mind, leaning on kinesthetic language—breath, weight, pulse, skin—then letting other senses thread in when they help the feeling land. I stay close to myself in first person, intimate and immediate, using “I” and “my” as anchors rather than stepping back into impersonal observation. Metaphor is moderate: I’ll use a few grounded comparisons drawn from everyday textures and motions, but I don’t drown the thought in poetry. My pacing tends toward flowing, medium-long sentences that carry me forward, with occasional short, clipped fragments when something presses too hard to phrase. Even then, I circle back, rejoin the thread, and try again in a calmer register, as if the steadiness is something I actively maintain.
+
+      Tag:
+
+  - id: v02_exactly_2_words_high
+    name: "v02 exactly 2 words (high style input)"
+    system_prompt: |
+      You write concise descriptive tags for fictional gallery visitors. You are precise, honest, and concrete.
+    user_prompt: |
+      Write a tag for this inner voice.
+
+      Rules:
+      - EXACTLY 2 words.
+      - No commas, no punctuation, no conjunctions.
+      - No article ("The", "A", "An").
+      - Must describe voice qualities, not content.
+      - Output only the 2-word tag.
+
+      Output language: English.
+
+      Reflective style:
+      My inner phrasing runs in a literary, slightly ceremonial diction—precise where it can be, lavish where it must be—sometimes borrowing an archaic turn of phrase as though old rooms still lend their grammar.
+      Emotion is rarely named outright; it leaks through tone, through the tilt of a clause, through the way a word is chosen and then quietly replaced.
+      The voice holds mostly steady, like a practiced breath, yet it will briefly stutter into fragments when something presses close, then gather itself again into a measured cadence.
+      Language drifts freely among senses: a thought may arrive as colorless hush, as skin-prickle, as a remembered timbre, as a taste of metal, sliding from one register to another without apology.
+      I speak in the first person, intimate and confessional, as if the mind were a small chapel where my own footsteps are plainly mine.
+      Metaphor is a frequent instrument—comparisons, veils, weather, and thresholds—used not to decorate but to carry what literal speech cannot hold.
+      The pacing is expansive and flowing, favoring long sentences with inner turns and afterthoughts, though I allow short, spare lines to fall like stones when emphasis is needed.
+      Even when I am uncertain, I choose a deliberate music: clauses braided together, pauses placed with care, so the inward monologue feels less like chatter and more like a quiet litany.
+
+      Tag:
+
+  - id: v02_exactly_2_words_low
+    name: "v02 exactly 2 words (low style input)"
+    system_prompt: |
+      You write concise descriptive tags for fictional gallery visitors. You are precise, honest, and concrete.
+    user_prompt: |
+      Write a tag for this inner voice.
+
+      Rules:
+      - EXACTLY 2 words.
+      - No commas, no punctuation, no conjunctions.
+      - No article ("The", "A", "An").
+      - Must describe voice qualities, not content.
+      - Output only the 2-word tag.
+
+      Output language: English.
+
+      Reflective style:
+      My inner voice uses mostly plain, conversational words, but I’ll sometimes reach for a sharper, more exact term when it fits, like I’m trying to get the sentence to sit correctly in my mouth. I rarely name emotions outright; instead I let them leak through the way my thoughts angle, the small hesitations, the warmth or tightness implied by what I choose to say. The rhythm is generally steady and composed, but under pressure it can crack—half-sentences, a sudden restart, a blunt admission that slips in before I smooth it over. I speak from the body as much as from the mind, leaning on kinesthetic language—breath, weight, pulse, skin—then letting other senses thread in when they help the feeling land. I stay close to myself in first person, intimate and immediate, using “I” and “my” as anchors rather than stepping back into impersonal observation. Metaphor is moderate: I’ll use a few grounded comparisons drawn from everyday textures and motions, but I don’t drown the thought in poetry. My pacing tends toward flowing, medium-long sentences that carry me forward, with occasional short, clipped fragments when something presses too hard to phrase. Even then, I circle back, rejoin the thread, and try again in a calmer register, as if the steadiness is something I actively maintain.
+
+      Tag:
+
+  - id: v03_hyphen_plus_voice_high
+    name: "v03 hyphen-compound + voice (high style input)"
+    system_prompt: |
+      You write concise descriptive tags for fictional gallery visitors. You are precise, honest, and concrete.
+    user_prompt: |
+      Write a tag in the form: <hyphenated compound> voice
+
+      Rules:
+      - EXACTLY 2 words.
+      - First word MUST be hyphenated (e.g., "metaphor-rich", "slow-unspooling").
+      - Second word MUST be exactly: voice
+      - No commas. No extra punctuation.
+      - Output only the tag.
+
+      Output language: English.
+
+      Reflective style:
+      My inner phrasing runs in a literary, slightly ceremonial diction—precise where it can be, lavish where it must be—sometimes borrowing an archaic turn of phrase as though old rooms still lend their grammar.
+      Emotion is rarely named outright; it leaks through tone, through the tilt of a clause, through the way a word is chosen and then quietly replaced.
+      The voice holds mostly steady, like a practiced breath, yet it will briefly stutter into fragments when something presses close, then gather itself again into a measured cadence.
+      Language drifts freely among senses: a thought may arrive as colorless hush, as skin-prickle, as a remembered timbre, as a taste of metal, sliding from one register to another without apology.
+      I speak in the first person, intimate and confessional, as if the mind were a small chapel where my own footsteps are plainly mine.
+      Metaphor is a frequent instrument—comparisons, veils, weather, and thresholds—used not to decorate but to carry what literal speech cannot hold.
+      The pacing is expansive and flowing, favoring long sentences with inner turns and afterthoughts, though I allow short, spare lines to fall like stones when emphasis is needed.
+      Even when I am uncertain, I choose a deliberate music: clauses braided together, pauses placed with care, so the inward monologue feels less like chatter and more like a quiet litany.
+
+      Tag:
+
+  - id: v03_hyphen_plus_voice_low
+    name: "v03 hyphen-compound + voice (low style input)"
+    system_prompt: |
+      You write concise descriptive tags for fictional gallery visitors. You are precise, honest, and concrete.
+    user_prompt: |
+      Write a tag in the form: <hyphenated compound> voice
+
+      Rules:
+      - EXACTLY 2 words.
+      - First word MUST be hyphenated (e.g., "body-led", "plainspoken").
+      - Second word MUST be exactly: voice
+      - No commas. No extra punctuation.
+      - Output only the tag.
+
+      Output language: English.
+
+      Reflective style:
+      My inner voice uses mostly plain, conversational words, but I’ll sometimes reach for a sharper, more exact term when it fits, like I’m trying to get the sentence to sit correctly in my mouth. I rarely name emotions outright; instead I let them leak through the way my thoughts angle, the small hesitations, the warmth or tightness implied by what I choose to say. The rhythm is generally steady and composed, but under pressure it can crack—half-sentences, a sudden restart, a blunt admission that slips in before I smooth it over. I speak from the body as much as from the mind, leaning on kinesthetic language—breath, weight, pulse, skin—then letting other senses thread in when they help the feeling land. I stay close to myself in first person, intimate and immediate, using “I” and “my” as anchors rather than stepping back into impersonal observation. Metaphor is moderate: I’ll use a few grounded comparisons drawn from everyday textures and motions, but I don’t drown the thought in poetry. My pacing tends toward flowing, medium-long sentences that carry me forward, with occasional short, clipped fragments when something presses too hard to phrase. Even then, I circle back, rejoin the thread, and try again in a calmer register, as if the steadiness is something I actively maintain.
+
+      Tag:
+
+  - id: v04_participle_first_high
+    name: "v04 participle-first (high style input)"
+    system_prompt: |
+      You write concise descriptive tags for fictional gallery visitors. You are precise, honest, and concrete.
+    user_prompt: |
+      Write a short tag for this inner voice.
+
+      Rules:
+      - EXACTLY 3 words.
+      - First word MUST be a present participle ending in "-ing" (e.g., "Unspooling", "Confessing", "Braiding").
+      - No commas. No conjunctions.
+      - No article. Voice qualities only.
+      - Output only the tag.
+
+      Output language: English.
+
+      Reflective style:
+      My inner phrasing runs in a literary, slightly ceremonial diction—precise where it can be, lavish where it must be—sometimes borrowing an archaic turn of phrase as though old rooms still lend their grammar.
+      Emotion is rarely named outright; it leaks through tone, through the tilt of a clause, through the way a word is chosen and then quietly replaced.
+      The voice holds mostly steady, like a practiced breath, yet it will briefly stutter into fragments when something presses close, then gather itself again into a measured cadence.
+      Language drifts freely among senses: a thought may arrive as colorless hush, as skin-prickle, as a remembered timbre, as a taste of metal, sliding from one register to another without apology.
+      I speak in the first person, intimate and confessional, as if the mind were a small chapel where my own footsteps are plainly mine.
+      Metaphor is a frequent instrument—comparisons, veils, weather, and thresholds—used not to decorate but to carry what literal speech cannot hold.
+      The pacing is expansive and flowing, favoring long sentences with inner turns and afterthoughts, though I allow short, spare lines to fall like stones when emphasis is needed.
+      Even when I am uncertain, I choose a deliberate music: clauses braided together, pauses placed with care, so the inward monologue feels less like chatter and more like a quiet litany.
+
+      Tag:
+
+  - id: v04_participle_first_low
+    name: "v04 participle-first (low style input)"
+    system_prompt: |
+      You write concise descriptive tags for fictional gallery visitors. You are precise, honest, and concrete.
+    user_prompt: |
+      Write a short tag for this inner voice.
+
+      Rules:
+      - EXACTLY 3 words.
+      - First word MUST be a present participle ending in "-ing" (e.g., "Correcting", "Restarting", "Smoothing").
+      - No commas. No conjunctions.
+      - No article. Voice qualities only.
+      - Output only the tag.
+
+      Output language: English.
+
+      Reflective style:
+      My inner voice uses mostly plain, conversational words, but I’ll sometimes reach for a sharper, more exact term when it fits, like I’m trying to get the sentence to sit correctly in my mouth. I rarely name emotions outright; instead I let them leak through the way my thoughts angle, the small hesitations, the warmth or tightness implied by what I choose to say. The rhythm is generally steady and composed, but under pressure it can crack—half-sentences, a sudden restart, a blunt admission that slips in before I smooth it over. I speak from the body as much as from the mind, leaning on kinesthetic language—breath, weight, pulse, skin—then letting other senses thread in when they help the feeling land. I stay close to myself in first person, intimate and immediate, using “I” and “my” as anchors rather than stepping back into impersonal observation. Metaphor is moderate: I’ll use a few grounded comparisons drawn from everyday textures and motions, but I don’t drown the thought in poetry. My pacing tends toward flowing, medium-long sentences that carry me forward, with occasional short, clipped fragments when something presses too hard to phrase. Even then, I circle back, rejoin the thread, and try again in a calmer register, as if the steadiness is something I actively maintain.
+
+      Tag:
+
+  - id: v05_max_18_chars_high
+    name: "v05 max 18 characters (high style input)"
+    system_prompt: |
+      You write concise descriptive tags for fictional gallery visitors. You are precise, honest, and concrete.
+    user_prompt: |
+      Write a tag for this inner voice.
+
+      Rules:
+      - Maximum length: 18 characters total (including spaces).
+      - 1–3 words.
+      - No commas. No article. No quotes.
+      - Voice qualities only.
+      - Output only the tag.
+
+      Output language: English.
+
+      Reflective style:
+      My inner phrasing runs in a literary, slightly ceremonial diction—precise where it can be, lavish where it must be—sometimes borrowing an archaic turn of phrase as though old rooms still lend their grammar.
+      Emotion is rarely named outright; it leaks through tone, through the tilt of a clause, through the way a word is chosen and then quietly replaced.
+      The voice holds mostly steady, like a practiced breath, yet it will briefly stutter into fragments when something presses close, then gather itself again into a measured cadence.
+      Language drifts freely among senses: a thought may arrive as colorless hush, as skin-prickle, as a remembered timbre, as a taste of metal, sliding from one register to another without apology.
+      I speak in the first person, intimate and confessional, as if the mind were a small chapel where my own footsteps are plainly mine.
+      Metaphor is a frequent instrument—comparisons, veils, weather, and thresholds—used not to decorate but to carry what literal speech cannot hold.
+      The pacing is expansive and flowing, favoring long sentences with inner turns and afterthoughts, though I allow short, spare lines to fall like stones when emphasis is needed.
+      Even when I am uncertain, I choose a deliberate music: clauses braided together, pauses placed with care, so the inward monologue feels less like chatter and more like a quiet litany.
+
+      Tag:
+
+  - id: v05_max_18_chars_low
+    name: "v05 max 18 characters (low style input)"
+    system_prompt: |
+      You write concise descriptive tags for fictional gallery visitors. You are precise, honest, and concrete.
+    user_prompt: |
+      Write a tag for this inner voice.
+
+      Rules:
+      - Maximum length: 18 characters total (including spaces).
+      - 1–3 words.
+      - No commas. No article. No quotes.
+      - Voice qualities only.
+      - Output only the tag.
+
+      Output language: English.
+
+      Reflective style:
+      My inner voice uses mostly plain, conversational words, but I’ll sometimes reach for a sharper, more exact term when it fits, like I’m trying to get the sentence to sit correctly in my mouth. I rarely name emotions outright; instead I let them leak through the way my thoughts angle, the small hesitations, the warmth or tightness implied by what I choose to say. The rhythm is generally steady and composed, but under pressure it can crack—half-sentences, a sudden restart, a blunt admission that slips in before I smooth it over. I speak from the body as much as from the mind, leaning on kinesthetic language—breath, weight, pulse, skin—then letting other senses thread in when they help the feeling land. I stay close to myself in first person, intimate and immediate, using “I” and “my” as anchors rather than stepping back into impersonal observation. Metaphor is moderate: I’ll use a few grounded comparisons drawn from everyday textures and motions, but I don’t drown the thought in poetry. My pacing tends toward flowing, medium-long sentences that carry me forward, with occasional short, clipped fragments when something presses too hard to phrase. Even then, I circle back, rejoin the thread, and try again in a calmer register, as if the steadiness is something I actively maintain.
+
+      Tag:
+

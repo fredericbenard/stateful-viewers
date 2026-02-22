@@ -25,6 +25,8 @@ const GA_MEASUREMENT_ID = String(process.env.GA_MEASUREMENT_ID || '').trim();
 // Data directory (use /data on HF paid persistent storage if set)
 const DATA_DIR = process.env.DATA_DIR || path.join(process.cwd(), 'data');
 const PROFILES_DIR = path.join(DATA_DIR, 'profiles');
+const STYLES_DIR = path.join(DATA_DIR, 'styles');
+const STATES_DIR = path.join(DATA_DIR, 'states');
 const REFLECTIONS_DIR = path.join(DATA_DIR, 'reflections');
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const GALLERY_ID_RE = /^[a-z0-9][a-z0-9_-]*$/i;
@@ -278,6 +280,57 @@ function isValidProfileId(value) {
   return typeof value === 'string' && UUID_RE.test(value);
 }
 
+function readJsonFileSafe(filePath) {
+  try {
+    const content = fs.readFileSync(filePath, 'utf-8');
+    return JSON.parse(content);
+  } catch {
+    return null;
+  }
+}
+
+function listJsonFiles(dir) {
+  if (!fs.existsSync(dir)) return [];
+  try {
+    return fs
+      .readdirSync(dir)
+      .filter((f) => {
+        const fp = path.join(dir, f);
+        return f.endsWith('.json') && fs.existsSync(fp) && fs.statSync(fp).isFile();
+      });
+  } catch {
+    return [];
+  }
+}
+
+function profileToStyleSummary(profile) {
+  if (!profile || !profile.id || !profile.reflectionStyle) return null;
+  return {
+    id: profile.id,
+    generatedAt: profile.generatedAt,
+    locale: profile.locale || 'en',
+    llm: profile.llm,
+    llmModelLabel: profile.llmModelLabel || profile.modelLabel,
+    modelLabel: profile.modelLabel || profile.llmModelLabel,
+    label: profile.styleLabel,
+    reflectionStyleShort: profile.reflectionStyleShort,
+  };
+}
+
+function profileToStateSummary(profile) {
+  if (!profile || !profile.id || !profile.initialState) return null;
+  return {
+    id: profile.id,
+    generatedAt: profile.generatedAt,
+    locale: profile.locale || 'en',
+    llm: profile.llm,
+    llmModelLabel: profile.llmModelLabel || profile.modelLabel,
+    modelLabel: profile.modelLabel || profile.llmModelLabel,
+    label: profile.stateLabel,
+    initialStateShort: profile.initialStateShort,
+  };
+}
+
 function isValidGalleryId(value) {
   return typeof value === 'string' && GALLERY_ID_RE.test(value);
 }
@@ -297,6 +350,44 @@ app.post('/api/save-profile', (req, res) => {
     const filePath = resolvePathInside(PROFILES_DIR, `${id}.json`);
     if (!filePath) {
       return res.status(400).json({ error: 'Invalid profile path' });
+    }
+    fs.writeFileSync(filePath, JSON.stringify(payload, null, 2), 'utf-8');
+    res.json({ ok: true, path: filePath });
+  } catch (e) {
+    res.status(500).json({ error: String(e) });
+  }
+});
+
+app.post('/api/save-style', (req, res) => {
+  try {
+    const payload = req.body;
+    const id = payload?.id;
+    if (!isValidProfileId(id)) {
+      return res.status(400).json({ error: 'Missing or invalid id' });
+    }
+    ensureDir(STYLES_DIR);
+    const filePath = resolvePathInside(STYLES_DIR, `${id}.json`);
+    if (!filePath) {
+      return res.status(400).json({ error: 'Invalid style path' });
+    }
+    fs.writeFileSync(filePath, JSON.stringify(payload, null, 2), 'utf-8');
+    res.json({ ok: true, path: filePath });
+  } catch (e) {
+    res.status(500).json({ error: String(e) });
+  }
+});
+
+app.post('/api/save-state', (req, res) => {
+  try {
+    const payload = req.body;
+    const id = payload?.id;
+    if (!isValidProfileId(id)) {
+      return res.status(400).json({ error: 'Missing or invalid id' });
+    }
+    ensureDir(STATES_DIR);
+    const filePath = resolvePathInside(STATES_DIR, `${id}.json`);
+    if (!filePath) {
+      return res.status(400).json({ error: 'Invalid state path' });
     }
     fs.writeFileSync(filePath, JSON.stringify(payload, null, 2), 'utf-8');
     res.json({ ok: true, path: filePath });
@@ -332,50 +423,157 @@ app.get('/api/list-profiles', (req, res) => {
     const profilesMap = new Map();
 
     if (fs.existsSync(publicDir)) {
-      fs.readdirSync(publicDir)
-        .filter((f) => f.endsWith('.json'))
-        .forEach((file) => {
-          try {
-            const content = fs.readFileSync(path.join(publicDir, file), 'utf-8');
-            const profile = JSON.parse(content);
-            profilesMap.set(profile.id, {
-              id: profile.id,
-              generatedAt: profile.generatedAt,
-              locale: profile.locale || 'en',
-              llm: profile.llm,
-              llmModelLabel: profile.llmModelLabel || profile.modelLabel,
-              modelLabel: profile.modelLabel || profile.llmModelLabel,
-              label: profile.label,
-            });
-          } catch (_) {}
+      listJsonFiles(publicDir).forEach((file) => {
+        const profile = readJsonFileSafe(path.join(publicDir, file));
+        if (!profile?.id) return;
+        profilesMap.set(profile.id, {
+          id: profile.id,
+          generatedAt: profile.generatedAt,
+          locale: profile.locale || 'en',
+          llm: profile.llm,
+          llmModelLabel: profile.llmModelLabel || profile.modelLabel,
+          modelLabel: profile.modelLabel || profile.llmModelLabel,
+          label: profile.label,
         });
+      });
     }
 
     if (fs.existsSync(PROFILES_DIR)) {
-      fs.readdirSync(PROFILES_DIR)
-        .filter((f) => {
-          const fp = path.join(PROFILES_DIR, f);
-          return f.endsWith('.json') && fs.statSync(fp).isFile();
-        })
-        .forEach((file) => {
-          try {
-            const content = fs.readFileSync(path.join(PROFILES_DIR, file), 'utf-8');
-            const profile = JSON.parse(content);
-            profilesMap.set(profile.id, {
-              id: profile.id,
-              generatedAt: profile.generatedAt,
-              locale: profile.locale || 'en',
-              llm: profile.llm,
-              llmModelLabel: profile.llmModelLabel || profile.modelLabel,
-              modelLabel: profile.modelLabel || profile.llmModelLabel,
-              label: profile.label,
-            });
-          } catch (_) {}
+      listJsonFiles(PROFILES_DIR).forEach((file) => {
+        const profile = readJsonFileSafe(path.join(PROFILES_DIR, file));
+        if (!profile?.id) return;
+        profilesMap.set(profile.id, {
+          id: profile.id,
+          generatedAt: profile.generatedAt,
+          locale: profile.locale || 'en',
+          llm: profile.llm,
+          llmModelLabel: profile.llmModelLabel || profile.modelLabel,
+          modelLabel: profile.modelLabel || profile.llmModelLabel,
+          label: profile.label,
         });
+      });
     }
 
     const profiles = Array.from(profilesMap.values());
     res.json({ profiles });
+  } catch (e) {
+    res.status(500).json({ error: String(e) });
+  }
+});
+
+app.get('/api/list-styles', (req, res) => {
+  try {
+    const stylesMap = new Map();
+
+    // 1) Extract styles from public profiles (fallback, lowest priority)
+    const publicProfilesDir = path.join(PROFILES_DIR, 'public');
+    listJsonFiles(publicProfilesDir).forEach((file) => {
+      const profile = readJsonFileSafe(path.join(publicProfilesDir, file));
+      const summary = profileToStyleSummary(profile);
+      if (summary) stylesMap.set(summary.id, summary);
+    });
+
+    // 2) Extract styles from user profiles (fallback)
+    listJsonFiles(PROFILES_DIR).forEach((file) => {
+      const profile = readJsonFileSafe(path.join(PROFILES_DIR, file));
+      const summary = profileToStyleSummary(profile);
+      if (summary) stylesMap.set(summary.id, summary);
+    });
+
+    // 3) Public styles (tracked in git if present)
+    const publicStylesDir = path.join(STYLES_DIR, 'public');
+    listJsonFiles(publicStylesDir).forEach((file) => {
+      const style = readJsonFileSafe(path.join(publicStylesDir, file));
+      if (!style?.id) return;
+      stylesMap.set(style.id, {
+        id: style.id,
+        generatedAt: style.generatedAt,
+        locale: style.locale || 'en',
+        llm: style.llm,
+        llmModelLabel: style.llmModelLabel || style.modelLabel,
+        modelLabel: style.modelLabel || style.llmModelLabel,
+        label: style.label,
+        reflectionStyleShort: style.reflectionStyleShort,
+      });
+    });
+
+    // 4) User styles (highest priority)
+    listJsonFiles(STYLES_DIR).forEach((file) => {
+      const style = readJsonFileSafe(path.join(STYLES_DIR, file));
+      if (!style?.id) return;
+      stylesMap.set(style.id, {
+        id: style.id,
+        generatedAt: style.generatedAt,
+        locale: style.locale || 'en',
+        llm: style.llm,
+        llmModelLabel: style.llmModelLabel || style.modelLabel,
+        modelLabel: style.modelLabel || style.llmModelLabel,
+        label: style.label,
+        reflectionStyleShort: style.reflectionStyleShort,
+      });
+    });
+
+    const styles = Array.from(stylesMap.values());
+    res.json({ styles });
+  } catch (e) {
+    res.status(500).json({ error: String(e) });
+  }
+});
+
+app.get('/api/list-states', (req, res) => {
+  try {
+    const statesMap = new Map();
+
+    // 1) Extract states from public profiles (fallback, lowest priority)
+    const publicProfilesDir = path.join(PROFILES_DIR, 'public');
+    listJsonFiles(publicProfilesDir).forEach((file) => {
+      const profile = readJsonFileSafe(path.join(publicProfilesDir, file));
+      const summary = profileToStateSummary(profile);
+      if (summary) statesMap.set(summary.id, summary);
+    });
+
+    // 2) Extract states from user profiles (fallback)
+    listJsonFiles(PROFILES_DIR).forEach((file) => {
+      const profile = readJsonFileSafe(path.join(PROFILES_DIR, file));
+      const summary = profileToStateSummary(profile);
+      if (summary) statesMap.set(summary.id, summary);
+    });
+
+    // 3) Public states (tracked in git if present)
+    const publicStatesDir = path.join(STATES_DIR, 'public');
+    listJsonFiles(publicStatesDir).forEach((file) => {
+      const state = readJsonFileSafe(path.join(publicStatesDir, file));
+      if (!state?.id) return;
+      statesMap.set(state.id, {
+        id: state.id,
+        generatedAt: state.generatedAt,
+        locale: state.locale || 'en',
+        llm: state.llm,
+        llmModelLabel: state.llmModelLabel || state.modelLabel,
+        modelLabel: state.modelLabel || state.llmModelLabel,
+        label: state.label,
+        initialStateShort: state.initialStateShort,
+      });
+    });
+
+    // 4) User states (highest priority)
+    listJsonFiles(STATES_DIR).forEach((file) => {
+      const state = readJsonFileSafe(path.join(STATES_DIR, file));
+      if (!state?.id) return;
+      statesMap.set(state.id, {
+        id: state.id,
+        generatedAt: state.generatedAt,
+        locale: state.locale || 'en',
+        llm: state.llm,
+        llmModelLabel: state.llmModelLabel || state.modelLabel,
+        modelLabel: state.modelLabel || state.llmModelLabel,
+        label: state.label,
+        initialStateShort: state.initialStateShort,
+      });
+    });
+
+    const states = Array.from(statesMap.values());
+    res.json({ states });
   } catch (e) {
     res.status(500).json({ error: String(e) });
   }
@@ -394,8 +592,118 @@ app.get('/api/load-profile', (req, res) => {
     if (fs.existsSync(userFilePath)) filePath = userFilePath;
     else if (fs.existsSync(publicFilePath)) filePath = publicFilePath;
     if (!filePath) return res.status(404).json({ error: 'Profile not found' });
-    const profile = JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+    const profile = readJsonFileSafe(filePath);
     res.json({ profile });
+  } catch (e) {
+    res.status(500).json({ error: String(e) });
+  }
+});
+
+app.get('/api/load-style', (req, res) => {
+  try {
+    const id = req.query.id;
+    if (!isValidProfileId(id)) return res.status(400).json({ error: 'Missing or invalid id parameter' });
+
+    const userStylePath = resolvePathInside(STYLES_DIR, `${id}.json`);
+    const publicStylePath = resolvePathInside(path.join(STYLES_DIR, 'public'), `${id}.json`);
+    const userProfilePath = resolvePathInside(PROFILES_DIR, `${id}.json`);
+    const publicProfilePath = resolvePathInside(path.join(PROFILES_DIR, 'public'), `${id}.json`);
+    if (!userStylePath || !publicStylePath || !userProfilePath || !publicProfilePath) {
+      return res.status(400).json({ error: 'Invalid style path' });
+    }
+
+    let style = null;
+    if (fs.existsSync(userStylePath)) style = readJsonFileSafe(userStylePath);
+    else if (fs.existsSync(publicStylePath)) style = readJsonFileSafe(publicStylePath);
+    else if (fs.existsSync(userProfilePath)) {
+      const profile = readJsonFileSafe(userProfilePath);
+      if (profile?.reflectionStyle) {
+        style = {
+          id: profile.id,
+          generatedAt: profile.generatedAt,
+          locale: profile.locale || 'en',
+          llm: profile.llm,
+          llmModelLabel: profile.llmModelLabel || profile.modelLabel,
+          modelLabel: profile.modelLabel || profile.llmModelLabel,
+          reflectionStyle: profile.reflectionStyle,
+          reflectionStyleShort: profile.reflectionStyleShort,
+          rawReflectionStyle: profile.rawReflectionStyle,
+        };
+      }
+    } else if (fs.existsSync(publicProfilePath)) {
+      const profile = readJsonFileSafe(publicProfilePath);
+      if (profile?.reflectionStyle) {
+        style = {
+          id: profile.id,
+          generatedAt: profile.generatedAt,
+          locale: profile.locale || 'en',
+          llm: profile.llm,
+          llmModelLabel: profile.llmModelLabel || profile.modelLabel,
+          modelLabel: profile.modelLabel || profile.llmModelLabel,
+          reflectionStyle: profile.reflectionStyle,
+          reflectionStyleShort: profile.reflectionStyleShort,
+          rawReflectionStyle: profile.rawReflectionStyle,
+        };
+      }
+    }
+
+    if (!style) return res.status(404).json({ error: 'Style not found' });
+    res.json({ style });
+  } catch (e) {
+    res.status(500).json({ error: String(e) });
+  }
+});
+
+app.get('/api/load-state', (req, res) => {
+  try {
+    const id = req.query.id;
+    if (!isValidProfileId(id)) return res.status(400).json({ error: 'Missing or invalid id parameter' });
+
+    const userStatePath = resolvePathInside(STATES_DIR, `${id}.json`);
+    const publicStatePath = resolvePathInside(path.join(STATES_DIR, 'public'), `${id}.json`);
+    const userProfilePath = resolvePathInside(PROFILES_DIR, `${id}.json`);
+    const publicProfilePath = resolvePathInside(path.join(PROFILES_DIR, 'public'), `${id}.json`);
+    if (!userStatePath || !publicStatePath || !userProfilePath || !publicProfilePath) {
+      return res.status(400).json({ error: 'Invalid state path' });
+    }
+
+    let state = null;
+    if (fs.existsSync(userStatePath)) state = readJsonFileSafe(userStatePath);
+    else if (fs.existsSync(publicStatePath)) state = readJsonFileSafe(publicStatePath);
+    else if (fs.existsSync(userProfilePath)) {
+      const profile = readJsonFileSafe(userProfilePath);
+      if (profile?.initialState) {
+        state = {
+          id: profile.id,
+          generatedAt: profile.generatedAt,
+          locale: profile.locale || 'en',
+          llm: profile.llm,
+          llmModelLabel: profile.llmModelLabel || profile.modelLabel,
+          modelLabel: profile.modelLabel || profile.llmModelLabel,
+          initialState: profile.initialState,
+          initialStateShort: profile.initialStateShort,
+          rawInitialState: profile.rawInitialState,
+        };
+      }
+    } else if (fs.existsSync(publicProfilePath)) {
+      const profile = readJsonFileSafe(publicProfilePath);
+      if (profile?.initialState) {
+        state = {
+          id: profile.id,
+          generatedAt: profile.generatedAt,
+          locale: profile.locale || 'en',
+          llm: profile.llm,
+          llmModelLabel: profile.llmModelLabel || profile.modelLabel,
+          modelLabel: profile.modelLabel || profile.llmModelLabel,
+          initialState: profile.initialState,
+          initialStateShort: profile.initialStateShort,
+          rawInitialState: profile.rawInitialState,
+        };
+      }
+    }
+
+    if (!state) return res.status(404).json({ error: 'State not found' });
+    res.json({ state });
   } catch (e) {
     res.status(500).json({ error: String(e) });
   }
@@ -430,6 +738,12 @@ app.use((err, _req, res, _next) => {
   console.error('Unhandled error', err);
 });
 
-app.listen(PORT, '0.0.0.0', () => {
+// Keep a strong reference to the server so the process stays alive.
+const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server listening on port ${PORT}`);
+});
+server.on('error', (e) => {
+  console.error('Server error', e);
+  // In dev, make port conflicts loud (otherwise concurrently can be confusing).
+  if (e?.code === 'EADDRINUSE') process.exit(1);
 });

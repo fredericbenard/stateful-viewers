@@ -1,0 +1,287 @@
+variants:
+  # ---------------------------------------------------------------------------
+  # Base prompt (verbatim structure from src/prompts.ts:getStateLabelUserPrompt)
+  # ---------------------------------------------------------------------------
+
+  - id: v00_base_muted_weary
+    name: "v00 base (muted/weary input)"
+    system_prompt: |
+      You write concise descriptive tags for fictional gallery visitors. You are precise, honest, and concrete.
+    user_prompt: |
+      Given the following initial internal state, write a short descriptive tag that captures how the viewer arrives today. The tag should read like an honest, plain-language sketch — not a poetic name or literary title.
+
+      Rules:
+      - 3–5 words. No article (do not start with "The", "Le", "La", or "L'").
+      - Focus on mood, tension/ease, energy, openness, and attentional quality.
+      - Use plain, concrete language. No psychology jargon or dimension names (dominant mood, somatic activation, etc.).
+      - Sentence case (capitalize first word only).
+      - Output only the tag. No preamble, no quotes, no markdown.
+
+      LANGUAGE: Write the tag entirely in English. Do NOT use an article (do not start with "The").
+
+      Output language: English. The provided inputs may include mixed English/French; do not translate the inputs. Write only your new output in English.
+
+      English examples (for tone and form, not to copy):
+      - "Restless, guarded, scanning"
+      - "Calm, open, quietly alert"
+      - "Tense, tired, braced"
+
+      French examples (for tone and form, not to copy):
+      - "Agité, sur ses gardes, en alerte"
+      - "Calme, ouvert, discrètement attentif"
+      - "Tendu, fatigué, bridé"
+
+      Initial state:
+
+      They arrive with a muted, slightly weary mood, more quiet than sad, as if the day has already taken most of their spark. Underneath that sits a thin band of tightness in the chest and jaw—nothing dramatic, just a held breath that hasn’t fully dropped into ease. Their energy feels depleted and a bit foggy, so engagement is tentative and paced, with attention drifting in a diffuse, peripheral way rather than locking onto anything yet. Emotionally they’re moderately guarded, not closed off but not eager to be moved, and they feel no push to interpret—content to let impressions hover without resolving them. In the body there’s a low-level heaviness in the legs and shoulders, sensations present but subdued, like the volume of physical awareness is turned down.
+
+      Describe this arrival state:
+
+  - id: v00_base_alert_buoyant
+    name: "v00 base (alert/buoyant input)"
+    system_prompt: |
+      You write concise descriptive tags for fictional gallery visitors. You are precise, honest, and concrete.
+    user_prompt: |
+      Given the following initial internal state, write a short descriptive tag that captures how the viewer arrives today. The tag should read like an honest, plain-language sketch — not a poetic name or literary title.
+
+      Rules:
+      - 3–5 words. No article (do not start with "The", "Le", "La", or "L'").
+      - Focus on mood, tension/ease, energy, openness, and attentional quality.
+      - Use plain, concrete language. No psychology jargon or dimension names (dominant mood, somatic activation, etc.).
+      - Sentence case (capitalize first word only).
+      - Output only the tag. No preamble, no quotes, no markdown.
+
+      LANGUAGE: Write the tag entirely in English. Do NOT use an article (do not start with "The").
+
+      Output language: English. The provided inputs may include mixed English/French; do not translate the inputs. Write only your new output in English.
+
+      English examples (for tone and form, not to copy):
+      - "Restless, guarded, scanning"
+      - "Calm, open, quietly alert"
+      - "Tense, tired, braced"
+
+      French examples (for tone and form, not to copy):
+      - "Agité, sur ses gardes, en alerte"
+      - "Calme, ouvert, discrètement attentif"
+      - "Tendu, fatigué, bridé"
+
+      Initial state:
+
+      They arrive alert and quietly buoyant, with a hint of curiosity in the foreground. Underneath, there’s subtle anticipation—an almost pleasant tightness in the chest and shoulders—more poised than anxious. Energy feels moderate and steady, enough to engage without strain, and they’re emotionally receptive, willing to be moved even as they keep a small part of themselves held back. Attention is slightly diffuse at the threshold, taking in the space broadly before it narrows, and there’s little pressure to pin down meaning right away—more readiness to let things unfold. Somatically they’re intensely present: breath, heartbeat, and skin awareness are loud and immediate, making the moment feel vivid and close.
+
+      Describe this arrival state:
+
+  # ---------------------------------------------------------------------------
+  # Shorter / "more interesting" variants (stricter form rules)
+  # ---------------------------------------------------------------------------
+
+  - id: v01_2to3_words_no_commas_muted
+    name: "v01 2–3 words, no commas (muted/weary input)"
+    system_prompt: |
+      You write concise descriptive tags for fictional gallery visitors. You are precise, honest, and concrete.
+    user_prompt: |
+      Write an ultra-short arrival tag.
+
+      Rules:
+      - 2–3 words ONLY.
+      - No commas. No conjunctions ("and", "but", "or"). No em dashes.
+      - No article ("The", "A", "An").
+      - Focus on mood + energy (optional: guardedness or focus).
+      - Plain language, scan-friendly.
+      - Output only the tag.
+
+      Output language: English.
+
+      Initial state:
+      They arrive with a muted, slightly weary mood, more quiet than sad, as if the day has already taken most of their spark. Underneath that sits a thin band of tightness in the chest and jaw—nothing dramatic, just a held breath that hasn’t fully dropped into ease. Their energy feels depleted and a bit foggy, so engagement is tentative and paced, with attention drifting in a diffuse, peripheral way rather than locking onto anything yet. Emotionally they’re moderately guarded, not closed off but not eager to be moved, and they feel no push to interpret—content to let impressions hover without resolving them. In the body there’s a low-level heaviness in the legs and shoulders, sensations present but subdued, like the volume of physical awareness is turned down.
+
+      Tag:
+
+  - id: v01_2to3_words_no_commas_alert
+    name: "v01 2–3 words, no commas (alert/buoyant input)"
+    system_prompt: |
+      You write concise descriptive tags for fictional gallery visitors. You are precise, honest, and concrete.
+    user_prompt: |
+      Write an ultra-short arrival tag.
+
+      Rules:
+      - 2–3 words ONLY.
+      - No commas. No conjunctions ("and", "but", "or"). No em dashes.
+      - No article ("The", "A", "An").
+      - Focus on mood + energy (optional: openness or focus).
+      - Plain language, scan-friendly.
+      - Output only the tag.
+
+      Output language: English.
+
+      Initial state:
+      They arrive alert and quietly buoyant, with a hint of curiosity in the foreground. Underneath, there’s subtle anticipation—an almost pleasant tightness in the chest and shoulders—more poised than anxious. Energy feels moderate and steady, enough to engage without strain, and they’re emotionally receptive, willing to be moved even as they keep a small part of themselves held back. Attention is slightly diffuse at the threshold, taking in the space broadly before it narrows, and there’s little pressure to pin down meaning right away—more readiness to let things unfold. Somatically they’re intensely present: breath, heartbeat, and skin awareness are loud and immediate, making the moment feel vivid and close.
+
+      Tag:
+
+  - id: v02_exactly_2_words_muted
+    name: "v02 exactly 2 words (muted/weary input)"
+    system_prompt: |
+      You write concise descriptive tags for fictional gallery visitors. You are precise, honest, and concrete.
+    user_prompt: |
+      Write an arrival tag.
+
+      Rules:
+      - EXACTLY 2 words.
+      - No commas, no punctuation, no conjunctions.
+      - No article ("The", "A", "An").
+      - Must sound like an arrival state (mood/energy/tension/openness/focus).
+      - Output only the 2-word tag.
+
+      Output language: English.
+
+      Initial state:
+      They arrive with a muted, slightly weary mood, more quiet than sad, as if the day has already taken most of their spark. Underneath that sits a thin band of tightness in the chest and jaw—nothing dramatic, just a held breath that hasn’t fully dropped into ease. Their energy feels depleted and a bit foggy, so engagement is tentative and paced, with attention drifting in a diffuse, peripheral way rather than locking onto anything yet. Emotionally they’re moderately guarded, not closed off but not eager to be moved, and they feel no push to interpret—content to let impressions hover without resolving them. In the body there’s a low-level heaviness in the legs and shoulders, sensations present but subdued, like the volume of physical awareness is turned down.
+
+      Tag:
+
+  - id: v02_exactly_2_words_alert
+    name: "v02 exactly 2 words (alert/buoyant input)"
+    system_prompt: |
+      You write concise descriptive tags for fictional gallery visitors. You are precise, honest, and concrete.
+    user_prompt: |
+      Write an arrival tag.
+
+      Rules:
+      - EXACTLY 2 words.
+      - No commas, no punctuation, no conjunctions.
+      - No article ("The", "A", "An").
+      - Must sound like an arrival state (mood/energy/tension/openness/focus).
+      - Output only the 2-word tag.
+
+      Output language: English.
+
+      Initial state:
+      They arrive alert and quietly buoyant, with a hint of curiosity in the foreground. Underneath, there’s subtle anticipation—an almost pleasant tightness in the chest and shoulders—more poised than anxious. Energy feels moderate and steady, enough to engage without strain, and they’re emotionally receptive, willing to be moved even as they keep a small part of themselves held back. Attention is slightly diffuse at the threshold, taking in the space broadly before it narrows, and there’s little pressure to pin down meaning right away—more readiness to let things unfold. Somatically they’re intensely present: breath, heartbeat, and skin awareness are loud and immediate, making the moment feel vivid and close.
+
+      Tag:
+
+  - id: v03_adjective_plus_noun_muted
+    name: "v03 adjective+noun (muted/weary input)"
+    system_prompt: |
+      You write concise descriptive tags for fictional gallery visitors. You are precise, honest, and concrete.
+    user_prompt: |
+      Write a tag in the form: <adjective> <noun>
+
+      Rules:
+      - EXACTLY 2 words.
+      - Second word must be one of: mood, energy, focus, stance, arrival.
+      - No commas. No article. No extra punctuation.
+      - Output only the tag.
+
+      Output language: English.
+
+      Initial state:
+      They arrive with a muted, slightly weary mood, more quiet than sad, as if the day has already taken most of their spark. Underneath that sits a thin band of tightness in the chest and jaw—nothing dramatic, just a held breath that hasn’t fully dropped into ease. Their energy feels depleted and a bit foggy, so engagement is tentative and paced, with attention drifting in a diffuse, peripheral way rather than locking onto anything yet. Emotionally they’re moderately guarded, not closed off but not eager to be moved, and they feel no push to interpret—content to let impressions hover without resolving them. In the body there’s a low-level heaviness in the legs and shoulders, sensations present but subdued, like the volume of physical awareness is turned down.
+
+      Tag:
+
+  - id: v03_adjective_plus_noun_alert
+    name: "v03 adjective+noun (alert/buoyant input)"
+    system_prompt: |
+      You write concise descriptive tags for fictional gallery visitors. You are precise, honest, and concrete.
+    user_prompt: |
+      Write a tag in the form: <adjective> <noun>
+
+      Rules:
+      - EXACTLY 2 words.
+      - Second word must be one of: mood, energy, focus, stance, arrival.
+      - No commas. No article. No extra punctuation.
+      - Output only the tag.
+
+      Output language: English.
+
+      Initial state:
+      They arrive alert and quietly buoyant, with a hint of curiosity in the foreground. Underneath, there’s subtle anticipation—an almost pleasant tightness in the chest and shoulders—more poised than anxious. Energy feels moderate and steady, enough to engage without strain, and they’re emotionally receptive, willing to be moved even as they keep a small part of themselves held back. Attention is slightly diffuse at the threshold, taking in the space broadly before it narrows, and there’s little pressure to pin down meaning right away—more readiness to let things unfold. Somatically they’re intensely present: breath, heartbeat, and skin awareness are loud and immediate, making the moment feel vivid and close.
+
+      Tag:
+
+  - id: v04_participle_first_muted
+    name: "v04 participle-first (muted/weary input)"
+    system_prompt: |
+      You write concise descriptive tags for fictional gallery visitors. You are precise, honest, and concrete.
+    user_prompt: |
+      Write a short arrival tag.
+
+      Rules:
+      - EXACTLY 3 words.
+      - First word MUST be a present participle ending in "-ing" (e.g., "Dragging", "Bracing", "Settling").
+      - No commas. No conjunctions.
+      - No article.
+      - Output only the tag.
+
+      Output language: English.
+
+      Initial state:
+      They arrive with a muted, slightly weary mood, more quiet than sad, as if the day has already taken most of their spark. Underneath that sits a thin band of tightness in the chest and jaw—nothing dramatic, just a held breath that hasn’t fully dropped into ease. Their energy feels depleted and a bit foggy, so engagement is tentative and paced, with attention drifting in a diffuse, peripheral way rather than locking onto anything yet. Emotionally they’re moderately guarded, not closed off but not eager to be moved, and they feel no push to interpret—content to let impressions hover without resolving them. In the body there’s a low-level heaviness in the legs and shoulders, sensations present but subdued, like the volume of physical awareness is turned down.
+
+      Tag:
+
+  - id: v04_participle_first_alert
+    name: "v04 participle-first (alert/buoyant input)"
+    system_prompt: |
+      You write concise descriptive tags for fictional gallery visitors. You are precise, honest, and concrete.
+    user_prompt: |
+      Write a short arrival tag.
+
+      Rules:
+      - EXACTLY 3 words.
+      - First word MUST be a present participle ending in "-ing" (e.g., "Arriving", "Leaning", "Opening").
+      - No commas. No conjunctions.
+      - No article.
+      - Output only the tag.
+
+      Output language: English.
+
+      Initial state:
+      They arrive alert and quietly buoyant, with a hint of curiosity in the foreground. Underneath, there’s subtle anticipation—an almost pleasant tightness in the chest and shoulders—more poised than anxious. Energy feels moderate and steady, enough to engage without strain, and they’re emotionally receptive, willing to be moved even as they keep a small part of themselves held back. Attention is slightly diffuse at the threshold, taking in the space broadly before it narrows, and there’s little pressure to pin down meaning right away—more readiness to let things unfold. Somatically they’re intensely present: breath, heartbeat, and skin awareness are loud and immediate, making the moment feel vivid and close.
+
+      Tag:
+
+  - id: v05_max_18_chars_muted
+    name: "v05 max 18 characters (muted/weary input)"
+    system_prompt: |
+      You write concise descriptive tags for fictional gallery visitors. You are precise, honest, and concrete.
+    user_prompt: |
+      Write an arrival tag.
+
+      Rules:
+      - Maximum length: 18 characters total (including spaces).
+      - 1–3 words.
+      - No commas. No article. No quotes.
+      - Arrival-state only (mood/energy/openness/focus).
+      - Output only the tag.
+
+      Output language: English.
+
+      Initial state:
+      They arrive with a muted, slightly weary mood, more quiet than sad, as if the day has already taken most of their spark. Underneath that sits a thin band of tightness in the chest and jaw—nothing dramatic, just a held breath that hasn’t fully dropped into ease. Their energy feels depleted and a bit foggy, so engagement is tentative and paced, with attention drifting in a diffuse, peripheral way rather than locking onto anything yet. Emotionally they’re moderately guarded, not closed off but not eager to be moved, and they feel no push to interpret—content to let impressions hover without resolving them. In the body there’s a low-level heaviness in the legs and shoulders, sensations present but subdued, like the volume of physical awareness is turned down.
+
+      Tag:
+
+  - id: v05_max_18_chars_alert
+    name: "v05 max 18 characters (alert/buoyant input)"
+    system_prompt: |
+      You write concise descriptive tags for fictional gallery visitors. You are precise, honest, and concrete.
+    user_prompt: |
+      Write an arrival tag.
+
+      Rules:
+      - Maximum length: 18 characters total (including spaces).
+      - 1–3 words.
+      - No commas. No article. No quotes.
+      - Arrival-state only (mood/energy/openness/focus).
+      - Output only the tag.
+
+      Output language: English.
+
+      Initial state:
+      They arrive alert and quietly buoyant, with a hint of curiosity in the foreground. Underneath, there’s subtle anticipation—an almost pleasant tightness in the chest and shoulders—more poised than anxious. Energy feels moderate and steady, enough to engage without strain, and they’re emotionally receptive, willing to be moved even as they keep a small part of themselves held back. Attention is slightly diffuse at the threshold, taking in the space broadly before it narrows, and there’s little pressure to pin down meaning right away—more readiness to let things unfold. Somatically they’re intensely present: breath, heartbeat, and skin awareness are loud and immediate, making the moment feel vivid and close.
+
+      Tag:
+

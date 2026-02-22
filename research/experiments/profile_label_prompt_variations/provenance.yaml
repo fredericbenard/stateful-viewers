@@ -1,0 +1,15 @@
+description: Prompt-variant experiment for shorter, more interesting profile labels
+base_prompt_source:
+  system_prompt: src/prompts.ts:PROFILE_LABEL_PROMPT
+  user_prompt: src/prompts.ts:getProfileLabelFromProfileUserPrompt(viewerProfile, locale)
+inputs:
+  high_ambiguity:
+    profile: data/profiles/public/c0d8a9a0-9c23-4e4c-9e38-2d6bbd3f1a77.json (profile)
+    frozen_files:
+      profile: artifacts/high_ambiguity_profile.txt
+  low_ambiguity:
+    profile: data/profiles/public/f3c1a2d4-6b7c-4d8e-9f10-1a2b3c4d5e6f.json (profile)
+    frozen_files:
+      profile: artifacts/low_ambiguity_profile.txt
+created_date: "2026-02-22"
+

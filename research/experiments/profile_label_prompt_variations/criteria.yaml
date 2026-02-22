@@ -1,0 +1,51 @@
+# Evaluation criteria for label prompt variants.
+#
+# This experiment is about *short, interesting, still-accurate* labels.
+
+criteria:
+  - id: brevity
+    name: "Brevity"
+    description: >
+      Is the label compact and easy to scan?
+    scoring_prompt: >
+      1 = Long, sentence-like, or cluttered with clauses.
+      2 = Still wordy; more than ~6 words or feels like a summary.
+      3 = Reasonably short (3–6 words) but could be tighter.
+      4 = Short (2–4 words) and scan-friendly.
+      5 = Very short (1–3 words) without losing meaning.
+
+  - id: groundedness
+    name: "Groundedness"
+    description: >
+      Does the label clearly reflect the provided profile and reflective style
+      (no hallucinated traits, no generic filler)?
+    scoring_prompt: >
+      1 = Mostly generic or mismatched to the inputs.
+      2 = Partly grounded but contains vagueness or drift.
+      3 = Mostly grounded; a bit generic.
+      4 = Clearly grounded in the inputs; specific.
+      5 = Precisely grounded; captures the distinctive signature.
+
+  - id: interestingness
+    name: "Interestingness"
+    description: >
+      Is the label vivid and distinctive without becoming poetic or gimmicky?
+    scoring_prompt: >
+      1 = Flat / generic.
+      2 = Slightly descriptive but forgettable.
+      3 = Adequate; some distinctiveness.
+      4 = Distinctive and memorable while staying plain-language.
+      5 = Strikingly distinctive without being poetic, abstract, or weird.
+
+  - id: rule_compliance
+    name: "Rule compliance"
+    description: >
+      Does it follow the prompt's formatting rules (no preamble/quotes, no
+      dimension-jargon, no articles, etc.)?
+    scoring_prompt: >
+      1 = Multiple rule violations.
+      2 = One major rule violation.
+      3 = Minor rule violation or borderline.
+      4 = Fully compliant.
+      5 = Fully compliant and cleanly formatted.
+
