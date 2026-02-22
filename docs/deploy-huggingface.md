@@ -85,3 +85,21 @@ Push this repo (or the branch you use) to the Space’s Git repo. Add the Space 
 - **Persistence:** If you have HF persistent storage, set `DATA_DIR=/data` in the Space’s **Settings → Variables and secrets** so profiles/sessions are retained across restarts.
 - **Analytics (optional):** To enable Google Analytics on the deployed Space without committing it to the repo, set `GA_MEASUREMENT_ID` (public Variable) to your GA4 measurement ID (e.g. `G-XXXXXXXXXX`). If unset, no GA script is injected.
 - **Build issues:** Check the Space **Logs** tab. The server uses the `PORT` environment variable (Dockerfile sets `PORT=7860` for HF).
+
+---
+
+## Troubleshooting: Space stuck in "Restarting"
+
+If the Space shows "Restarting" and never loads:
+
+1. **Check the Logs tab** — Open your Space → **Logs**. Look for:
+   - `FATAL: dist/index.html not found` — build failed or dist wasn’t copied
+   - `Uncaught exception` / `Unhandled rejection` — runtime error (details will appear)
+   - `EADDRINUSE` — port conflict (rare on HF)
+
+2. **Build vs runtime** — If the build succeeds but the app restarts, the logs will show the runtime error. If the build fails, you’ll see the Docker build error.
+
+3. **HF platform issues** — If logs show nothing useful or the build never finishes, try:
+   - **Factory rebuild** — Space Settings → **Factory rebuild**
+   - **New Space** — Create a new Space and push the same code again
+   - **HF status** — Check [status.huggingface.co](https://status.huggingface.co) for incidents

@@ -6,8 +6,12 @@ dist
 *.md
 docs
 data
-# Include public profiles so they are available in the Docker image (e.g. HF)
+# Include public artifacts so they are available in the Docker image (e.g. HF)
 !data/profiles/public
 !data/profiles/public/**
+!data/styles/public
+!data/styles/public/**
+!data/states/public
+!data/states/public/**
 .huggingface
 .cursor
