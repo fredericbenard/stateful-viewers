@@ -93,6 +93,8 @@ Push this repo (or the branch you use) to the Space’s Git repo. Add the Space 
 If the Space shows "Restarting" and never loads:
 
 1. **Check the Logs tab** — Open your Space → **Logs**. Look for:
+   - `Stateful Viewers server loading...` — our process started; next line should be `Server listening on port 7860`
+   - If you only see `Application Startup` (HF banner) and nothing else — the Node process may have crashed before logging; the Dockerfile uses `USER user` (UID 1000) per HF requirements to avoid permission issues
    - `FATAL: dist/index.html not found` — build failed or dist wasn’t copied
    - `Uncaught exception` / `Unhandled rejection` — runtime error (details will appear)
    - `EADDRINUSE` — port conflict (rare on HF)

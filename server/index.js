@@ -3,6 +3,8 @@
  * Serves the Vite build and proxies /api/* and /images to external services.
  * BYOK: forwards X-OpenAI-API-Key, X-Google-API-Key, X-Anthropic-API-Key from request headers.
  */
+// Immediate log so HF container logs show our process started (helps debug startup)
+process.stdout.write('Stateful Viewers server loading...\n');
 import express from 'express';
 import path from 'path';
 import fs from 'fs';
