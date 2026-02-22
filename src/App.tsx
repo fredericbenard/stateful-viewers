@@ -696,6 +696,71 @@ function App() {
       return aDisplay.toLocaleLowerCase().localeCompare(bDisplay.toLocaleLowerCase());
     });
   })();
+
+  const viewerCaptionDash = "—";
+  const viewerCaptionProfileValue = (() => {
+    if (profileId) {
+      const p = sortedAvailableProfiles.find((x) => x.id === profileId) ?? null;
+      if (p) {
+        const badge =
+          p.locale && normalizeArtifactLocale(p.locale) !== locale
+            ? ` (${normalizeArtifactLocale(p.locale).toUpperCase()})`
+            : "";
+        return (p.label || t(locale, "sidebar.untitledProfile")) + badge;
+      }
+      return profileLabel || t(locale, "viewerProfile.profileHeading");
+    }
+    if (!!viewerProfile.trim() && !profileId) {
+      return profileLabel || t(locale, "viewerProfile.profileHeading");
+    }
+    return viewerCaptionDash;
+  })();
+
+  const viewerCaptionStyleValue = (() => {
+    if (styleId) {
+      const s = sortedAvailableStyles.find((x) => x.id === styleId) ?? null;
+      if (s) {
+        const label =
+          s.label ||
+          (s.reflectionStyleShort
+            ? truncateAtWord(s.reflectionStyleShort, 72)
+            : t(locale, "sidebar.untitledStyle"));
+        const badge =
+          s.locale && normalizeArtifactLocale(s.locale) !== locale
+            ? ` (${normalizeArtifactLocale(s.locale).toUpperCase()})`
+            : "";
+        return label + badge;
+      }
+      return styleLabel || t(locale, "viewerProfile.reflectionStyleHeading");
+    }
+    if (!!reflectionStyle.trim() && !styleId) {
+      return styleLabel || t(locale, "viewerProfile.reflectionStyleHeading");
+    }
+    return viewerCaptionDash;
+  })();
+
+  const viewerCaptionStateValue = (() => {
+    if (stateId) {
+      const s = sortedAvailableStates.find((x) => x.id === stateId) ?? null;
+      if (s) {
+        const label =
+          s.label ||
+          (s.initialStateShort
+            ? truncateAtWord(s.initialStateShort, 72)
+            : t(locale, "sidebar.untitledState"));
+        const badge =
+          s.locale && normalizeArtifactLocale(s.locale) !== locale
+            ? ` (${normalizeArtifactLocale(s.locale).toUpperCase()})`
+            : "";
+        return label + badge;
+      }
+      return stateLabel || t(locale, "viewerProfile.initialStateHeading");
+    }
+    if (!!initialState.trim() && !stateId) {
+      return stateLabel || t(locale, "viewerProfile.initialStateHeading");
+    }
+    return viewerCaptionDash;
+  })();
   const selectedReflectionGeneratedAt =
     selectedReflectionGeneratedAtByGallery[galleryId];
 
@@ -2265,24 +2330,28 @@ function App() {
           </div>
           <div className="sidebar-section sidebar-section-viewer">
             <h2>{t(locale, "sidebar.viewer")}</h2>
-            <div className="viewer-artifact-group">
-              <div className="viewer-artifact-group-header">
-                <div className="viewer-artifact-group-title">
+            <div className="viewer-section-caption">
+              <div>
+                {t(locale, "sidebar.viewerCaptionProfile", {
+                  value: viewerCaptionProfileValue,
+                })}
+              </div>
+              <div>
+                {t(locale, "sidebar.viewerCaptionStyle", {
+                  value: viewerCaptionStyleValue,
+                })}
+              </div>
+              <div>
+                {t(locale, "sidebar.viewerCaptionState", {
+                  value: viewerCaptionStateValue,
+                })}
+              </div>
+            </div>
+            <div className="viewer-unified-card">
+              <div className="viewer-artifact-row">
+                <div className="viewer-artifact-label">
                   {t(locale, "viewerProfile.profileHeading")}
                 </div>
-                <div className="viewer-artifact-actions">
-                  <button
-                    className="generate-viewer-btn viewer-artifact-btn-secondary"
-                    onClick={() => !isGeneratingUi && handleGenerateProfile()}
-                    disabled={isGeneratingUi}
-                  >
-                    {isGeneratingProfile
-                      ? t(locale, "sidebar.generating")
-                      : t(locale, "sidebar.generate")}
-                  </button>
-                </div>
-              </div>
-              <div className="artifact-picklist-section">
                 <select
                   className="artifact-select"
                   value={
@@ -2299,17 +2368,24 @@ function App() {
                       return;
                     }
                     if (v === "__current__") return;
+                    if (v === "__create__") {
+                      if (!isGeneratingUi) handleGenerateProfile();
+                      return;
+                    }
                     handleLoadProfile(v);
                   }}
                   disabled={isLoadingProfiles}
                   aria-label={t(locale, "sidebar.selectProfile")}
                 >
                   <option value="">
-                    {isLoadingProfiles
-                      ? t(locale, "sidebar.loadingProfiles")
-                      : sortedAvailableProfiles.length === 0 && !(!!viewerProfile.trim() && !profileId)
-                        ? t(locale, "sidebar.noProfiles")
-                        : t(locale, "sidebar.selectProfile")}
+                    {isGeneratingProfile
+                      ? t(locale, "sidebar.generating")
+                      : isLoadingProfiles
+                        ? t(locale, "sidebar.loadingProfiles")
+                        : sortedAvailableProfiles.length === 0 &&
+                            !(!!viewerProfile.trim() && !profileId)
+                          ? t(locale, "sidebar.noProfiles")
+                          : t(locale, "sidebar.selectProfile")}
                   </option>
                   {!!viewerProfile.trim() &&
                     !profileId &&
@@ -2330,55 +2406,43 @@ function App() {
                         </option>
                       );
                     })}
+                  {!isLoadingProfiles && (
+                    <option value="__create__">{t(locale, "sidebar.createNew")}</option>
+                  )}
                 </select>
-                {(profileId || !!viewerProfile.trim()) && (
-                  <div className="artifact-detail-block">
-                    <div
-                      ref={profileTextRef}
-                      className={`profile-selector-summary artifact-detail-text ${
-                        !profileShortExpanded ? "artifact-detail-text--clamped" : ""
-                      }`}
-                    >
-                      {profileShort?.trim() || viewerProfile}
-                    </div>
-                    {(profileShortExpanded || profileHasOverflow) && (
-                      <button
-                        type="button"
-                        className="viewer-profile-toggle-ghost"
-                        onClick={() => setProfileShortExpanded((v) => !v)}
-                        data-expanded={profileShortExpanded ? "true" : "false"}
-                      >
-                        <span className="viewer-profile-toggle-chevron" aria-hidden="true">
-                          ▸
-                        </span>
-                        {profileShortExpanded
-                          ? t(locale, "viewerProfile.showLess")
-                          : t(locale, "viewerProfile.showMore")}
-                      </button>
-                    )}
-                  </div>
-                )}
               </div>
-            </div>
+              {(profileId || !!viewerProfile.trim()) && (
+                <div className="artifact-detail-block">
+                  <div
+                    ref={profileTextRef}
+                    className={`profile-selector-summary artifact-detail-text ${
+                      !profileShortExpanded ? "artifact-detail-text--clamped" : ""
+                    }`}
+                  >
+                    {profileShort?.trim() || viewerProfile}
+                  </div>
+                  {(profileShortExpanded || profileHasOverflow) && (
+                    <button
+                      type="button"
+                      className="viewer-profile-toggle-ghost"
+                      onClick={() => setProfileShortExpanded((v) => !v)}
+                      data-expanded={profileShortExpanded ? "true" : "false"}
+                    >
+                      <span className="viewer-profile-toggle-chevron" aria-hidden="true">
+                        ▸
+                      </span>
+                      {profileShortExpanded
+                        ? t(locale, "viewerProfile.less")
+                        : t(locale, "viewerProfile.more")}
+                    </button>
+                  )}
+                </div>
+              )}
 
-            <div className="viewer-artifact-group">
-              <div className="viewer-artifact-group-header">
-                <div className="viewer-artifact-group-title">
+              <div className="viewer-artifact-row">
+                <div className="viewer-artifact-label">
                   {t(locale, "viewerProfile.reflectionStyleHeading")}
                 </div>
-                <div className="viewer-artifact-actions">
-                  <button
-                    className="generate-viewer-btn viewer-artifact-btn-secondary"
-                    onClick={() => !isGeneratingUi && handleGenerateStyle()}
-                    disabled={isGeneratingUi}
-                  >
-                    {isGeneratingStyle
-                      ? t(locale, "sidebar.generating")
-                      : t(locale, "sidebar.generate")}
-                  </button>
-                </div>
-              </div>
-              <div className="artifact-picklist-section">
                 <select
                   className="artifact-select"
                   value={
@@ -2395,17 +2459,24 @@ function App() {
                       return;
                     }
                     if (v === "__current__") return;
+                    if (v === "__create__") {
+                      if (!isGeneratingUi) handleGenerateStyle();
+                      return;
+                    }
                     handleLoadStyle(v);
                   }}
                   disabled={isLoadingStyles}
                   aria-label={t(locale, "sidebar.selectVoice")}
                 >
                   <option value="">
-                    {isLoadingStyles
-                      ? t(locale, "sidebar.loadingStyles")
-                      : sortedAvailableStyles.length === 0 && !(!!reflectionStyle.trim() && !styleId)
-                        ? t(locale, "sidebar.noStyles")
-                        : t(locale, "sidebar.selectVoice")}
+                    {isGeneratingStyle
+                      ? t(locale, "sidebar.generating")
+                      : isLoadingStyles
+                        ? t(locale, "sidebar.loadingStyles")
+                        : sortedAvailableStyles.length === 0 &&
+                            !(!!reflectionStyle.trim() && !styleId)
+                          ? t(locale, "sidebar.noStyles")
+                          : t(locale, "sidebar.selectVoice")}
                   </option>
                   {!!reflectionStyle.trim() &&
                     !styleId &&
@@ -2431,55 +2502,43 @@ function App() {
                         </option>
                       );
                     })}
+                  {!isLoadingStyles && (
+                    <option value="__create__">{t(locale, "sidebar.createNew")}</option>
+                  )}
                 </select>
-                {(styleId || !!reflectionStyle.trim()) && (
-                  <div className="artifact-detail-block">
-                    <div
-                      ref={styleTextRef}
-                      className={`profile-selector-summary artifact-detail-text ${
-                        !styleShortExpanded ? "artifact-detail-text--clamped" : ""
-                      }`}
-                    >
-                      {reflectionStyleShort?.trim() || reflectionStyle}
-                    </div>
-                    {(styleShortExpanded || styleHasOverflow) && (
-                      <button
-                        type="button"
-                        className="viewer-profile-toggle-ghost"
-                        onClick={() => setStyleShortExpanded((v) => !v)}
-                        data-expanded={styleShortExpanded ? "true" : "false"}
-                      >
-                        <span className="viewer-profile-toggle-chevron" aria-hidden="true">
-                          ▸
-                        </span>
-                        {styleShortExpanded
-                          ? t(locale, "viewerProfile.showLess")
-                          : t(locale, "viewerProfile.showMore")}
-                      </button>
-                    )}
-                  </div>
-                )}
               </div>
-            </div>
+              {(styleId || !!reflectionStyle.trim()) && (
+                <div className="artifact-detail-block">
+                  <div
+                    ref={styleTextRef}
+                    className={`profile-selector-summary artifact-detail-text ${
+                      !styleShortExpanded ? "artifact-detail-text--clamped" : ""
+                    }`}
+                  >
+                    {reflectionStyleShort?.trim() || reflectionStyle}
+                  </div>
+                  {(styleShortExpanded || styleHasOverflow) && (
+                    <button
+                      type="button"
+                      className="viewer-profile-toggle-ghost"
+                      onClick={() => setStyleShortExpanded((v) => !v)}
+                      data-expanded={styleShortExpanded ? "true" : "false"}
+                    >
+                      <span className="viewer-profile-toggle-chevron" aria-hidden="true">
+                        ▸
+                      </span>
+                      {styleShortExpanded
+                        ? t(locale, "viewerProfile.less")
+                        : t(locale, "viewerProfile.more")}
+                    </button>
+                  )}
+                </div>
+              )}
 
-            <div className="viewer-artifact-group">
-              <div className="viewer-artifact-group-header">
-                <div className="viewer-artifact-group-title">
+              <div className="viewer-artifact-row">
+                <div className="viewer-artifact-label">
                   {t(locale, "viewerProfile.initialStateHeading")}
                 </div>
-                <div className="viewer-artifact-actions">
-                  <button
-                    className="generate-viewer-btn viewer-artifact-btn-secondary"
-                    onClick={() => !isGeneratingUi && handleGenerateState()}
-                    disabled={isGeneratingUi}
-                  >
-                    {isGeneratingState
-                      ? t(locale, "sidebar.generating")
-                      : t(locale, "sidebar.generate")}
-                  </button>
-                </div>
-              </div>
-              <div className="artifact-picklist-section">
                 <select
                   className="artifact-select"
                   value={
@@ -2496,17 +2555,24 @@ function App() {
                       return;
                     }
                     if (v === "__current__") return;
+                    if (v === "__create__") {
+                      if (!isGeneratingUi) handleGenerateState();
+                      return;
+                    }
                     handleLoadState(v);
                   }}
                   disabled={isLoadingStates}
                   aria-label={t(locale, "sidebar.selectState")}
                 >
                   <option value="">
-                    {isLoadingStates
-                      ? t(locale, "sidebar.loadingStates")
-                      : sortedAvailableStates.length === 0 && !(!!initialState.trim() && !stateId)
-                        ? t(locale, "sidebar.noStates")
-                        : t(locale, "sidebar.selectState")}
+                    {isGeneratingState
+                      ? t(locale, "sidebar.generating")
+                      : isLoadingStates
+                        ? t(locale, "sidebar.loadingStates")
+                        : sortedAvailableStates.length === 0 &&
+                            !(!!initialState.trim() && !stateId)
+                          ? t(locale, "sidebar.noStates")
+                          : t(locale, "sidebar.selectState")}
                   </option>
                   {!!initialState.trim() &&
                     !stateId &&
@@ -2532,35 +2598,38 @@ function App() {
                         </option>
                       );
                     })}
+                  {!isLoadingStates && (
+                    <option value="__create__">{t(locale, "sidebar.createNew")}</option>
+                  )}
                 </select>
-                {(stateId || !!initialState.trim()) && (
-                  <div className="artifact-detail-block">
-                    <div
-                      ref={stateTextRef}
-                      className={`profile-selector-summary artifact-detail-text ${
-                        !stateShortExpanded ? "artifact-detail-text--clamped" : ""
-                      }`}
-                    >
-                      {initialStateShort?.trim() || initialState}
-                    </div>
-                    {(stateShortExpanded || stateHasOverflow) && (
-                      <button
-                        type="button"
-                        className="viewer-profile-toggle-ghost"
-                        onClick={() => setStateShortExpanded((v) => !v)}
-                        data-expanded={stateShortExpanded ? "true" : "false"}
-                      >
-                        <span className="viewer-profile-toggle-chevron" aria-hidden="true">
-                          ▸
-                        </span>
-                        {stateShortExpanded
-                          ? t(locale, "viewerProfile.showLess")
-                          : t(locale, "viewerProfile.showMore")}
-                      </button>
-                    )}
-                  </div>
-                )}
               </div>
+              {(stateId || !!initialState.trim()) && (
+                <div className="artifact-detail-block">
+                  <div
+                    ref={stateTextRef}
+                    className={`profile-selector-summary artifact-detail-text ${
+                      !stateShortExpanded ? "artifact-detail-text--clamped" : ""
+                    }`}
+                  >
+                    {initialStateShort?.trim() || initialState}
+                  </div>
+                  {(stateShortExpanded || stateHasOverflow) && (
+                    <button
+                      type="button"
+                      className="viewer-profile-toggle-ghost"
+                      onClick={() => setStateShortExpanded((v) => !v)}
+                      data-expanded={stateShortExpanded ? "true" : "false"}
+                    >
+                      <span className="viewer-profile-toggle-chevron" aria-hidden="true">
+                        ▸
+                      </span>
+                      {stateShortExpanded
+                        ? t(locale, "viewerProfile.less")
+                        : t(locale, "viewerProfile.more")}
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         </aside>
