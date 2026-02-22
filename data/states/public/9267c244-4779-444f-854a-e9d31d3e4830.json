@@ -1,0 +1,11 @@
+{
+  "id": "9267c244-4779-444f-854a-e9d31d3e4830",
+  "generatedAt": "2026-02-22T16:21:06.105Z",
+  "locale": "fr",
+  "llm": "openai",
+  "llmModelLabel": "gpt-5.2",
+  "label": "Agité scrutateur",
+  "initialState": "Ils arrivent légèrement agités mais alertes, avec une attention souplement orientée, balayant la pièce sans se poser sur quoi que ce soit pour l’instant. En dessous, il y a une fine bande de tension — plus de l’anticipation que de la résistance — comme s’ils se préparaient à ce que la journée exige quelque chose. L’énergie est correcte mais inégale : ils peuvent s’engager si quelque chose accroche, sans être complètement régénérés. Émotionnellement, ils sont modérément sur la réserve, curieux mais pas avides d’être remués, et ressentent une pression discrète à « comprendre » ce qui se passe plutôt qu’à le laisser en suspens. La présence somatique est intense : souffle, battements, et petites crispations musculaires sont forts et immédiats, faisant passer l’expérience par le corps avant qu’elle n’atteigne la pensée.",
+  "initialStateShort": "Vous arrivez alerte et légèrement agité, avec une tension d’anticipation et des sensations corporelles fortes (souffle/battements/crispations) qui vous rendent prudemment curieux et poussent à comprendre vite ce qui se passe.",
+  "rawInitialState": "Ils arrivent légèrement agités mais alertes, avec une attention souplement orientée, balayant la pièce sans se poser sur quoi que ce soit pour l’instant. En dessous, il y a une fine bande de tension — plus de l’anticipation que de la résistance — comme s’ils se préparaient à ce que la journée exige quelque chose. L’énergie est correcte mais inégale : ils peuvent s’engager si quelque chose accroche, sans être complètement régénérés. Émotionnellement, ils sont modérément sur la réserve, curieux mais pas avides d’être remués, et ressentent une pression discrète à « comprendre » ce qui se passe plutôt qu’à le laisser en suspens. La présence somatique est intense : souffle, battements, et petites crispations musculaires sont forts et immédiats, faisant passer l’expérience par le corps avant qu’elle n’atteigne la pensée."
+}

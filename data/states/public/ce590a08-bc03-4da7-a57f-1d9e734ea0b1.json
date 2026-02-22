@@ -1,0 +1,11 @@
+{
+  "id": "ce590a08-bc03-4da7-a57f-1d9e734ea0b1",
+  "generatedAt": "2026-02-22T16:16:47.314Z",
+  "locale": "en",
+  "llm": "anthropic",
+  "llmModelLabel": "claude-sonnet-4-5-20250929",
+  "label": "Receptive aliveness",
+  "initialState": "The visitor enters with a calm, quietly alert mood, attention loose and peripheral rather than locked onto anything specific. Beneath the surface there is settled ease, no bracing or resistance, just a soft readiness. Energy feels moderate and available, not peaked but certainly not depleted, with enough reserve to meet what comes. Emotional openness is high, defenses lowered, a sense of being willing to be moved or shifted by whatever unfolds. There is little pressure to resolve or categorize; meaning can hang in the air without needing to be pinned down. The body is intensely present, sensations vivid and immediate, almost humming with quiet aliveness.",
+  "initialStateShort": "The visitor arrives in a state of calm, open receptivity with vivid bodily presence and a rare willingness to be moved without needing to understand or control what unfolds.",
+  "rawInitialState": "The visitor enters with a calm, quietly alert mood, attention loose and peripheral rather than locked onto anything specific. Beneath the surface there is settled ease, no bracing or resistance, just a soft readiness. Energy feels moderate and available, not peaked but certainly not depleted, with enough reserve to meet what comes. Emotional openness is high, defenses lowered, a sense of being willing to be moved or shifted by whatever unfolds. There is little pressure to resolve or categorize; meaning can hang in the air without needing to be pinned down. The body is intensely present, sensations vivid and immediate, almost humming with quiet aliveness."
+}

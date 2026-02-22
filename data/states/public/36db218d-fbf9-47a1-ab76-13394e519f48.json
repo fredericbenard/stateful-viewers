@@ -1,0 +1,11 @@
+{
+  "id": "36db218d-fbf9-47a1-ab76-13394e519f48",
+  "generatedAt": "2026-02-22T16:16:24.227Z",
+  "locale": "fr",
+  "llm": "anthropic",
+  "llmModelLabel": "claude-sonnet-4-5-20250929",
+  "label": "Concentré inquiet",
+  "initialState": "Le visiteur entre avec une détermination silencieuse et concentrée, alerte sans être agité, porté par un sens du but qui frôle l’étude. Sous cette surface composée, une légère crispation demeure, un maintien à peine perceptible, comme s’il se préparait à quelque chose d’important sans en connaître la forme. Les réserves sont modérées et intactes : ni épuisé ni particulièrement énergisé, capable d’attention soutenue mais conscient de ses limites. Malgré une disposition inhabituelle à se laisser toucher, à laisser quelque chose traverser, le corps semble lointain et étouffé, les sensations arrivant faiblement comme à travers des couches de coton. L’attention est prête à se resserrer nettement, à se verrouiller sur les détails dès qu’un objectif se présente, tandis qu’en arrière-plan vibre une traction insistante vers la compréhension : le besoin de saisir et de catégoriser ce qui va être rencontré.",
+  "initialStateShort": "Silencieusement concentré et animé d’un sens du but, prêt à s’engager profondément, mais percevant tout à distance, comme étouffé, tout en se préparant à quelque chose d’important encore indéfinissable.",
+  "rawInitialState": "Le visiteur entre avec une détermination silencieuse et concentrée, alerte sans être agité, porté par un sens du but qui frôle l’étude. Sous cette surface composée, une légère crispation demeure, un maintien à peine perceptible, comme s’il se préparait à quelque chose d’important sans en connaître la forme. Les réserves sont modérées et intactes : ni épuisé ni particulièrement énergisé, capable d’attention soutenue mais conscient de ses limites. Malgré une disposition inhabituelle à se laisser toucher, à laisser quelque chose traverser, le corps semble lointain et étouffé, les sensations arrivant faiblement comme à travers des couches de coton. L’attention est prête à se resserrer nettement, à se verrouiller sur les détails dès qu’un objectif se présente, tandis qu’en arrière-plan vibre une traction insistante vers la compréhension : le besoin de saisir et de catégoriser ce qui va être rencontré."
+}

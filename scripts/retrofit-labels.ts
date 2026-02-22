@@ -69,6 +69,7 @@ function parseCli(): {
   llmProvider: LlmProvider;
   model: string;
   onlyMissing: boolean;
+  localeFilter?: OutputLocale;
   targets: Set<RetrofitTarget>;
 } {
   if (hasCliFlag("--help") || hasCliFlag("-h")) {
@@ -77,12 +78,14 @@ function parseCli(): {
         "Retrofit labels on existing artifacts (public + saved).",
         "",
         "Usage:",
-        "  npx tsx scripts/retrofit-labels.ts [--profiles] [--styles] [--states] [--all] [--llm <openai|anthropic|gemini|ollama>] [--model <model>] [--only-missing]",
+        "  npx tsx scripts/retrofit-labels.ts [--profiles] [--styles] [--states] [--all] [--locale <en|fr> | --only-fr] [--llm <openai|anthropic|gemini|ollama>] [--model <model>] [--only-missing]",
         "",
         "Examples:",
         "  npx tsx scripts/retrofit-labels.ts",
         "  npx tsx scripts/retrofit-labels.ts --only-missing",
         "  npx tsx scripts/retrofit-labels.ts --all",
+        "  npx tsx scripts/retrofit-labels.ts --locale fr",
+        "  npx tsx scripts/retrofit-labels.ts --only-fr --only-missing",
         "  npx tsx scripts/retrofit-labels.ts --styles",
         "  npx tsx scripts/retrofit-labels.ts --states",
         "  npx tsx scripts/retrofit-labels.ts --llm openai --model gpt-5.2",
@@ -121,6 +124,19 @@ function parseCli(): {
   const model = getCliFlagValue("--model") ?? defaultModel;
   const onlyMissing = hasCliFlag("--only-missing");
 
+  const localeRaw = (getCliFlagValue("--locale") ?? "").toLowerCase();
+  const localeFilter: OutputLocale | undefined = hasCliFlag("--only-fr")
+    ? "fr"
+    : localeRaw === "fr"
+      ? "fr"
+      : localeRaw === "en"
+        ? "en"
+        : localeRaw.length > 0
+          ? (() => {
+              throw new Error(`Invalid --locale value: ${localeRaw}. Use en or fr.`);
+            })()
+          : undefined;
+
   const targets = new Set<RetrofitTarget>();
   const wantsAll = hasCliFlag("--all");
   if (wantsAll || hasCliFlag("--profiles")) targets.add("profiles");
@@ -133,10 +149,10 @@ function parseCli(): {
     targets.add("states");
   }
 
-  return { llmProvider, model, onlyMissing, targets };
+  return { llmProvider, model, onlyMissing, localeFilter, targets };
 }
 
-function cleanLabel(text: string): string {
+function cleanLabel(text: string, locale: OutputLocale): string {
   let cleaned = text.trim();
   cleaned = cleaned.replace(/\*\*([^*]+)\*\*/g, "$1");
   const introPatterns = [
@@ -150,6 +166,19 @@ function cleanLabel(text: string): string {
     (cleaned.startsWith("'") && cleaned.endsWith("'"))
   ) {
     cleaned = cleaned.slice(1, -1).trim();
+  }
+  if (locale === "fr") {
+    // Normalize spacing around apostrophes and fix a common elision error: "S attarde" -> "S’attarde"
+    cleaned = cleaned.replace(/\s*'\s*/g, "'");
+    cleaned = cleaned.replace(/\s*’\s*/g, "’");
+    cleaned = cleaned.replace(
+      /^S\s+([AEIOUYÀÂÄÉÈÊËÎÏÔÖÙÛÜŒHaeiouyàâäéèêëîïôöùûüœh][A-Za-zÀ-ÖØ-öø-ÿ]*)/,
+      "S’$1",
+    );
+    cleaned = cleaned.replace(
+      /^s\s+([AEIOUYÀÂÄÉÈÊËÎÏÔÖÙÛÜŒHaeiouyàâäéèêëîïôöùûüœh][A-Za-zÀ-ÖØ-öø-ÿ]*)/,
+      "s’$1",
+    );
   }
   return cleaned.trim();
 }
@@ -173,12 +202,19 @@ function getLocale(obj: unknown): OutputLocale {
   return locale === "fr" ? "fr" : "en";
 }
 
+function getDeclaredLocale(obj: unknown): OutputLocale | undefined {
+  const locale = (obj as { locale?: unknown } | null | undefined)?.locale;
+  if (locale === "fr") return "fr";
+  if (locale === "en") return "en";
+  return undefined;
+}
+
 function getDisplayName(target: RetrofitTarget): string {
   return target === "profiles" ? "profile" : target === "styles" ? "style" : "state";
 }
 
 async function main() {
-  const { llmProvider, model, onlyMissing, targets } = parseCli();
+  const { llmProvider, model, onlyMissing, localeFilter, targets } = parseCli();
 
   const allFiles: { target: RetrofitTarget; filePath: string }[] = [];
   if (targets.has("profiles")) {
@@ -223,6 +259,13 @@ async function main() {
   for (const { target, filePath } of allFiles) {
     const raw = fs.readFileSync(filePath, "utf-8");
     const obj = JSON.parse(raw);
+    if (localeFilter) {
+      const declared = getDeclaredLocale(obj);
+      if (declared !== localeFilter) {
+        skipped++;
+        continue;
+      }
+    }
     const locale: OutputLocale = getLocale(obj);
     const oldLabel =
       typeof (obj as { label?: unknown }).label === "string"
@@ -259,7 +302,7 @@ async function main() {
         maxTokens: llmProvider === "gemini" ? undefined : 64,
         temperature: 0.95,
       });
-      const label = cleanLabel(rawLabel);
+      const label = cleanLabel(rawLabel, locale);
 
       (obj as { label?: string }).label = label;
       delete (obj as { rawLabel?: unknown }).rawLabel;

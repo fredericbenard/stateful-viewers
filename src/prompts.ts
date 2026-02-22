@@ -387,13 +387,19 @@ export function getProfileLabelFromProfileUserPrompt(
       ? `LANGUAGE: Write the tag entirely in French. Do NOT mix English and French.`
       : `LANGUAGE: Write the tag entirely in English. Do NOT mix English and French.`;
 
+  const frContractionNote =
+    locale === "fr"
+      ? `\n- French contractions may use apostrophes (e.g., s’attarde).`
+      : "";
+
   return `Write a tag for this visitor.
 
 Rules:
 - Maximum length: 18 characters total (including spaces).
 - 1–3 words.
-- No commas. No punctuation. No quotes.
+- No commas. No punctuation. No quotes.${frContractionNote}
 - No article ("The", "A", "An", "Le", "La", or "L'").
+- Sentence case (capitalize first word only).
 - Plain language, behavior-based.
 - Output only the tag.
 
@@ -416,12 +422,18 @@ export function getStyleLabelUserPrompt(
       ? `LANGUAGE: Write the tag entirely in French. Do NOT mix English and French.`
       : `LANGUAGE: Write the tag entirely in English. Do NOT mix English and French.`;
 
+  const frContractionNote =
+    locale === "fr"
+      ? `\n- French contractions may use apostrophes (e.g., d’accord).`
+      : "";
+
   return `Write a tag for this inner voice.
 
 Rules:
 - EXACTLY 2 words.
-- No commas, no punctuation, no conjunctions.
+- No commas, no punctuation, no conjunctions.${frContractionNote}
 - No article ("The", "A", "An", "Le", "La", or "L'").
+- Sentence case (capitalize first word only).
 - Must describe voice qualities, not content.
 - Output only the 2-word tag.
 
@@ -444,12 +456,18 @@ export function getStateLabelUserPrompt(
       ? `LANGUAGE: Write the tag entirely in French. Do NOT mix English and French.`
       : `LANGUAGE: Write the tag entirely in English. Do NOT mix English and French.`;
 
+  const frContractionNote =
+    locale === "fr"
+      ? `\n- French contractions may use apostrophes (e.g., d’entrer).`
+      : "";
+
   return `Write an arrival tag.
 
 Rules:
 - EXACTLY 2 words.
-- No commas, no punctuation, no conjunctions.
+- No commas, no punctuation, no conjunctions.${frContractionNote}
 - No article ("The", "A", "An", "Le", "La", or "L'").
+- Sentence case (capitalize first word only).
 - Must sound like an arrival state (mood/energy/tension/openness/focus).
 - Output only the 2-word tag.
 

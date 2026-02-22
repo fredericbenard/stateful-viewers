@@ -1,0 +1,11 @@
+{
+  "id": "1cb362b0-8310-4de5-b4ef-f4122d8322af",
+  "generatedAt": "2026-02-22T16:16:47.314Z",
+  "locale": "fr",
+  "llm": "anthropic",
+  "llmModelLabel": "claude-sonnet-4-5-20250929",
+  "label": "Vif réceptif",
+  "initialState": "Le visiteur entre dans un calme discret, vigilant, avec une attention lâche et périphérique plutôt que fixée sur quelque chose de précis. Sous la surface, il y a une aisance installée, aucune crispation ni résistance, seulement une disponibilité douce. L’énergie est modérée et accessible, sans pic mais certainement pas épuisée, avec assez de réserve pour accueillir ce qui vient. L’ouverture émotionnelle est élevée : les défenses sont abaissées, avec la sensation d’être prêt à être touché ou déplacé par ce qui se déploie. La pression à résoudre ou à catégoriser est faible ; le sens peut rester en suspens sans qu’il faille le clouer. Le corps est intensément présent : les sensations sont vives et immédiates, presque comme un léger bourdonnement de vie tranquille.",
+  "initialStateShort": "Le visiteur arrive dans un calme réceptif, avec une présence corporelle vive et une rare disposition à se laisser toucher sans devoir comprendre ou contrôler ce qui se déploie.",
+  "rawInitialState": "Le visiteur entre dans un calme discret, vigilant, avec une attention lâche et périphérique plutôt que fixée sur quelque chose de précis. Sous la surface, il y a une aisance installée, aucune crispation ni résistance, seulement une disponibilité douce. L’énergie est modérée et accessible, sans pic mais certainement pas épuisée, avec assez de réserve pour accueillir ce qui vient. L’ouverture émotionnelle est élevée : les défenses sont abaissées, avec la sensation d’être prêt à être touché ou déplacé par ce qui se déploie. La pression à résoudre ou à catégoriser est faible ; le sens peut rester en suspens sans qu’il faille le clouer. Le corps est intensément présent : les sensations sont vives et immédiates, presque comme un léger bourdonnement de vie tranquille."
+}

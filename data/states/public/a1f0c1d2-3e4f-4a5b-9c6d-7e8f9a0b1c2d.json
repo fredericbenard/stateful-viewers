@@ -1,0 +1,11 @@
+{
+  "id": "a1f0c1d2-3e4f-4a5b-9c6d-7e8f9a0b1c2d",
+  "generatedAt": "2026-02-22T00:00:00.000Z",
+  "locale": "fr",
+  "llm": "openai",
+  "llmModelLabel": "GPT-5.2",
+  "label": "Silence tendu",
+  "initialStateShort": "Sourd, légèrement las ; attention diffuse ; légère tension poitrine/mâchoire ; sur ses gardes mais ouvert ; aucune urgence à résoudre les impressions.",
+  "initialState": "Ils arrivent dans une humeur sourde, légèrement lasse, plus silencieuse que triste, comme si la journée avait déjà pris l’essentiel de leur étincelle. En dessous, une fine bande de tension se tient dans la poitrine et la mâchoire — rien de dramatique, juste un souffle retenu qui n’est pas encore descendu dans l’aisance. Leur énergie semble entamée et un peu brumeuse ; l’engagement est donc prudent et mesuré, l’attention dérivant de façon diffuse et périphérique plutôt que de se verrouiller sur quoi que ce soit pour l’instant. Émotionnellement, ils sont modérément sur la réserve : pas fermés, mais pas avides d’être remués, et ils ne ressentent aucune poussée d’interprétation — satisfaits de laisser les impressions flotter sans les résoudre. Dans le corps, il y a une lourdeur de bas niveau dans les jambes et les épaules, des sensations présentes mais atténuées, comme si le volume de la conscience corporelle était baissé.",
+  "rawInitialState": "Ils arrivent dans une humeur sourde, légèrement lasse, plus silencieuse que triste, comme si la journée avait déjà pris l’essentiel de leur étincelle. En dessous, une fine bande de tension se tient dans la poitrine et la mâchoire — rien de dramatique, juste un souffle retenu qui n’est pas encore descendu dans l’aisance. Leur énergie semble entamée et un peu brumeuse ; l’engagement est donc prudent et mesuré, l’attention dérivant de façon diffuse et périphérique plutôt que de se verrouiller sur quoi que ce soit pour l’instant. Émotionnellement, ils sont modérément sur la réserve : pas fermés, mais pas avides d’être remués, et ils ne ressentent aucune poussée d’interprétation — satisfaits de laisser les impressions flotter sans les résoudre. Dans le corps, il y a une lourdeur de bas niveau dans les jambes et les épaules, des sensations présentes mais atténuées, comme si le volume de la conscience corporelle était baissé."
+}

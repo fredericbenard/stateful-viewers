@@ -1,0 +1,11 @@
+{
+  "id": "b2e3f4a5-6c7d-4e8f-9a0b-1c2d3e4f5a6b",
+  "generatedAt": "2026-02-22T00:00:00.000Z",
+  "locale": "fr",
+  "llm": "openai",
+  "llmModelLabel": "GPT-5.2",
+  "label": "Alerte curieux",
+  "initialStateShort": "Alerte, discrètement allègre ; légère tension d’anticipation ; réceptif mais un peu retenu ; présence somatique vive ; faible pression à résoudre le sens.",
+  "initialState": "Ils arrivent alertes et discrètement allègres, avec un soupçon de curiosité au premier plan. En dessous, il y a une anticipation subtile — une tension presque agréable dans la poitrine et les épaules — plus posée qu’anxieuse. L’énergie est modérée et stable, suffisante pour s’engager sans effort, et ils sont émotionnellement réceptifs, disposés à être touchés tout en gardant une petite part d’eux-mêmes en retrait. L’attention est légèrement diffuse au seuil, embrassant largement l’espace avant de se resserrer, et il y a peu de pression à fixer le sens d’emblée — plutôt une disponibilité à laisser les choses se dérouler. Somatiquement, ils sont intensément présents : souffle, battements et conscience de la peau sont forts et immédiats, rendant l’instant vif et proche.",
+  "rawInitialState": "Ils arrivent alertes et discrètement allègres, avec un soupçon de curiosité au premier plan. En dessous, il y a une anticipation subtile — une tension presque agréable dans la poitrine et les épaules — plus posée qu’anxieuse. L’énergie est modérée et stable, suffisante pour s’engager sans effort, et ils sont émotionnellement réceptifs, disposés à être touchés tout en gardant une petite part d’eux-mêmes en retrait. L’attention est légèrement diffuse au seuil, embrassant largement l’espace avant de se resserrer, et il y a peu de pression à fixer le sens d’emblée — plutôt une disponibilité à laisser les choses se dérouler. Somatiquement, ils sont intensément présents : souffle, battements et conscience de la peau sont forts et immédiats, rendant l’instant vif et proche."
+}

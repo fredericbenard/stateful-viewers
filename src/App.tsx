@@ -587,13 +587,10 @@ function App() {
   const [showTrajectorySummaryModal, setShowTrajectorySummaryModal] = useState(false);
   const [availableProfiles, setAvailableProfiles] = useState<ProfileSummary[]>([]);
   const [isLoadingProfiles, setIsLoadingProfiles] = useState(false);
-  const [showProfileSelector, setShowProfileSelector] = useState(false);
   const [availableStyles, setAvailableStyles] = useState<StyleSummary[]>([]);
   const [isLoadingStyles, setIsLoadingStyles] = useState(false);
-  const [showStyleSelector, setShowStyleSelector] = useState(false);
   const [availableStates, setAvailableStates] = useState<StateSummary[]>([]);
   const [isLoadingStates, setIsLoadingStates] = useState(false);
-  const [showStateSelector, setShowStateSelector] = useState(false);
   // We intentionally do not filter profiles/styles/states by locale: allow mixing across languages.
   const [showImageModal, setShowImageModal] = useState(false);
   const [modalImageNaturalSize, setModalImageNaturalSize] = useState<{
@@ -615,24 +612,81 @@ function App() {
   const lastInternalState = lastInternalStateByGallery[galleryId] ?? "";
   const isGeneratingAny = isGeneratingProfile || isGeneratingStyle || isGeneratingState;
   const isGeneratingUi = isGeneratingAny || generationStatus != null;
-  const visibleProfiles = availableProfiles;
-  const visibleStyles = availableStyles;
-  const visibleStates = availableStates;
-  const sortedAvailableProfiles = [...visibleProfiles].sort((a, b) => {
-    const labelA = (a.label || t(locale, "sidebar.untitledProfile")).toLocaleLowerCase();
-    const labelB = (b.label || t(locale, "sidebar.untitledProfile")).toLocaleLowerCase();
-    return labelA.localeCompare(labelB);
-  });
-  const sortedAvailableStyles = [...visibleStyles].sort((a, b) => {
-    const aLabel = (a.reflectionStyleShort || "").toLocaleLowerCase();
-    const bLabel = (b.reflectionStyleShort || "").toLocaleLowerCase();
-    return aLabel.localeCompare(bLabel);
-  });
-  const sortedAvailableStates = [...visibleStates].sort((a, b) => {
-    const aLabel = (a.initialStateShort || "").toLocaleLowerCase();
-    const bLabel = (b.initialStateShort || "").toLocaleLowerCase();
-    return aLabel.localeCompare(bLabel);
-  });
+  // Default behavior: show artifacts matching the current UI locale.
+  // UX improvement: always keep the currently selected artifact visible (pinned),
+  // even if it's from the other locale, so switching UI language doesn't make
+  // the selection "disappear" from the picker.
+  // Back-compat: older artifacts may be missing locale → treat as English.
+  const normalizeArtifactLocale = (l?: string): UiLocale =>
+    (l || "en").toString().toLowerCase().startsWith("fr") ? "fr" : "en";
+  const selectedProfileSummary = profileId
+    ? availableProfiles.find((p) => p.id === profileId) ?? null
+    : null;
+  const selectedStyleSummary = styleId
+    ? availableStyles.find((s) => s.id === styleId) ?? null
+    : null;
+  const selectedStateSummary = stateId
+    ? availableStates.find((s) => s.id === stateId) ?? null
+    : null;
+
+  const visibleProfiles = availableProfiles.filter(
+    (p) => normalizeArtifactLocale(p.locale) === locale
+  );
+  const visibleStyles = availableStyles.filter(
+    (s) => normalizeArtifactLocale(s.locale) === locale
+  );
+  const visibleStates = availableStates.filter(
+    (s) => normalizeArtifactLocale(s.locale) === locale
+  );
+
+  const sortedAvailableProfiles = (() => {
+    const sorted = [...visibleProfiles].sort((a, b) => {
+      const labelA = (a.label || t(locale, "sidebar.untitledProfile")).toLocaleLowerCase();
+      const labelB = (b.label || t(locale, "sidebar.untitledProfile")).toLocaleLowerCase();
+      return labelA.localeCompare(labelB);
+    });
+    if (!selectedProfileSummary) return sorted;
+    return [
+      selectedProfileSummary,
+      ...sorted.filter((p) => p.id !== selectedProfileSummary.id),
+    ];
+  })();
+
+  const sortedAvailableStyles = (() => {
+    const sorted = [...visibleStyles].sort((a, b) => {
+      const aDisplay =
+        a.label ||
+        (a.reflectionStyleShort
+          ? truncateAtWord(a.reflectionStyleShort, 72)
+          : t(locale, "sidebar.untitledStyle"));
+      const bDisplay =
+        b.label ||
+        (b.reflectionStyleShort
+          ? truncateAtWord(b.reflectionStyleShort, 72)
+          : t(locale, "sidebar.untitledStyle"));
+      return aDisplay.toLocaleLowerCase().localeCompare(bDisplay.toLocaleLowerCase());
+    });
+    if (!selectedStyleSummary) return sorted;
+    return [selectedStyleSummary, ...sorted.filter((s) => s.id !== selectedStyleSummary.id)];
+  })();
+
+  const sortedAvailableStates = (() => {
+    const sorted = [...visibleStates].sort((a, b) => {
+      const aDisplay =
+        a.label ||
+        (a.initialStateShort
+          ? truncateAtWord(a.initialStateShort, 72)
+          : t(locale, "sidebar.untitledState"));
+      const bDisplay =
+        b.label ||
+        (b.initialStateShort
+          ? truncateAtWord(b.initialStateShort, 72)
+          : t(locale, "sidebar.untitledState"));
+      return aDisplay.toLocaleLowerCase().localeCompare(bDisplay.toLocaleLowerCase());
+    });
+    if (!selectedStateSummary) return sorted;
+    return [selectedStateSummary, ...sorted.filter((s) => s.id !== selectedStateSummary.id)];
+  })();
   const selectedReflectionGeneratedAt =
     selectedReflectionGeneratedAtByGallery[galleryId];
 
@@ -1221,7 +1275,6 @@ function App() {
       }
       const cleanedProfile = cleanGeneratedText(profileResult.content);
 
-      setGenerationStatus("generatingLabel");
       const labelResult = await generateText(
         visionProvider,
         PROFILE_LABEL_PROMPT,
@@ -1235,7 +1288,6 @@ function App() {
         );
       }
 
-      setGenerationStatus("generatingSummaries");
       const shortProfileRes = await generateText(
         visionProvider,
         SHORT_DESCRIPTION_PROMPT,
@@ -1246,7 +1298,6 @@ function App() {
         ? ""
         : cleanGeneratedText(shortProfileRes.content).trim();
 
-      setGenerationStatus("saving");
       const savedId = await saveGeneratedProfile({
         locale,
         profileRaw: profileResult.content,
@@ -1271,7 +1322,6 @@ function App() {
         setGenerationError(t(locale, "errors.failedSaveProfile"));
       }
 
-      setShowProfileSelector(false);
       setGenerationStatus(null);
       setIsGeneratingProfile(false);
     } catch (error) {
@@ -1315,7 +1365,6 @@ function App() {
       }
       const cleanedStyle = cleanGeneratedText(styleResult.content);
 
-      setGenerationStatus("generatingLabel");
       const labelResult = await generateText(
         visionProvider,
         PROFILE_LABEL_PROMPT,
@@ -1329,7 +1378,6 @@ function App() {
         );
       }
 
-      setGenerationStatus("generatingSummaries");
       const shortStyleRes = await generateText(
         visionProvider,
         SHORT_DESCRIPTION_PROMPT,
@@ -1340,7 +1388,6 @@ function App() {
         ? ""
         : cleanGeneratedText(shortStyleRes.content).trim();
 
-      setGenerationStatus("saving");
       const savedId = await saveGeneratedStyle({
         locale,
         styleRaw: styleResult.content,
@@ -1365,7 +1412,6 @@ function App() {
         setGenerationError(t(locale, "errors.failedSaveStyle"));
       }
 
-      setShowStyleSelector(false);
       setGenerationStatus(null);
       setIsGeneratingStyle(false);
     } catch (error) {
@@ -1409,7 +1455,6 @@ function App() {
       }
       const cleanedState = cleanGeneratedText(stateResult.content);
 
-      setGenerationStatus("generatingLabel");
       const labelResult = await generateText(
         visionProvider,
         PROFILE_LABEL_PROMPT,
@@ -1423,7 +1468,6 @@ function App() {
         );
       }
 
-      setGenerationStatus("generatingSummaries");
       const shortStateRes = await generateText(
         visionProvider,
         SHORT_DESCRIPTION_PROMPT,
@@ -1434,7 +1478,6 @@ function App() {
         ? ""
         : cleanGeneratedText(shortStateRes.content).trim();
 
-      setGenerationStatus("saving");
       const savedId = await saveGeneratedState({
         locale,
         initialStateRaw: stateResult.content,
@@ -1459,7 +1502,6 @@ function App() {
         setGenerationError(t(locale, "errors.failedSaveState"));
       }
 
-      setShowStateSelector(false);
       setGenerationStatus(null);
       setIsGeneratingState(false);
     } catch (error) {
@@ -1531,7 +1573,6 @@ function App() {
         setProfileLlmModelLabel(profile.llmModelLabel || profile.modelLabel || null);
         setProfileShort(profile.profileShort || "");
         resetExperienceAfterViewerChange();
-        setShowProfileSelector(false);
         console.info(`Loaded profile ${profile.id}`);
       } else {
         console.error("Failed to load profile");
@@ -1555,7 +1596,6 @@ function App() {
         setStyleLlm(style.llm || null);
         setStyleLlmModelLabel(style.llmModelLabel || style.modelLabel || null);
         resetExperienceAfterViewerChange();
-        setShowStyleSelector(false);
         console.info(`Loaded style ${style.id}`);
       } else {
         console.error("Failed to load style");
@@ -1579,7 +1619,6 @@ function App() {
         setStateLlm(state.llm || null);
         setStateLlmModelLabel(state.llmModelLabel || state.modelLabel || null);
         resetExperienceAfterViewerChange();
-        setShowStateSelector(false);
         console.info(`Loaded state ${state.id}`);
       } else {
         console.error("Failed to load state");
@@ -2138,22 +2177,84 @@ function App() {
             )}
           </div>
           <div className="sidebar-section">
+            {(() => {
+              const unset = t(locale, "viewerConfiguration.unset");
+              const profileLocaleTag = selectedProfileSummary
+                ? normalizeArtifactLocale(selectedProfileSummary.locale).toUpperCase()
+                : null;
+              const voiceLocaleTag = selectedStyleSummary
+                ? normalizeArtifactLocale(selectedStyleSummary.locale).toUpperCase()
+                : null;
+              const stateLocaleTag = selectedStateSummary
+                ? normalizeArtifactLocale(selectedStateSummary.locale).toUpperCase()
+                : null;
+
+              const currentProfileRaw = profileLabel?.trim();
+              const currentVoiceRaw = styleLabel?.trim();
+              const currentInitialStateRaw = stateLabel?.trim();
+
+              const currentProfile = currentProfileRaw
+                ? `${currentProfileRaw}${
+                    profileLocaleTag && profileLocaleTag.toLowerCase() !== locale
+                      ? ` (${profileLocaleTag})`
+                      : ""
+                  }`
+                : unset;
+              const currentVoice = currentVoiceRaw
+                ? `${currentVoiceRaw}${
+                    voiceLocaleTag && voiceLocaleTag.toLowerCase() !== locale
+                      ? ` (${voiceLocaleTag})`
+                      : ""
+                  }`
+                : unset;
+              const currentInitialState = currentInitialStateRaw
+                ? `${currentInitialStateRaw}${
+                    stateLocaleTag && stateLocaleTag.toLowerCase() !== locale
+                      ? ` (${stateLocaleTag})`
+                      : ""
+                  }`
+                : unset;
+
+              return (
+                <div className="viewer-config-block">
+                  <div className="viewer-config-title">
+                    {t(locale, "viewerConfiguration.title")}
+                  </div>
+                  <p className="viewer-config-definition">
+                    <em>{t(locale, "viewerConfiguration.definition")}</em>
+                  </p>
+                  <div className="viewer-config-subtitle">
+                    {t(locale, "viewerConfiguration.currentViewer")}
+                  </div>
+                  <ul className="viewer-config-list">
+                    <li>
+                      <span className="viewer-config-key">
+                        {t(locale, "viewerProfile.profileHeading")}:
+                      </span>{" "}
+                      {currentProfile}
+                    </li>
+                    <li>
+                      <span className="viewer-config-key">
+                        {t(locale, "viewerProfile.reflectionStyleHeading")}:
+                      </span>{" "}
+                      {currentVoice}
+                    </li>
+                    <li>
+                      <span className="viewer-config-key">
+                        {t(locale, "viewerProfile.initialStateHeading")}:
+                      </span>{" "}
+                      {currentInitialState}
+                    </li>
+                  </ul>
+                </div>
+              );
+            })()}
             <div className="viewer-artifact-group">
               <div className="viewer-artifact-group-header">
                 <div className="viewer-artifact-group-title">
                   {t(locale, "viewerProfile.profileHeading")}
                 </div>
                 <div className="viewer-artifact-actions">
-                  <button
-                    className="load-profile-btn viewer-artifact-btn-primary"
-                    onClick={() => setShowProfileSelector(!showProfileSelector)}
-                    disabled={isLoadingProfiles || isGeneratingUi}
-                    title={isLoadingProfiles ? t(locale, "sidebar.loadingProfiles") : undefined}
-                  >
-                    {showProfileSelector
-                      ? t(locale, "sidebar.hide")
-                      : t(locale, "sidebar.load")}
-                  </button>
                   <button
                     className="generate-viewer-btn viewer-artifact-btn-secondary"
                     onClick={() => !isGeneratingUi && handleGenerateProfile()}
@@ -2166,72 +2267,98 @@ function App() {
                 </div>
               </div>
 
-            {(profileShort || viewerProfile) && (
-              <div className={`viewer-profile-block ${profileExpanded ? "expanded" : ""}`}>
-                <div className="viewer-profile-summary">
-                  <div className="viewer-profile-summary-row">
-                    <div className="viewer-profile-label-header">
-                      {profileLabel || t(locale, "viewerProfile.profileHeading")}
-                    </div>
-                    <button
-                      type="button"
-                      className="viewer-profile-toggle viewer-profile-toggle-ghost"
-                      data-expanded={profileExpanded ? "true" : "false"}
-                      onClick={() => setProfileExpanded((e) => !e)}
-                    >
-                      <span className="viewer-profile-toggle-chevron" aria-hidden="true">
-                        ▸
-                      </span>
-                      {profileExpanded ? t(locale, "viewerProfile.hide") : t(locale, "viewerProfile.show")}
-                    </button>
+            <div className="profile-loader-section">
+              <div className="profile-list">
+                {isLoadingProfiles ? (
+                  <div className="loading-profiles">
+                    {renderTextWithAnimatedEllipsis(t(locale, "sidebar.loadingProfiles"))}
                   </div>
-                </div>
-                {profileExpanded && (
-                  <div className="viewer-profile-full">
-                    {profileShort?.trim() && (
-                      <p className="viewer-profile-text viewer-profile-text-summary">
-                        {profileShort}
-                      </p>
-                    )}
-                    <p className="viewer-profile-text viewer-profile-text-full">
-                      {viewerProfile?.trim() ? viewerProfile : profileShort}
-                    </p>
-                  </div>
+                ) : sortedAvailableProfiles.length === 0 ? (
+                  <div className="no-profiles">{t(locale, "sidebar.noProfiles")}</div>
+                ) : (
+                  <ul className="profile-selector-list">
+                    {(() => {
+                      const hasUnsavedCurrent = !!viewerProfile.trim() && !profileId;
+                      const items: Array<{ id: string; label: string; locale?: string }> = [];
+                      if (hasUnsavedCurrent) {
+                        items.push({
+                          id: "__current__",
+                          label: profileLabel || t(locale, "viewerProfile.profileHeading"),
+                          locale,
+                        });
+                      }
+                      for (const p of sortedAvailableProfiles) {
+                        items.push({
+                          id: p.id,
+                          label: p.label || t(locale, "sidebar.untitledProfile"),
+                          locale: p.locale,
+                        });
+                      }
+
+                      return items.map((item) => {
+                        const isCurrentUnsaved = item.id === "__current__";
+                        const isActive = isCurrentUnsaved
+                          ? !profileId && !!viewerProfile.trim()
+                          : item.id === profileId;
+                        const isExpanded = isActive && profileExpanded;
+                        const badge =
+                          item.locale && normalizeArtifactLocale(item.locale) !== locale
+                            ? normalizeArtifactLocale(item.locale).toUpperCase()
+                            : null;
+
+                        return (
+                          <li key={item.id}>
+                            <button
+                              className={`profile-selector-item ${isActive ? "active" : ""}`}
+                              onClick={() => {
+                                if (isActive) {
+                                  setProfileExpanded((v) => !v);
+                                  return;
+                                }
+                                if (isCurrentUnsaved) {
+                                  setProfileExpanded((v) => !v);
+                                  return;
+                                }
+                                setProfileExpanded(false);
+                                handleLoadProfile(item.id);
+                              }}
+                              disabled={isLoadingProfiles}
+                              data-expanded={isExpanded ? "true" : "false"}
+                            >
+                              <div className="profile-selector-label-row">
+                                <div className="profile-selector-label">{item.label}</div>
+                                {badge && (
+                                  <span className="profile-locale-badge" aria-label={badge}>
+                                    {badge}
+                                  </span>
+                                )}
+                              </div>
+                              <span
+                                className="profile-selector-chevron"
+                                aria-hidden="true"
+                                data-visible={isActive ? "true" : "false"}
+                              >
+                                ▸
+                              </span>
+                            </button>
+                            {isExpanded && (
+                              <div className="profile-selector-details">
+                                {profileShort?.trim() && (
+                                  <div className="profile-selector-summary">{profileShort}</div>
+                                )}
+                                {viewerProfile?.trim() && (
+                                  <div className="profile-selector-full">{viewerProfile}</div>
+                                )}
+                              </div>
+                            )}
+                          </li>
+                        );
+                      });
+                    })()}
+                  </ul>
                 )}
               </div>
-            )}
-
-            {showProfileSelector && (
-              <div className="profile-loader-section">
-                <div className="profile-list">
-                  {isLoadingProfiles ? (
-                    <div className="loading-profiles">
-                      {renderTextWithAnimatedEllipsis(t(locale, "sidebar.loadingProfiles"))}
-                    </div>
-                  ) : availableProfiles.length === 0 ? (
-                    <div className="no-profiles">{t(locale, "sidebar.noProfiles")}</div>
-                  ) : (
-                      <ul className="profile-selector-list">
-                        {sortedAvailableProfiles.map((profile) => (
-                          <li key={profile.id}>
-                            <button
-                              className={`profile-selector-item ${
-                                profile.id === profileId ? "active" : ""
-                              }`}
-                              onClick={() => handleLoadProfile(profile.id)}
-                              disabled={isLoadingProfiles}
-                            >
-                              <div className="profile-selector-label">
-                                {profile.label || t(locale, "sidebar.untitledProfile")}
-                              </div>
-                            </button>
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                </div>
-              </div>
-            )}
+            </div>
 
             </div>
 
@@ -2241,16 +2368,6 @@ function App() {
                   {t(locale, "viewerProfile.reflectionStyleHeading")}
                 </div>
                 <div className="viewer-artifact-actions">
-                  <button
-                    className="load-profile-btn viewer-artifact-btn-primary"
-                    onClick={() => setShowStyleSelector(!showStyleSelector)}
-                    disabled={isLoadingStyles || isGeneratingUi}
-                    title={isLoadingStyles ? t(locale, "sidebar.loadingStyles") : undefined}
-                  >
-                    {showStyleSelector
-                      ? t(locale, "sidebar.hide")
-                      : t(locale, "sidebar.load")}
-                  </button>
                   <button
                     className="generate-viewer-btn viewer-artifact-btn-secondary"
                     onClick={() => !isGeneratingUi && handleGenerateStyle()}
@@ -2263,76 +2380,97 @@ function App() {
                 </div>
               </div>
 
-            {(reflectionStyleShort || reflectionStyle) && (
-              <div className={`viewer-profile-block ${styleExpanded ? "expanded" : ""}`}>
-                <div className="viewer-profile-summary">
-                  <div className="viewer-profile-summary-row">
-                    <div className="viewer-profile-label-header">
-                      {styleLabel || t(locale, "viewerProfile.reflectionStyleHeading")}
-                    </div>
-                    <button
-                      type="button"
-                      className="viewer-profile-toggle viewer-profile-toggle-ghost"
-                      data-expanded={styleExpanded ? "true" : "false"}
-                      onClick={() => setStyleExpanded((e) => !e)}
-                    >
-                      <span className="viewer-profile-toggle-chevron" aria-hidden="true">
-                        ▸
-                      </span>
-                      {styleExpanded ? t(locale, "viewerProfile.hide") : t(locale, "viewerProfile.show")}
-                    </button>
+            <div className="profile-loader-section">
+              <div className="profile-list">
+                {isLoadingStyles ? (
+                  <div className="loading-profiles">
+                    {renderTextWithAnimatedEllipsis(t(locale, "sidebar.loadingStyles"))}
                   </div>
-                </div>
-                {styleExpanded && (
-                  <div className="viewer-profile-full">
-                    {reflectionStyleShort?.trim() && (
-                      <p className="viewer-profile-text viewer-profile-text-summary">
-                        {reflectionStyleShort}
-                      </p>
-                    )}
-                    <p className="viewer-profile-text viewer-profile-text-full">
-                      {reflectionStyle?.trim() ? reflectionStyle : reflectionStyleShort}
-                    </p>
-                  </div>
+                ) : sortedAvailableStyles.length === 0 ? (
+                  <div className="no-profiles">{t(locale, "sidebar.noStyles")}</div>
+                ) : (
+                  <ul className="profile-selector-list">
+                    {(() => {
+                      const hasUnsavedCurrent = !!reflectionStyle.trim() && !styleId;
+                      const items: Array<{ id: string; label: string; locale?: string }> = [];
+                      if (hasUnsavedCurrent) {
+                        items.push({
+                          id: "__current__",
+                          label: styleLabel || t(locale, "viewerProfile.reflectionStyleHeading"),
+                          locale,
+                        });
+                      }
+                      for (const s of sortedAvailableStyles) {
+                        const fallback =
+                          s.label ||
+                          (s.reflectionStyleShort
+                            ? truncateAtWord(s.reflectionStyleShort, 72)
+                            : t(locale, "sidebar.untitledStyle"));
+                        items.push({ id: s.id, label: fallback, locale: s.locale });
+                      }
+
+                      return items.map((item) => {
+                        const isCurrentUnsaved = item.id === "__current__";
+                        const isActive = isCurrentUnsaved
+                          ? !styleId && !!reflectionStyle.trim()
+                          : item.id === styleId;
+                        const isExpanded = isActive && styleExpanded;
+                        const badge =
+                          item.locale && normalizeArtifactLocale(item.locale) !== locale
+                            ? normalizeArtifactLocale(item.locale).toUpperCase()
+                            : null;
+
+                        return (
+                          <li key={item.id}>
+                            <button
+                              className={`profile-selector-item ${isActive ? "active" : ""}`}
+                              onClick={() => {
+                                if (isActive || isCurrentUnsaved) {
+                                  setStyleExpanded((v) => !v);
+                                  return;
+                                }
+                                setStyleExpanded(false);
+                                handleLoadStyle(item.id);
+                              }}
+                              disabled={isLoadingStyles}
+                              data-expanded={isExpanded ? "true" : "false"}
+                            >
+                              <div className="profile-selector-label-row">
+                                <div className="profile-selector-label">{item.label}</div>
+                                {badge && (
+                                  <span className="profile-locale-badge" aria-label={badge}>
+                                    {badge}
+                                  </span>
+                                )}
+                              </div>
+                              <span
+                                className="profile-selector-chevron"
+                                aria-hidden="true"
+                                data-visible={isActive ? "true" : "false"}
+                              >
+                                ▸
+                              </span>
+                            </button>
+                            {isExpanded && (
+                              <div className="profile-selector-details">
+                                {reflectionStyleShort?.trim() && (
+                                  <div className="profile-selector-summary">
+                                    {reflectionStyleShort}
+                                  </div>
+                                )}
+                                {reflectionStyle?.trim() && (
+                                  <div className="profile-selector-full">{reflectionStyle}</div>
+                                )}
+                              </div>
+                            )}
+                          </li>
+                        );
+                      });
+                    })()}
+                  </ul>
                 )}
               </div>
-            )}
-
-            {showStyleSelector && (
-              <div className="profile-loader-section">
-                <div className="profile-list">
-                  {isLoadingStyles ? (
-                    <div className="loading-profiles">
-                      {renderTextWithAnimatedEllipsis(t(locale, "sidebar.loadingStyles"))}
-                    </div>
-                  ) : availableStyles.length === 0 ? (
-                    <div className="no-profiles">{t(locale, "sidebar.noStyles")}</div>
-                  ) : (
-                    <ul className="profile-selector-list">
-                      {sortedAvailableStyles.map((style) => (
-                        <li key={style.id}>
-                          <button
-                            className={`profile-selector-item ${
-                              style.id === styleId ? "active" : ""
-                            }`}
-                            onClick={() => handleLoadStyle(style.id)}
-                            disabled={isLoadingStyles}
-                          >
-                            <div className="profile-selector-label">
-                              {style.label
-                                ? style.label
-                                : style.reflectionStyleShort
-                                  ? truncateAtWord(style.reflectionStyleShort, 72)
-                                  : t(locale, "sidebar.untitledStyle")}
-                            </div>
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              </div>
-            )}
+            </div>
 
             </div>
 
@@ -2342,16 +2480,6 @@ function App() {
                   {t(locale, "viewerProfile.initialStateHeading")}
                 </div>
                 <div className="viewer-artifact-actions">
-                  <button
-                    className="load-profile-btn viewer-artifact-btn-primary"
-                    onClick={() => setShowStateSelector(!showStateSelector)}
-                    disabled={isLoadingStates || isGeneratingUi}
-                    title={isLoadingStates ? t(locale, "sidebar.loadingStates") : undefined}
-                  >
-                    {showStateSelector
-                      ? t(locale, "sidebar.hide")
-                      : t(locale, "sidebar.load")}
-                  </button>
                   <button
                     className="generate-viewer-btn viewer-artifact-btn-secondary"
                     onClick={() => !isGeneratingUi && handleGenerateState()}
@@ -2364,76 +2492,97 @@ function App() {
                 </div>
               </div>
 
-            {(initialStateShort || initialState) && (
-              <div className={`viewer-profile-block ${stateExpanded ? "expanded" : ""}`}>
-                <div className="viewer-profile-summary">
-                  <div className="viewer-profile-summary-row">
-                    <div className="viewer-profile-label-header">
-                      {stateLabel || t(locale, "viewerProfile.initialStateHeading")}
-                    </div>
-                    <button
-                      type="button"
-                      className="viewer-profile-toggle viewer-profile-toggle-ghost"
-                      data-expanded={stateExpanded ? "true" : "false"}
-                      onClick={() => setStateExpanded((e) => !e)}
-                    >
-                      <span className="viewer-profile-toggle-chevron" aria-hidden="true">
-                        ▸
-                      </span>
-                      {stateExpanded ? t(locale, "viewerProfile.hide") : t(locale, "viewerProfile.show")}
-                    </button>
+            <div className="profile-loader-section">
+              <div className="profile-list">
+                {isLoadingStates ? (
+                  <div className="loading-profiles">
+                    {renderTextWithAnimatedEllipsis(t(locale, "sidebar.loadingStates"))}
                   </div>
-                </div>
-                {stateExpanded && (
-                  <div className="viewer-profile-full">
-                    {initialStateShort?.trim() && (
-                      <p className="viewer-profile-text viewer-profile-text-summary">
-                        {initialStateShort}
-                      </p>
-                    )}
-                    <p className="viewer-profile-text viewer-profile-text-full">
-                      {initialState?.trim() ? initialState : initialStateShort}
-                    </p>
-                  </div>
+                ) : sortedAvailableStates.length === 0 ? (
+                  <div className="no-profiles">{t(locale, "sidebar.noStates")}</div>
+                ) : (
+                  <ul className="profile-selector-list">
+                    {(() => {
+                      const hasUnsavedCurrent = !!initialState.trim() && !stateId;
+                      const items: Array<{ id: string; label: string; locale?: string }> = [];
+                      if (hasUnsavedCurrent) {
+                        items.push({
+                          id: "__current__",
+                          label: stateLabel || t(locale, "viewerProfile.initialStateHeading"),
+                          locale,
+                        });
+                      }
+                      for (const s of sortedAvailableStates) {
+                        const fallback =
+                          s.label ||
+                          (s.initialStateShort
+                            ? truncateAtWord(s.initialStateShort, 72)
+                            : t(locale, "sidebar.untitledState"));
+                        items.push({ id: s.id, label: fallback, locale: s.locale });
+                      }
+
+                      return items.map((item) => {
+                        const isCurrentUnsaved = item.id === "__current__";
+                        const isActive = isCurrentUnsaved
+                          ? !stateId && !!initialState.trim()
+                          : item.id === stateId;
+                        const isExpanded = isActive && stateExpanded;
+                        const badge =
+                          item.locale && normalizeArtifactLocale(item.locale) !== locale
+                            ? normalizeArtifactLocale(item.locale).toUpperCase()
+                            : null;
+
+                        return (
+                          <li key={item.id}>
+                            <button
+                              className={`profile-selector-item ${isActive ? "active" : ""}`}
+                              onClick={() => {
+                                if (isActive || isCurrentUnsaved) {
+                                  setStateExpanded((v) => !v);
+                                  return;
+                                }
+                                setStateExpanded(false);
+                                handleLoadState(item.id);
+                              }}
+                              disabled={isLoadingStates}
+                              data-expanded={isExpanded ? "true" : "false"}
+                            >
+                              <div className="profile-selector-label-row">
+                                <div className="profile-selector-label">{item.label}</div>
+                                {badge && (
+                                  <span className="profile-locale-badge" aria-label={badge}>
+                                    {badge}
+                                  </span>
+                                )}
+                              </div>
+                              <span
+                                className="profile-selector-chevron"
+                                aria-hidden="true"
+                                data-visible={isActive ? "true" : "false"}
+                              >
+                                ▸
+                              </span>
+                            </button>
+                            {isExpanded && (
+                              <div className="profile-selector-details">
+                                {initialStateShort?.trim() && (
+                                  <div className="profile-selector-summary">
+                                    {initialStateShort}
+                                  </div>
+                                )}
+                                {initialState?.trim() && (
+                                  <div className="profile-selector-full">{initialState}</div>
+                                )}
+                              </div>
+                            )}
+                          </li>
+                        );
+                      });
+                    })()}
+                  </ul>
                 )}
               </div>
-            )}
-
-            {showStateSelector && (
-              <div className="profile-loader-section">
-                <div className="profile-list">
-                  {isLoadingStates ? (
-                    <div className="loading-profiles">
-                      {renderTextWithAnimatedEllipsis(t(locale, "sidebar.loadingStates"))}
-                    </div>
-                  ) : availableStates.length === 0 ? (
-                    <div className="no-profiles">{t(locale, "sidebar.noStates")}</div>
-                  ) : (
-                    <ul className="profile-selector-list">
-                      {sortedAvailableStates.map((state) => (
-                        <li key={state.id}>
-                          <button
-                            className={`profile-selector-item ${
-                              state.id === stateId ? "active" : ""
-                            }`}
-                            onClick={() => handleLoadState(state.id)}
-                            disabled={isLoadingStates}
-                          >
-                            <div className="profile-selector-label">
-                              {state.label
-                                ? state.label
-                                : state.initialStateShort
-                                  ? truncateAtWord(state.initialStateShort, 72)
-                                  : t(locale, "sidebar.untitledState")}
-                            </div>
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
-                </div>
-              </div>
-            )}
+            </div>
 
             </div>
           </div>
