@@ -64,25 +64,55 @@ EXPERIMENTS_DIR = _RESEARCH_DIR / "experiments"
 
 def parse_reflection_and_state(text: str) -> tuple[str, str]:
     """Extract reflection and state text from a [REFLECTION]...[STATE]... response."""
-    reflection = ""
-    state = ""
+    # Keep parsing tolerant and aligned with the app's parser (`src/lib/parseReflection.ts`):
+    # - accept optional markdown bold **[STATE]**
+    # - accept optional colon ([STATE]: ...)
+    # - accept tag and content on same line or next line
+    # - case-insensitive
+    raw = text.strip()
 
-    ref_match = re.search(
-        r"\[REFLECTION\]\s*\n\s*\n(.*?)(?=\[STATE\]|\Z)",
-        text,
-        re.DOTALL,
+    reflection_match = re.search(
+        r"\*{0,2}\[REFLECTION\]\*{0,2}\s*:?\s*\n?([\s\S]*?)(?=\n\s*\*{0,2}\[STATE\]\*{0,2}|$)",
+        raw,
+        re.IGNORECASE,
     )
-    if ref_match:
-        reflection = ref_match.group(1).strip()
-
     state_match = re.search(
-        r"\[STATE\]\s*\n\s*\n(.*)",
-        text,
-        re.DOTALL,
+        r"\*{0,2}\[STATE\]\*{0,2}\s*:?\s*\n?([\s\S]*?)$",
+        raw,
+        re.IGNORECASE | re.MULTILINE,
     )
-    if state_match:
-        state = state_match.group(1).strip()
 
+    if reflection_match and state_match:
+        return reflection_match.group(1).strip(), state_match.group(1).strip()
+
+    # Common legacy drift (seen with smaller/local models):
+    #   Reflection: ...  /  State: ...
+    legacy_reflection = re.search(
+        r"Reflection:\s*\n?([\s\S]*?)(?=\n\s*State:|$)",
+        raw,
+        re.IGNORECASE,
+    )
+    legacy_state = re.search(
+        r"State:\s*\n?([\s\S]*?)$",
+        raw,
+        re.IGNORECASE | re.MULTILINE,
+    )
+    if legacy_reflection and legacy_state:
+        return legacy_reflection.group(1).strip(), legacy_state.group(1).strip()
+
+    # Older fallback used elsewhere in the app.
+    old_reaction = re.search(
+        r"Reaction:\s*\n([\s\S]*?)(?=\n\s*Internal state|$)",
+        raw,
+        re.IGNORECASE,
+    )
+    old_state = re.search(
+        r"Internal state after this image:\s*\n([\s\S]*?)$",
+        raw,
+        re.IGNORECASE | re.MULTILINE,
+    )
+    reflection = old_reaction.group(1).strip() if old_reaction else raw
+    state = old_state.group(1).strip() if old_state else ""
     return reflection, state
 
 
@@ -248,7 +278,9 @@ def save_run(
     assembled_prompt_records: list[dict] | None = None,
 ) -> Path:
     """Save results, artifacts, and assembled prompts to a timestamped output directory."""
-    timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H-%M-%S")
+    # Include microseconds to prevent collisions when multiple runs start within
+    # the same second (directories are created with exist_ok=True).
+    timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H-%M-%S-%f")
     run_dir = OUTPUT_DIR / config.experiment_id / timestamp
     run_dir.mkdir(parents=True, exist_ok=True)
 

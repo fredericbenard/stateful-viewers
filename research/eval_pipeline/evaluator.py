@@ -203,7 +203,9 @@ def _backup_if_exists(path: Path) -> None:
     """Rename an existing file with a timestamp suffix before overwriting."""
     if not path.is_file():
         return
-    ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H-%M-%S")
+    # Microsecond resolution avoids backup-name collisions when a run writes
+    # multiple judge outputs in quick succession.
+    ts = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H-%M-%S-%f")
     backup = path.with_suffix(f".bak.{ts}.json")
     shutil.copy2(path, backup)
     console.print(f"  [dim]Backed up previous scores to {backup.name}[/dim]")

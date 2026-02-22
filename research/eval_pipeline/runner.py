@@ -176,7 +176,9 @@ def save_run(
 
     Returns the path to the created run directory.
     """
-    timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H-%M-%S")
+    # Include microseconds to prevent collisions when multiple runs start within
+    # the same second (directories are created with exist_ok=True).
+    timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H-%M-%S-%f")
     run_dir = output_dir / config.experiment_id / timestamp
     run_dir.mkdir(parents=True, exist_ok=True)
 

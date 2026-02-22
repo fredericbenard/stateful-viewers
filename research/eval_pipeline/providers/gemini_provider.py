@@ -12,6 +12,8 @@ from google.genai import types as genai_types
 from eval_pipeline.types import ProviderResponse
 
 DEFAULT_MODEL = "gemini-2.5-pro-preview-05-06"
+DEFAULT_MAX_OUTPUT_TOKENS = 4096
+DEFAULT_THINKING_BUDGET = 2048
 
 
 class GeminiVisionProvider:
@@ -34,7 +36,7 @@ class GeminiVisionProvider:
         mime_type: str,
         *,
         temperature: float = 0.7,
-        max_tokens: int = 2048,
+        max_tokens: int = DEFAULT_MAX_OUTPUT_TOKENS,
     ) -> ProviderResponse:
         image_bytes = base64.b64decode(image_base64)
         image_part = genai_types.Part.from_bytes(data=image_bytes, mime_type=mime_type)
@@ -44,6 +46,9 @@ class GeminiVisionProvider:
             system_instruction=system_prompt,
             temperature=temperature,
             max_output_tokens=max_tokens,
+            # Keep defaults aligned with the main app:
+            # maxOutputTokens=4096, thinkingConfig.thinkingBudget=2048.
+            thinking_config={"thinking_budget": DEFAULT_THINKING_BUDGET},
         )
 
         start = time.perf_counter()
@@ -69,12 +74,13 @@ class GeminiVisionProvider:
         user_prompt: str,
         *,
         temperature: float = 0.7,
-        max_tokens: int = 1024,
+        max_tokens: int = DEFAULT_MAX_OUTPUT_TOKENS,
     ) -> ProviderResponse:
         config = genai_types.GenerateContentConfig(
             system_instruction=system_prompt,
             temperature=temperature,
             max_output_tokens=max_tokens,
+            thinking_config={"thinking_budget": DEFAULT_THINKING_BUDGET},
         )
 
         start = time.perf_counter()
