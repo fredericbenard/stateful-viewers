@@ -607,6 +607,7 @@ function App() {
   const profileTextRef = useRef<HTMLDivElement>(null);
   const styleTextRef = useRef<HTMLDivElement>(null);
   const stateTextRef = useRef<HTMLDivElement>(null);
+  const activeThumbnailRef = useRef<HTMLButtonElement | null>(null);
   const [profileHasOverflow, setProfileHasOverflow] = useState(false);
   const [styleHasOverflow, setStyleHasOverflow] = useState(false);
   const [stateHasOverflow, setStateHasOverflow] = useState(false);
@@ -2122,6 +2123,14 @@ function App() {
     setIsHistoryCollapsed(galleryReflections.length > 1);
   }, [galleryId]);
 
+  useEffect(() => {
+    activeThumbnailRef.current?.scrollIntoView({
+      block: "nearest",
+      inline: "center",
+      behavior: "smooth",
+    });
+  }, [currentIndex, galleryId]);
+
   const needsReflect =
     walkThroughActive &&
     selectedGallery &&
@@ -2930,6 +2939,11 @@ function App() {
                           return (
                             <button
                               key={img.id}
+                              ref={(el) => {
+                                if (idx === currentIndex) {
+                                  activeThumbnailRef.current = el;
+                                }
+                              }}
                               type="button"
                               className={`thumbnail-item ${
                                 idx === currentIndex ? "active" : ""
@@ -3078,92 +3092,91 @@ function App() {
                       )}
                     </div>
                     <div className="reflection-voice-toolbar">
-                      {walkThroughActive && (
-                        <label className="auto-advance-label reflection-auto-advance">
+                      <div className="reflection-voice-toolbar-row reflection-voice-toolbar-row-1">
+                        {walkThroughActive && (
+                          <label className="auto-advance-label reflection-auto-advance">
+                            <input
+                              type="checkbox"
+                              checked={autoAdvance}
+                              onChange={(e) => setAutoAdvance(e.target.checked)}
+                            />
+                            {t(locale, "reflection.autoAdvance")}
+                          </label>
+                        )}
+                        <label className="reflection-auto-voice-toggle">
                           <input
                             type="checkbox"
-                            checked={autoAdvance}
-                            onChange={(e) => setAutoAdvance(e.target.checked)}
+                            checked={autoVoiceOver}
+                            onChange={(e) => {
+                              const checked = e.target.checked;
+                              setAutoVoiceOver(checked);
+                              if (checked) {
+                                unlockSpeech();
+                              }
+                            }}
                           />
-                          {t(locale, "reflection.autoAdvance")}
+                          {t(locale, "reflection.autoVoiceOver")}
                         </label>
-                      )}
-                      <label className="reflection-auto-voice-toggle">
-                        <input
-                          type="checkbox"
-                          checked={autoVoiceOver}
-                          onChange={(e) => {
-                            const checked = e.target.checked;
-                            setAutoVoiceOver(checked);
-                            if (checked) {
-                              // Warm up TTS when the user explicitly enables auto voice-over.
+                      </div>
+                      <div className="reflection-voice-toolbar-row reflection-voice-toolbar-row-2">
+                        <label className="reflection-voice-select-label">
+                          <span>{t(locale, "reflection.voice")}</span>
+                          <select
+                            className="reflection-voice-select"
+                            value={voicesForVoicePicker.length ? voicePickerValue : ""}
+                            onMouseDown={() => refreshVoices()}
+                            onFocus={() => refreshVoices()}
+                            onChange={(e) => {
+                              const next = e.target.value;
+                              if (isSpeaking) stop();
+                              setTtsVoice(next);
                               unlockSpeech();
+                            }}
+                            disabled={!voicesForVoicePicker.length}
+                            aria-label={t(locale, "reflection.voice")}
+                          >
+                            {!voicesForVoicePicker.length ? (
+                              <option value="">{t(locale, "reflection.loadingVoices")}</option>
+                            ) : (
+                              [...voicesForVoicePicker]
+                                .sort((a, b) => {
+                                  const aIsLocale = a.lang.toLowerCase().startsWith(locale);
+                                  const bIsLocale = b.lang.toLowerCase().startsWith(locale);
+                                  if (aIsLocale !== bIsLocale) return aIsLocale ? -1 : 1;
+                                  const byLang = a.lang.localeCompare(b.lang);
+                                  if (byLang !== 0) return byLang;
+                                  return a.name.localeCompare(b.name);
+                                })
+                                .map((v) => (
+                                  <option key={`${v.name}|||${v.lang}`} value={v.name}>
+                                    {v.name} ({v.lang})
+                                  </option>
+                                ))
+                            )}
+                          </select>
+                        </label>
+                        <button
+                          type="button"
+                          className="speak-btn"
+                          onClick={() => {
+                            if (!currentReflection) return;
+                            if (isSpeaking) {
+                              stop();
+                            } else {
+                              speak(getSpeakableReflectionOnlyText(currentReflection.content), {
+                                rate: ttsRate,
+                                voice: ttsVoice || undefined,
+                                lang: locale,
+                              });
                             }
                           }}
-                        />
-                        {t(locale, "reflection.autoVoiceOver")}
-                      </label>
-                      <label className="reflection-voice-select-label">
-                        <span>{t(locale, "reflection.voice")}</span>
-                        <select
-                          className="reflection-voice-select"
-                          value={voicesForVoicePicker.length ? voicePickerValue : ""}
-                          onMouseDown={() => {
-                            // Ensure the browser has a chance to populate voices before showing the list.
-                            refreshVoices();
-                          }}
-                          onFocus={() => refreshVoices()}
-                          onChange={(e) => {
-                            const next = e.target.value;
-                            if (isSpeaking) stop();
-                            setTtsVoice(next);
-                            // Selecting a voice is a user gesture; also warm up TTS for iOS/iPadOS.
-                            unlockSpeech();
-                          }}
-                          disabled={!voicesForVoicePicker.length}
-                          aria-label={t(locale, "reflection.voice")}
+                          disabled={!currentReflection}
                         >
-                          {!voicesForVoicePicker.length ? (
-                            <option value="">{t(locale, "reflection.loadingVoices")}</option>
-                          ) : (
-                            [...voicesForVoicePicker]
-                              .sort((a, b) => {
-                                const aIsLocale = a.lang.toLowerCase().startsWith(locale);
-                                const bIsLocale = b.lang.toLowerCase().startsWith(locale);
-                                if (aIsLocale !== bIsLocale) return aIsLocale ? -1 : 1;
-                                const byLang = a.lang.localeCompare(b.lang);
-                                if (byLang !== 0) return byLang;
-                                return a.name.localeCompare(b.name);
-                              })
-                              .map((v) => (
-                                <option key={`${v.name}|||${v.lang}`} value={v.name}>
-                                  {v.name} ({v.lang})
-                                </option>
-                              ))
-                          )}
-                        </select>
-                      </label>
-                      <button
-                        type="button"
-                        className="speak-btn"
-                        onClick={() => {
-                          if (!currentReflection) return;
-                          if (isSpeaking) {
-                            stop();
-                          } else {
-                            speak(getSpeakableReflectionOnlyText(currentReflection.content), {
-                              rate: ttsRate,
-                              voice: ttsVoice || undefined,
-                              lang: locale,
-                            });
-                          }
-                        }}
-                        disabled={!currentReflection}
-                      >
                         {isSpeaking
                           ? t(locale, "reflection.stopListening")
                           : t(locale, "reflection.listen")}
-                      </button>
+                        </button>
+                      </div>
                     </div>
                     {currentReflection ? (
                       <div className="reflection-content">
