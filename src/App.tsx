@@ -368,7 +368,6 @@ function App() {
   const [walkThroughActive, setWalkThroughActive] = useState(false);
   const [autoAdvance, setAutoAdvance] = useState(false);
   const [isHistoryCollapsed, setIsHistoryCollapsed] = useState(true);
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const { speak, stop, isSpeaking, voices, unlock: unlockSpeech, refreshVoices } = useSpeech();
   const [ttsRate] = useState(() => {
     try {
@@ -1665,7 +1664,7 @@ function App() {
   };
 
   useEffect(() => {
-    if (profileShortExpanded || isSidebarCollapsed) return;
+    if (profileShortExpanded) return;
     const el = profileTextRef.current;
     const run = () => checkOverflow(profileTextRef.current, setProfileHasOverflow);
     run();
@@ -1679,10 +1678,10 @@ function App() {
       clearTimeout(afterTransition);
       ro.disconnect();
     };
-  }, [profileShortExpanded, profileShort, viewerProfile, isSidebarCollapsed]);
+  }, [profileShortExpanded, profileShort, viewerProfile]);
 
   useEffect(() => {
-    if (styleShortExpanded || isSidebarCollapsed) return;
+    if (styleShortExpanded) return;
     const el = styleTextRef.current;
     const run = () => checkOverflow(styleTextRef.current, setStyleHasOverflow);
     run();
@@ -1696,10 +1695,10 @@ function App() {
       clearTimeout(afterTransition);
       ro.disconnect();
     };
-  }, [styleShortExpanded, reflectionStyleShort, reflectionStyle, isSidebarCollapsed]);
+  }, [styleShortExpanded, reflectionStyleShort, reflectionStyle]);
 
   useEffect(() => {
-    if (stateShortExpanded || isSidebarCollapsed) return;
+    if (stateShortExpanded) return;
     const el = stateTextRef.current;
     const run = () => checkOverflow(stateTextRef.current, setStateHasOverflow);
     run();
@@ -1713,7 +1712,7 @@ function App() {
       clearTimeout(afterTransition);
       ro.disconnect();
     };
-  }, [stateShortExpanded, initialStateShort, initialState, isSidebarCollapsed]);
+  }, [stateShortExpanded, initialStateShort, initialState]);
 
   const handleStartGallery = (galleryId: string) => {
     setSelectedGalleryId(galleryId);
@@ -2142,6 +2141,39 @@ function App() {
     (showTrajectorySummaryModal &&
       (narrativeSummary !== null || narrativeSummaryError !== null));
 
+  const activeHint =
+    generationStatus ||
+    (onboardingHint && onboardingHint !== t(locale, "onboarding.nextStepSelectGallery"))
+      ? (generationStatus ? (
+          <>
+            {t(locale, `status.${generationStatus}`)}
+            <span className="loading-dots" aria-hidden="true">
+              <span>.</span>
+              <span>.</span>
+              <span>.</span>
+            </span>
+          </>
+        ) : (
+          renderTextWithAnimatedEllipsis(onboardingHint!)
+        ))
+      : !onboardingHint && selectedGallery
+        ? isLoading
+          ? renderTextWithAnimatedEllipsis(t(locale, "reflection.reflectingHint"))
+          : walkThroughActive || reflections.length === 0
+            ? walkThroughActive
+              ? <>
+                  {t(locale, "reflection.walkthroughInProgress")}
+                  <br />
+                  {autoAdvance
+                    ? t(locale, "reflection.autoAdvanceOn")
+                    : t(locale, "reflection.autoAdvanceOff")}
+                  <br />
+                  {t(locale, "reflection.stopWalkthroughHint")}
+                </>
+              : <>{t(locale, "reflection.selectImageHint")}</>
+            : null
+        : null;
+
   return (
     <div className={`app${overlayOpen ? " overlay-open" : ""}`}>
       <header className="header">
@@ -2154,50 +2186,16 @@ function App() {
             </p>
           </div>
         </div>
+        {activeHint != null && (
+          <p className="hint-top-right" role="status" aria-live="polite">
+            {activeHint}
+          </p>
+        )}
       </header>
 
-      <main className={`main${isSidebarCollapsed ? " sidebar-collapsed" : ""}`}>
-        <aside className={`sidebar ${isSidebarCollapsed ? "collapsed" : ""}`}>
-          <div className="sidebar-collapse-row">
-            <button
-              type="button"
-              className="sidebar-collapse-btn"
-              onClick={() => setIsSidebarCollapsed((v) => !v)}
-              aria-label={
-                isSidebarCollapsed
-                  ? t(locale, "sidebar.expandSidebar")
-                  : t(locale, "sidebar.collapseSidebar")
-              }
-              title={
-                isSidebarCollapsed
-                  ? t(locale, "sidebar.expandSidebar")
-                  : t(locale, "sidebar.collapseSidebar")
-              }
-            >
-              {isSidebarCollapsed ? "→" : "←"}
-            </button>
-          </div>
-          {!isSidebarCollapsed && (
-            <>
+      <main className="main">
+        <aside className="sidebar">
           <div className="sidebar-section sidebar-section-models">
-            {(generationStatus ||
-              (onboardingHint &&
-                onboardingHint !== t(locale, "onboarding.nextStepSelectGallery"))) && (
-              <p className="experience-panel-hint sidebar-guidance-keys" role="status" aria-live="polite">
-                {generationStatus ? (
-                  <>
-                    {t(locale, `status.${generationStatus}`)}
-                    <span className="loading-dots" aria-hidden="true">
-                      <span>.</span>
-                      <span>.</span>
-                      <span>.</span>
-                    </span>
-                  </>
-                ) : (
-                  renderTextWithAnimatedEllipsis(onboardingHint)
-                )}
-              </p>
-            )}
             <h2>{t(locale, "sidebar.models")}</h2>
             <div className="model-select">
               {!isHfSpace() && (
@@ -2256,7 +2254,8 @@ function App() {
               </div>
             )}
           </div>
-          <div className="sidebar-section">
+          <div className="sidebar-section sidebar-section-viewer">
+            <h2>{t(locale, "sidebar.viewer")}</h2>
             {(() => {
               const unset = t(locale, "viewerConfiguration.unset");
               const profileLocaleTag = selectedProfileSummary
@@ -2297,9 +2296,6 @@ function App() {
 
               return (
                 <div className="viewer-config-block">
-                  <div className="viewer-config-title">
-                    {t(locale, "viewerConfiguration.title")}
-                  </div>
                   <p className="viewer-config-definition">
                     <em>{t(locale, "viewerConfiguration.definition")}</em>
                   </p>
@@ -2627,8 +2623,6 @@ function App() {
               </div>
             </div>
           </div>
-            </>
-          )}
         </aside>
 
         {showApiKeysModal && (
@@ -2867,41 +2861,67 @@ function App() {
         )}
 
         <section className="viewer">
-          <div className="viewer-gallery-selector">
-            <div className="viewer-artifact-group-title">
-              {t(locale, "gallery.heading")}
-            </div>
-            <select
-              className="gallery-select"
-              value={selectedGallery?.id ?? ""}
-              onChange={(e) => {
-                const id = e.target.value || null;
-                if (id) handleStartGallery(id);
-                else setSelectedGalleryId(null);
-              }}
-              disabled={walkThroughActive}
-              title={
-                walkThroughActive
-                  ? t(locale, "sidebar.stopWalkthroughToSwitchGalleries")
-                  : undefined
-              }
-              aria-label={t(locale, "gallery.selectPlaceholder")}
-            >
-              <option value="">{t(locale, "gallery.selectPlaceholder")}</option>
-              {galleries.map((gallery) => (
-                <option key={gallery.id} value={gallery.id}>
-                  {gallery.name}
-                  {gallery.era ? ` — ${gallery.era}` : ""}
-                </option>
-              ))}
-            </select>
-          </div>
           {!selectedGallery ? (
-            <div className="placeholder" />
-          ) : (
             <>
-              <div className="viewer-gallery-top">
-                <div className="gallery-thumbnails">
+              <div className="viewer-gallery-selector">
+                <div className="viewer-artifact-group-title">
+                  {t(locale, "gallery.heading")}
+                </div>
+                <select
+                  className="gallery-select"
+                  value=""
+                  onChange={(e) => {
+                    const id = e.target.value || null;
+                    if (id) handleStartGallery(id);
+                    else setSelectedGalleryId(null);
+                  }}
+                  disabled={walkThroughActive}
+                  aria-label={t(locale, "gallery.selectPlaceholder")}
+                >
+                  <option value="">{t(locale, "gallery.selectPlaceholder")}</option>
+                  {galleries.map((gallery) => (
+                    <option key={gallery.id} value={gallery.id}>
+                      {gallery.name}
+                      {gallery.era ? ` — ${gallery.era}` : ""}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="placeholder" />
+            </>
+          ) : (
+            <div className="viewer-three-panes">
+              <div className="viewer-center-pane">
+                <div className="viewer-gallery-selector">
+                  <div className="viewer-artifact-group-title">
+                    {t(locale, "gallery.heading")}
+                  </div>
+                  <select
+                    className="gallery-select"
+                    value={selectedGallery?.id ?? ""}
+                    onChange={(e) => {
+                      const id = e.target.value || null;
+                      if (id) handleStartGallery(id);
+                      else setSelectedGalleryId(null);
+                    }}
+                    disabled={walkThroughActive}
+                    title={
+                      walkThroughActive
+                        ? t(locale, "sidebar.stopWalkthroughToSwitchGalleries")
+                        : undefined
+                    }
+                    aria-label={t(locale, "gallery.selectPlaceholder")}
+                  >
+                    <option value="">{t(locale, "gallery.selectPlaceholder")}</option>
+                    {galleries.map((gallery) => (
+                      <option key={gallery.id} value={gallery.id}>
+                        {gallery.name}
+                        {gallery.era ? ` — ${gallery.era}` : ""}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="gallery-thumbnails gallery-thumbnails-contained">
                   <div className="gallery-thumbnails-row">
                     <div className="thumbnails-strip">
                       {selectedGallery.images.map((img, idx) => (
@@ -2919,7 +2939,6 @@ function App() {
                                   ...prev,
                                   [galleryId]: idx,
                                 }));
-                                // Clear selected reflection when clicking thumbnail (show most recent for that image)
                                 setSelectedReflectionGeneratedAtByGallery((prev) => {
                                   const updated = { ...prev };
                                   delete updated[galleryId];
@@ -2954,92 +2973,67 @@ function App() {
                     </div>
                   </div>
                 </div>
-              </div>
-              <div className="viewer-main-layout">
-                <div className="image-focus-column">
-                  <div className="image-section">
-                    <div className="image-container">
-                      {isSensitiveImage(currentImage) && !isImageRevealed(selectedGallery, currentImage) && (
-                        <div className="sensitive-image-overlay">
-                          <p className="sensitive-image-text">
-                            {t(locale, "image.containsArtisticNudity")}
-                          </p>
-                          <button
-                            type="button"
-                            className="sensitive-reveal-btn"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              revealImage(selectedGallery, currentImage, true);
-                            }}
-                          >
-                            {t(locale, "image.revealImage")}
-                          </button>
-                        </div>
-                      )}
-                      <img
-                        src={currentImage?.url}
-                        alt={(currentImage?.caption ?? "").replace(/&mdash;/g, "—")}
-                        className={`gallery-image ${
-                          isSensitiveImage(currentImage) && !isImageRevealed(selectedGallery, currentImage)
-                            ? "is-sensitive-blurred"
-                            : ""
-                        }`}
-                        onClick={() => setShowImageModal(true)}
-                        style={{ cursor: "pointer" }}
-                      />
-                      {currentImage?.caption && (
-                        <div className="image-caption">
-                          {currentImage.caption.replace(/&mdash;/g, "—")}
-                        </div>
-                      )}
-                    </div>
-                    <div className="image-nav">
-                      <button
-                        onClick={handlePrev}
-                        disabled={walkThroughActive || currentIndex === 0}
-                      >
-                        {t(locale, "image.previous")}
-                      </button>
-                      <span className="image-counter">
-                        {currentIndex + 1} / {selectedGallery.images.length}
-                      </span>
-                      <button
-                        onClick={handleNext}
-                        disabled={
-                          (walkThroughActive && autoAdvance) ||
-                          currentIndex >= selectedGallery.images.length - 1
-                        }
-                      >
-                        {t(locale, "reflection.next")}
-                      </button>
-                    </div>
+                <div className="image-section">
+                  <div className="image-container">
+                    {isSensitiveImage(currentImage) && !isImageRevealed(selectedGallery, currentImage) && (
+                      <div className="sensitive-image-overlay">
+                        <p className="sensitive-image-text">
+                          {t(locale, "image.containsArtisticNudity")}
+                        </p>
+                        <button
+                          type="button"
+                          className="sensitive-reveal-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            revealImage(selectedGallery, currentImage, true);
+                          }}
+                        >
+                          {t(locale, "image.revealImage")}
+                        </button>
+                      </div>
+                    )}
+                    <img
+                      src={currentImage?.url}
+                      alt={(currentImage?.caption ?? "").replace(/&mdash;/g, "—")}
+                      className={`gallery-image ${
+                        isSensitiveImage(currentImage) && !isImageRevealed(selectedGallery, currentImage)
+                          ? "is-sensitive-blurred"
+                          : ""
+                      }`}
+                      onClick={() => setShowImageModal(true)}
+                      style={{ cursor: "pointer" }}
+                    />
+                    {currentImage?.caption && (
+                      <div className="image-caption">
+                        {currentImage.caption.replace(/&mdash;/g, "—")}
+                      </div>
+                    )}
+                  </div>
+                  <div className="image-nav">
+                    <button
+                      onClick={handlePrev}
+                      disabled={walkThroughActive || currentIndex === 0}
+                    >
+                      {t(locale, "image.previous")}
+                    </button>
+                    <span className="image-counter">
+                      {currentIndex + 1} / {selectedGallery.images.length}
+                    </span>
+                    <button
+                      onClick={handleNext}
+                      disabled={
+                        (walkThroughActive && autoAdvance) ||
+                        currentIndex >= selectedGallery.images.length - 1
+                      }
+                    >
+                      {t(locale, "reflection.next")}
+                    </button>
                   </div>
                 </div>
+              </div>
 
-                <aside className="experience-panel">
+              <aside className="experience-panel experience-panel-right">
                   <div className="reflection-section experience-current">
-                    {!onboardingHint &&
-                      (isLoading ? (
-                        <p className="experience-panel-hint">
-                          {renderTextWithAnimatedEllipsis(t(locale, "reflection.reflectingHint"))}
-                        </p>
-                      ) : walkThroughActive || reflections.length === 0 ? (
-                        <p className="experience-panel-hint">
-                          {walkThroughActive ? (
-                            <>
-                              {t(locale, "reflection.walkthroughInProgress")}
-                              <br />
-                              {autoAdvance
-                                ? t(locale, "reflection.autoAdvanceOn")
-                                : t(locale, "reflection.autoAdvanceOff")}
-                              <br />
-                              {t(locale, "reflection.stopWalkthroughHint")}
-                            </>
-                          ) : (
-                            <>{t(locale, "reflection.selectImageHint")}</>
-                          )}
-                        </p>
-                      ) : null)}
                     <div className="reflection-header-row">
                       <h3>{t(locale, "reflection.title")}</h3>
                     </div>
@@ -3322,8 +3316,7 @@ function App() {
                     </div>
                   )}
                 </aside>
-              </div>
-            </>
+            </div>
           )}
         </section>
       </main>

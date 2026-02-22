@@ -120,7 +120,7 @@ export const fr = {
     title: "Résumé de la trajectoire",
   },
   gallery: {
-    heading: "Galerie",
+    heading: "Image",
     selectPlaceholder: "Sélectionnez une galerie…",
   },
   image: {

@@ -12,12 +12,37 @@
 .header {
   padding: 0.75rem 2rem 0.75rem 2rem;
   border-bottom: 1px solid #2d2d30;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
 }
 
 .header-content {
   display: flex;
   align-items: center;
   gap: 1rem;
+}
+
+.hint-top-right {
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0.55rem 0.9rem;
+  border: 1px solid rgba(250, 204, 21, 0.35);
+  border-radius: 6px;
+  background: rgba(250, 204, 21, 0.08);
+  font-size: 0.8rem;
+  color: #facc15;
+  text-align: right;
+  line-height: 1.35;
+  max-width: 36rem;
+}
+
+.hint-top-right a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: rgba(250, 204, 21, 0.65);
+  text-underline-offset: 2px;
 }
 
 .header-logo {
@@ -55,57 +80,11 @@
   scrollbar-gutter: stable;
 }
 
-.main.sidebar-collapsed {
-  /* Reclaim space when the sidebar is just a slim rail. */
-  gap: 1.25rem;
-  padding-left: 1.25rem;
-}
-
 .sidebar {
   flex-shrink: 0;
   width: 312px;
   transition: width 0.2s ease;
   overflow: hidden;
-}
-
-.sidebar.collapsed {
-  /* Common “rail” width: ~44px keeps a comfortable hit target. */
-  width: 44px;
-}
-
-.sidebar-collapse-row {
-  margin-bottom: 1.25rem;
-}
-
-.sidebar-collapse-btn {
-  width: 100%;
-  padding: 0.45rem 0;
-  background: #2d2d30;
-  border: 1px solid #3d3d40;
-  border-radius: 6px;
-  color: #e8e6e3;
-  cursor: pointer;
-  font-size: 0.9rem;
-  -webkit-tap-highlight-color: transparent;
-}
-
-.sidebar-collapse-btn:hover:not(:disabled) {
-  background: #3d3d40;
-  border-color: #4a4a4e;
-}
-
-.sidebar-collapse-btn:focus {
-  outline: none;
-}
-
-.sidebar-collapse-btn:focus-visible {
-  outline: 2px solid #4a4a4e;
-  outline-offset: 2px;
-  box-shadow: none;
-}
-
-.sidebar-collapse-btn:active {
-  box-shadow: none;
 }
 
 .sidebar-section {
@@ -131,7 +110,8 @@
   color: #8e8e93;
 }
 
-.sidebar-section-models h2 {
+.sidebar-section-models h2,
+.sidebar-section-viewer h2 {
   margin-bottom: 0.4rem;
 }
 
@@ -162,7 +142,7 @@
   display: block;
   margin-top: 0.75rem;
   padding: 0;
-  margin-bottom: 0.25rem;
+  margin-bottom: 1.25rem;
   border: none;
   background: transparent;
   color: #8e8e93;
@@ -195,6 +175,28 @@
 .viewer-artifact-group + .viewer-artifact-group {
   margin-top: 1.15rem;
   padding-top: 0.45rem;
+}
+
+.sidebar-section-viewer .viewer-config-block {
+  margin-bottom: 0.6rem;
+}
+
+.sidebar-section-viewer .viewer-artifact-group + .viewer-artifact-group {
+  margin-top: 0.6rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid #2a2a2e;
+}
+
+.sidebar-section-viewer .viewer-artifact-group-header {
+  margin-bottom: 0.2rem;
+}
+
+.sidebar-section-viewer .viewer-artifact-group-title {
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: none;
+  letter-spacing: 0.02em;
+  color: #9b9ba1;
 }
 
 .viewer-artifact-group-header {
@@ -1639,16 +1641,6 @@
 }
 
 @media (max-width: 1100px) {
-  .viewer-gallery-top {
-    flex-direction: column;
-    gap: 0.5rem;
-    align-items: stretch;
-  }
-
-  .viewer-gallery-meta {
-    min-width: 0;
-  }
-
   .gallery-thumbnails-row {
     flex-direction: column;
     gap: 0.45rem;
@@ -1663,6 +1655,40 @@
   align-items: center;
   justify-content: center;
   min-height: 300px;
+}
+
+/* Three-pane layout: left (sidebar), center (gallery + image + thumbnails), right (REFLECTION) */
+.viewer-three-panes {
+  display: flex;
+  flex-direction: row;
+  gap: 2.1rem;
+  align-items: flex-start;
+  flex: 1;
+  min-width: 0;
+}
+
+.viewer-center-pane {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.gallery-thumbnails-contained {
+  flex: 0 0 auto;
+  max-width: 100%;
+}
+
+.gallery-thumbnails-contained .thumbnails-strip {
+  flex: 0 1 auto;
+}
+
+.experience-panel-right {
+  flex: 0 0 420px;
+  min-width: 380px;
+  max-width: 460px;
+  align-self: flex-start;
 }
 
 .viewer-main-layout {
@@ -2268,10 +2294,26 @@
   cursor: not-allowed;
 }
 
-/* Stack image + reflection columns when they'd be roughly the same width. */
+/* Stack center + right panes when narrow. */
 @container (max-width: 960px) {
-  .viewer-main-layout {
-    grid-template-columns: 1fr;
+  .viewer-three-panes {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .viewer-center-pane {
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    max-width: 560px;
+  }
+
+  .experience-panel-right {
+    flex: 1;
+    min-width: 0;
+    width: 100%;
+    max-width: 560px;
+    min-height: 0;
   }
 }
 
@@ -2286,38 +2328,51 @@
 
   .header {
     padding: 0.75rem 1rem;
+    flex-wrap: wrap;
+  }
+
+  .hint-top-right {
+    width: 100%;
+    text-align: left;
   }
 
   .main {
     flex-direction: column;
-    /* In column layout, the cross-axis is horizontal: stretch children to phone width. */
-    align-items: stretch;
+    align-items: flex-start;
     gap: 1rem;
     padding: 1rem;
     overflow: visible;
   }
 
-  .main.sidebar-collapsed {
-    gap: 1rem;
-    padding-left: 1rem;
-  }
-
   .sidebar {
     width: 100%;
-  }
-
-  /* On mobile, treat "collapsed" as a compact header rather than a thin rail. */
-  .sidebar.collapsed {
-    width: 100%;
+    max-width: 560px;
   }
 
   .viewer {
     width: 100%;
   }
 
-  .viewer-main-layout {
+  .viewer-three-panes {
     width: 100%;
+    flex-direction: column;
     gap: 1.25rem;
+    align-items: flex-start;
+  }
+
+  .viewer-center-pane {
+    flex: 1;
+    min-height: 0;
+    width: 100%;
+    max-width: 560px;
+  }
+
+  .experience-panel-right {
+    flex: 1;
+    width: 100%;
+    min-width: 0;
+    max-width: 560px;
+    min-height: 0;
   }
 
   .image-container {
@@ -2338,10 +2393,6 @@
 
   .image-container {
     max-height: 68vh;
-  }
-
-  .sidebar.collapsed ~ .viewer .image-container {
-    max-height: 64vh;
   }
 }
 
