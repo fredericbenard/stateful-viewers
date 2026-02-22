@@ -328,7 +328,8 @@
 
 .artifact-detail-text--clamped {
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  line-clamp: 1;
+  -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -448,7 +449,9 @@
 
 .viewer-profile-toggle-chevron {
   display: inline-block;
-  width: 0.75rem;
+  width: 0.95rem;
+  font-size: 0.95rem;
+  line-height: 1;
   transform: rotate(0deg);
   transition: transform 0.15s ease;
   opacity: 0.9;
@@ -1738,9 +1741,9 @@
 }
 
 .experience-panel-right {
-  flex: 0 0 420px;
-  min-width: 380px;
-  max-width: 460px;
+  flex: 0 0 480px;   /* base */
+  min-width: 420px;
+  max-width: 560px;
   align-self: flex-start;
 }
 
