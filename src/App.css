@@ -36,6 +36,7 @@
   text-align: left;
   line-height: 1.35;
   max-width: 36rem;
+  box-sizing: border-box;
 }
 
 .hint-top-right a {
@@ -2403,6 +2404,7 @@
 
   .hint-top-right {
     width: 100%;
+    max-width: 560px;
     text-align: left;
   }
 
