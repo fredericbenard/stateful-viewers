@@ -193,7 +193,7 @@
 }
 
 .viewer-artifact-group + .viewer-artifact-group {
-  margin-top: 0.65rem;
+  margin-top: 1.15rem;
   padding-top: 0.45rem;
 }
 
@@ -219,25 +219,76 @@
   width: auto;
   margin: 0;
   min-width: 0;
-  padding: 0.35rem 0.55rem;
-  font-size: 0.78rem;
+  padding: 0.22rem 0.4rem;
+  font-size: 0.7rem;
   line-height: 1.15;
 }
 
 .viewer-artifact-group-title {
-  font-size: 0.72rem;
-  font-weight: 650;
+  font-size: 0.78rem;
+  font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: #8e8e93;
   margin-bottom: 0.2rem;
 }
 
+.artifact-picklist-section {
+  margin-top: 0.4rem;
+}
+
+.artifact-select {
+  width: 100%;
+  padding: 0.45rem 0.6rem;
+  background: #1a1a1a;
+  border: 1px solid #2d2d30;
+  border-radius: 6px;
+  color: #e8e6e3;
+  font-size: 0.88rem;
+  cursor: pointer;
+}
+
+.artifact-select:hover:not(:disabled) {
+  border-color: #3d3d40;
+}
+
+.artifact-select:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+.artifact-select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.artifact-detail-block {
+  margin-top: 0.5rem;
+  padding-left: 0.5rem;
+}
+
+.artifact-detail-block .profile-selector-summary {
+  margin-bottom: 0;
+  white-space: pre-wrap;
+  line-height: 1.7;
+}
+
+.artifact-detail-text--clamped {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.artifact-detail-block .viewer-profile-toggle-ghost {
+  margin-top: 0.25rem;
+}
+
 .viewer-config-block {
   margin: 0 0 0.85rem;
-  padding: 0.65rem 0.7rem;
-  background: #101013;
-  border: 1px solid #252529;
+  padding: 0.8rem 0.9rem;
+  background: #222225;
+  border: 1px solid #2d2d30;
   border-radius: 6px;
 }
 
@@ -246,15 +297,15 @@
   font-weight: 650;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #8e8e93;
+  color: #9b9ba1;
   margin-bottom: 0.35rem;
 }
 
 .viewer-config-definition {
   margin: 0 0 0.65rem;
   font-size: 0.82rem;
-  line-height: 1.45;
-  color: #9b9ba1;
+  line-height: 1.6;
+  color: #cfcfd6;
 }
 
 .viewer-config-subtitle {
@@ -263,7 +314,7 @@
   font-weight: 650;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #8e8e93;
+  color: #9b9ba1;
 }
 
 .viewer-config-list {
@@ -271,7 +322,7 @@
   padding-left: 1.1rem;
   font-size: 0.82rem;
   line-height: 1.5;
-  color: #cfcfd6;
+  color: #dadade;
 }
 
 .viewer-config-list li {
@@ -298,14 +349,19 @@
 
 .viewer-artifact-btn-secondary {
   background: transparent;
-  border-color: #2a2b31;
-  color: #b7b8c0;
+  border-color: #252529;
+  color: #6e6e73;
 }
 
 .viewer-artifact-btn-secondary:hover:not(:disabled) {
-  background: #232327;
-  border-color: #3d3d40;
-  color: #e8e6e3;
+  background: #1e1e21;
+  border-color: #2d2d30;
+  color: #8e8e93;
+}
+
+.viewer-artifact-btn-secondary:focus-visible {
+  outline: 1px solid #3d3d40;
+  outline-offset: 1px;
 }
 
 .viewer-profile-toggle-ghost {
@@ -323,7 +379,6 @@
 
 .viewer-profile-toggle-ghost:hover:not(:disabled) {
   color: #e8e6e3;
-  text-decoration: underline;
 }
 
 .viewer-profile-toggle-ghost:disabled {
@@ -531,6 +586,11 @@
   outline-offset: 2px;
 }
 
+.viewer-artifact-actions .generate-viewer-btn.viewer-artifact-btn-secondary:focus-visible {
+  outline: 1px solid #3d3d40;
+  outline-offset: 1px;
+}
+
 .profile-list {
   margin-top: 0.6rem;
   padding: 0;
@@ -623,7 +683,7 @@
   margin-top: 0.35rem;
   margin-bottom: 0.25rem;
   padding: 0.6rem 0.7rem;
-  background: #101013;
+  background: #1a1a1a;
   border: 1px solid #252529;
   border-radius: 6px;
 }
@@ -633,16 +693,6 @@
   font-size: 0.78rem;
   line-height: 1.5;
   color: #e8e6e3;
-}
-
-.profile-selector-full {
-  margin: 0;
-  font-size: 0.78rem;
-  line-height: 1.6;
-  color: #cfcfd6;
-  white-space: pre-wrap;
-  border-left: 2px solid #252529;
-  padding-left: 0.55rem;
 }
 
 .profile-selector-item:disabled {
@@ -686,7 +736,7 @@
 .generation-status {
   margin-top: 0.75rem;
   padding: 0.5rem 0.75rem;
-  background: #0d0d0e;
+  background: #1a1a1a;
   border-radius: 6px;
   border: 1px solid #2d2d30;
   font-size: 0.85rem;
@@ -719,7 +769,7 @@
 .viewer-profile-block {
   margin-top: 0.65rem;
   padding: 0;
-  background: #101013;
+  background: #1a1a1a;
   border: 1px solid #252529;
   border-radius: 6px;
   overflow: hidden;
@@ -1350,18 +1400,26 @@
 }
 
 .viewer-gallery-selector {
-  margin-bottom: 0.85rem;
+  margin-bottom: 0.2rem;
+}
+
+.viewer-gallery-selector .viewer-artifact-group-title {
+  margin-bottom: 0.25rem;
+}
+
+.viewer-gallery-selector .gallery-select {
+  margin-top: 0.4rem;
 }
 
 .gallery-select {
   width: 100%;
   max-width: 28rem;
-  padding: 0.5rem 0.65rem;
-  background: #0d0d0e;
+  padding: 0.45rem 0.6rem;
+  background: #1a1a1a;
   border: 1px solid #2d2d30;
   border-radius: 6px;
   color: #e8e6e3;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   cursor: pointer;
 }
 
@@ -1383,7 +1441,7 @@
   display: flex;
   align-items: flex-start;
   gap: 1.6rem;
-  margin-top: -0.28rem;
+  margin-top: -0.5rem;
 }
 
 .viewer-gallery-meta {

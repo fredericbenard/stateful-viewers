@@ -597,14 +597,20 @@ function App() {
     width: number;
     height: number;
   } | null>(null);
-  const [profileExpanded, setProfileExpanded] = useState(false);
-  const [styleExpanded, setStyleExpanded] = useState(false);
-  const [stateExpanded, setStateExpanded] = useState(false);
   const [revealedSensitiveByImageKey, setRevealedSensitiveByImageKey] = useState<
     Record<string, boolean>
   >({});
   const [showExportMenu, setShowExportMenu] = useState(false);
   const exportMenuRef = useRef<HTMLDivElement>(null);
+  const [profileShortExpanded, setProfileShortExpanded] = useState(false);
+  const [styleShortExpanded, setStyleShortExpanded] = useState(false);
+  const [stateShortExpanded, setStateShortExpanded] = useState(false);
+  const profileTextRef = useRef<HTMLDivElement>(null);
+  const styleTextRef = useRef<HTMLDivElement>(null);
+  const stateTextRef = useRef<HTMLDivElement>(null);
+  const [profileHasOverflow, setProfileHasOverflow] = useState(false);
+  const [styleHasOverflow, setStyleHasOverflow] = useState(false);
+  const [stateHasOverflow, setStateHasOverflow] = useState(false);
 
   const galleryId = selectedGallery?.id ?? "";
   const currentIndex = currentIndexByGallery[galleryId] ?? 0;
@@ -640,20 +646,23 @@ function App() {
   );
 
   const sortedAvailableProfiles = (() => {
-    const sorted = [...visibleProfiles].sort((a, b) => {
+    const list =
+      selectedProfileSummary && !visibleProfiles.some((p) => p.id === selectedProfileSummary.id)
+        ? [selectedProfileSummary, ...visibleProfiles]
+        : visibleProfiles;
+    return [...list].sort((a, b) => {
       const labelA = (a.label || t(locale, "sidebar.untitledProfile")).toLocaleLowerCase();
       const labelB = (b.label || t(locale, "sidebar.untitledProfile")).toLocaleLowerCase();
       return labelA.localeCompare(labelB);
     });
-    if (!selectedProfileSummary) return sorted;
-    return [
-      selectedProfileSummary,
-      ...sorted.filter((p) => p.id !== selectedProfileSummary.id),
-    ];
   })();
 
   const sortedAvailableStyles = (() => {
-    const sorted = [...visibleStyles].sort((a, b) => {
+    const list =
+      selectedStyleSummary && !visibleStyles.some((s) => s.id === selectedStyleSummary.id)
+        ? [selectedStyleSummary, ...visibleStyles]
+        : visibleStyles;
+    return [...list].sort((a, b) => {
       const aDisplay =
         a.label ||
         (a.reflectionStyleShort
@@ -666,12 +675,14 @@ function App() {
           : t(locale, "sidebar.untitledStyle"));
       return aDisplay.toLocaleLowerCase().localeCompare(bDisplay.toLocaleLowerCase());
     });
-    if (!selectedStyleSummary) return sorted;
-    return [selectedStyleSummary, ...sorted.filter((s) => s.id !== selectedStyleSummary.id)];
   })();
 
   const sortedAvailableStates = (() => {
-    const sorted = [...visibleStates].sort((a, b) => {
+    const list =
+      selectedStateSummary && !visibleStates.some((s) => s.id === selectedStateSummary.id)
+        ? [selectedStateSummary, ...visibleStates]
+        : visibleStates;
+    return [...list].sort((a, b) => {
       const aDisplay =
         a.label ||
         (a.initialStateShort
@@ -684,8 +695,6 @@ function App() {
           : t(locale, "sidebar.untitledState"));
       return aDisplay.toLocaleLowerCase().localeCompare(bDisplay.toLocaleLowerCase());
     });
-    if (!selectedStateSummary) return sorted;
-    return [selectedStateSummary, ...sorted.filter((s) => s.id !== selectedStateSummary.id)];
   })();
   const selectedReflectionGeneratedAt =
     selectedReflectionGeneratedAtByGallery[galleryId];
@@ -1572,6 +1581,7 @@ function App() {
         setProfileLlm(profile.llm || null);
         setProfileLlmModelLabel(profile.llmModelLabel || profile.modelLabel || null);
         setProfileShort(profile.profileShort || "");
+        setProfileShortExpanded(false);
         resetExperienceAfterViewerChange();
         console.info(`Loaded profile ${profile.id}`);
       } else {
@@ -1595,6 +1605,7 @@ function App() {
         setReflectionStyleShort(style.reflectionStyleShort || "");
         setStyleLlm(style.llm || null);
         setStyleLlmModelLabel(style.llmModelLabel || style.modelLabel || null);
+        setStyleShortExpanded(false);
         resetExperienceAfterViewerChange();
         console.info(`Loaded style ${style.id}`);
       } else {
@@ -1618,6 +1629,7 @@ function App() {
         setInitialStateShort(state.initialStateShort || "");
         setStateLlm(state.llm || null);
         setStateLlmModelLabel(state.llmModelLabel || state.modelLabel || null);
+        setStateShortExpanded(false);
         resetExperienceAfterViewerChange();
         console.info(`Loaded state ${state.id}`);
       } else {
@@ -1636,6 +1648,72 @@ function App() {
     loadStates();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Hydrate profileShort when we have profileId but profileShort is empty (e.g. page load with persisted profile)
+  useEffect(() => {
+    if (!profileId || profileShort?.trim()) return;
+    loadProfile(profileId).then((profile) => {
+      if (profile?.profileShort?.trim()) {
+        setProfileShort(profile.profileShort);
+      }
+    });
+  }, [profileId, profileShort]);
+
+  const checkOverflow = (el: HTMLDivElement | null, setter: (v: boolean) => void) => {
+    if (!el) return;
+    setter(el.scrollHeight > el.clientHeight);
+  };
+
+  useEffect(() => {
+    if (profileShortExpanded || isSidebarCollapsed) return;
+    const el = profileTextRef.current;
+    const run = () => checkOverflow(profileTextRef.current, setProfileHasOverflow);
+    run();
+    const raf = requestAnimationFrame(() => run());
+    const afterTransition = setTimeout(run, 250);
+    if (!el) return () => { cancelAnimationFrame(raf); clearTimeout(afterTransition); };
+    const ro = new ResizeObserver(run);
+    ro.observe(el);
+    return () => {
+      cancelAnimationFrame(raf);
+      clearTimeout(afterTransition);
+      ro.disconnect();
+    };
+  }, [profileShortExpanded, profileShort, viewerProfile, isSidebarCollapsed]);
+
+  useEffect(() => {
+    if (styleShortExpanded || isSidebarCollapsed) return;
+    const el = styleTextRef.current;
+    const run = () => checkOverflow(styleTextRef.current, setStyleHasOverflow);
+    run();
+    const raf = requestAnimationFrame(() => run());
+    const afterTransition = setTimeout(run, 250);
+    if (!el) return () => { cancelAnimationFrame(raf); clearTimeout(afterTransition); };
+    const ro = new ResizeObserver(run);
+    ro.observe(el);
+    return () => {
+      cancelAnimationFrame(raf);
+      clearTimeout(afterTransition);
+      ro.disconnect();
+    };
+  }, [styleShortExpanded, reflectionStyleShort, reflectionStyle, isSidebarCollapsed]);
+
+  useEffect(() => {
+    if (stateShortExpanded || isSidebarCollapsed) return;
+    const el = stateTextRef.current;
+    const run = () => checkOverflow(stateTextRef.current, setStateHasOverflow);
+    run();
+    const raf = requestAnimationFrame(() => run());
+    const afterTransition = setTimeout(run, 250);
+    if (!el) return () => { cancelAnimationFrame(raf); clearTimeout(afterTransition); };
+    const ro = new ResizeObserver(run);
+    ro.observe(el);
+    return () => {
+      cancelAnimationFrame(raf);
+      clearTimeout(afterTransition);
+      ro.disconnect();
+    };
+  }, [stateShortExpanded, initialStateShort, initialState, isSidebarCollapsed]);
 
   const handleStartGallery = (galleryId: string) => {
     setSelectedGalleryId(galleryId);
@@ -2268,100 +2346,83 @@ function App() {
                   </button>
                 </div>
               </div>
-
-            <div className="profile-loader-section">
-              <div className="profile-list">
-                {isLoadingProfiles ? (
-                  <div className="loading-profiles">
-                    {renderTextWithAnimatedEllipsis(t(locale, "sidebar.loadingProfiles"))}
+              <div className="artifact-picklist-section">
+                <select
+                  className="artifact-select"
+                  value={
+                    profileId || (!!viewerProfile.trim() && !profileId ? "__current__" : "")
+                  }
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    if (!v) {
+                      setProfileId(null);
+                      setViewerProfile("");
+                      setProfileShort("");
+                      setProfileLabel(null);
+                      resetExperienceAfterViewerChange();
+                      return;
+                    }
+                    if (v === "__current__") return;
+                    handleLoadProfile(v);
+                  }}
+                  disabled={isLoadingProfiles}
+                  aria-label={t(locale, "sidebar.selectProfile")}
+                >
+                  <option value="">
+                    {isLoadingProfiles
+                      ? t(locale, "sidebar.loadingProfiles")
+                      : sortedAvailableProfiles.length === 0 && !(!!viewerProfile.trim() && !profileId)
+                        ? t(locale, "sidebar.noProfiles")
+                        : t(locale, "sidebar.selectProfile")}
+                  </option>
+                  {!!viewerProfile.trim() &&
+                    !profileId &&
+                    !isLoadingProfiles && (
+                      <option value="__current__">
+                        {profileLabel || t(locale, "viewerProfile.profileHeading")}
+                      </option>
+                    )}
+                  {!isLoadingProfiles &&
+                    sortedAvailableProfiles.map((p) => {
+                      const badge =
+                        p.locale && normalizeArtifactLocale(p.locale) !== locale
+                          ? ` (${normalizeArtifactLocale(p.locale).toUpperCase()})`
+                          : "";
+                      return (
+                        <option key={p.id} value={p.id}>
+                          {(p.label || t(locale, "sidebar.untitledProfile")) + badge}
+                        </option>
+                      );
+                    })}
+                </select>
+                {(profileId || !!viewerProfile.trim()) && (
+                  <div className="artifact-detail-block">
+                    <div
+                      ref={profileTextRef}
+                      className={`profile-selector-summary artifact-detail-text ${
+                        !profileShortExpanded ? "artifact-detail-text--clamped" : ""
+                      }`}
+                    >
+                      {profileShort?.trim() || viewerProfile}
+                    </div>
+                    {(profileShortExpanded || profileHasOverflow) && (
+                      <button
+                        type="button"
+                        className="viewer-profile-toggle-ghost"
+                        onClick={() => setProfileShortExpanded((v) => !v)}
+                        data-expanded={profileShortExpanded ? "true" : "false"}
+                      >
+                        <span className="viewer-profile-toggle-chevron" aria-hidden="true">
+                          ▸
+                        </span>
+                        {profileShortExpanded
+                          ? t(locale, "viewerProfile.showLess")
+                          : t(locale, "viewerProfile.showMore")}
+                      </button>
+                    )}
                   </div>
-                ) : sortedAvailableProfiles.length === 0 ? (
-                  <div className="no-profiles">{t(locale, "sidebar.noProfiles")}</div>
-                ) : (
-                  <ul className="profile-selector-list">
-                    {(() => {
-                      const hasUnsavedCurrent = !!viewerProfile.trim() && !profileId;
-                      const items: Array<{ id: string; label: string; locale?: string }> = [];
-                      if (hasUnsavedCurrent) {
-                        items.push({
-                          id: "__current__",
-                          label: profileLabel || t(locale, "viewerProfile.profileHeading"),
-                          locale,
-                        });
-                      }
-                      for (const p of sortedAvailableProfiles) {
-                        items.push({
-                          id: p.id,
-                          label: p.label || t(locale, "sidebar.untitledProfile"),
-                          locale: p.locale,
-                        });
-                      }
-
-                      return items.map((item) => {
-                        const isCurrentUnsaved = item.id === "__current__";
-                        const isActive = isCurrentUnsaved
-                          ? !profileId && !!viewerProfile.trim()
-                          : item.id === profileId;
-                        const isExpanded = isActive && profileExpanded;
-                        const badge =
-                          item.locale && normalizeArtifactLocale(item.locale) !== locale
-                            ? normalizeArtifactLocale(item.locale).toUpperCase()
-                            : null;
-
-                        return (
-                          <li key={item.id}>
-                            <button
-                              className={`profile-selector-item ${isActive ? "active" : ""}`}
-                              onClick={() => {
-                                if (isActive) {
-                                  setProfileExpanded((v) => !v);
-                                  return;
-                                }
-                                if (isCurrentUnsaved) {
-                                  setProfileExpanded((v) => !v);
-                                  return;
-                                }
-                                setProfileExpanded(false);
-                                handleLoadProfile(item.id);
-                              }}
-                              disabled={isLoadingProfiles}
-                              data-expanded={isExpanded ? "true" : "false"}
-                            >
-                              <div className="profile-selector-label-row">
-                                <div className="profile-selector-label">{item.label}</div>
-                                {badge && (
-                                  <span className="profile-locale-badge" aria-label={badge}>
-                                    {badge}
-                                  </span>
-                                )}
-                              </div>
-                              <span
-                                className="profile-selector-chevron"
-                                aria-hidden="true"
-                                data-visible={isActive ? "true" : "false"}
-                              >
-                                ▸
-                              </span>
-                            </button>
-                            {isExpanded && (
-                              <div className="profile-selector-details">
-                                {profileShort?.trim() && (
-                                  <div className="profile-selector-summary">{profileShort}</div>
-                                )}
-                                {viewerProfile?.trim() && (
-                                  <div className="profile-selector-full">{viewerProfile}</div>
-                                )}
-                              </div>
-                            )}
-                          </li>
-                        );
-                      });
-                    })()}
-                  </ul>
                 )}
               </div>
-            </div>
-
             </div>
 
             <div className="viewer-artifact-group">
@@ -2381,99 +2442,88 @@ function App() {
                   </button>
                 </div>
               </div>
-
-            <div className="profile-loader-section">
-              <div className="profile-list">
-                {isLoadingStyles ? (
-                  <div className="loading-profiles">
-                    {renderTextWithAnimatedEllipsis(t(locale, "sidebar.loadingStyles"))}
+              <div className="artifact-picklist-section">
+                <select
+                  className="artifact-select"
+                  value={
+                    styleId || (!!reflectionStyle.trim() && !styleId ? "__current__" : "")
+                  }
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    if (!v) {
+                      setStyleId(null);
+                      setReflectionStyle("");
+                      setReflectionStyleShort("");
+                      setStyleLabel(null);
+                      resetExperienceAfterViewerChange();
+                      return;
+                    }
+                    if (v === "__current__") return;
+                    handleLoadStyle(v);
+                  }}
+                  disabled={isLoadingStyles}
+                  aria-label={t(locale, "sidebar.selectVoice")}
+                >
+                  <option value="">
+                    {isLoadingStyles
+                      ? t(locale, "sidebar.loadingStyles")
+                      : sortedAvailableStyles.length === 0 && !(!!reflectionStyle.trim() && !styleId)
+                        ? t(locale, "sidebar.noStyles")
+                        : t(locale, "sidebar.selectVoice")}
+                  </option>
+                  {!!reflectionStyle.trim() &&
+                    !styleId &&
+                    !isLoadingStyles && (
+                      <option value="__current__">
+                        {styleLabel || t(locale, "viewerProfile.reflectionStyleHeading")}
+                      </option>
+                    )}
+                  {!isLoadingStyles &&
+                    sortedAvailableStyles.map((s) => {
+                      const label =
+                        s.label ||
+                        (s.reflectionStyleShort
+                          ? truncateAtWord(s.reflectionStyleShort, 72)
+                          : t(locale, "sidebar.untitledStyle"));
+                      const badge =
+                        s.locale && normalizeArtifactLocale(s.locale) !== locale
+                          ? ` (${normalizeArtifactLocale(s.locale).toUpperCase()})`
+                          : "";
+                      return (
+                        <option key={s.id} value={s.id}>
+                          {label + badge}
+                        </option>
+                      );
+                    })}
+                </select>
+                {(styleId || !!reflectionStyle.trim()) && (
+                  <div className="artifact-detail-block">
+                    <div
+                      ref={styleTextRef}
+                      className={`profile-selector-summary artifact-detail-text ${
+                        !styleShortExpanded ? "artifact-detail-text--clamped" : ""
+                      }`}
+                    >
+                      {reflectionStyleShort?.trim() || reflectionStyle}
+                    </div>
+                    {(styleShortExpanded || styleHasOverflow) && (
+                      <button
+                        type="button"
+                        className="viewer-profile-toggle-ghost"
+                        onClick={() => setStyleShortExpanded((v) => !v)}
+                        data-expanded={styleShortExpanded ? "true" : "false"}
+                      >
+                        <span className="viewer-profile-toggle-chevron" aria-hidden="true">
+                          ▸
+                        </span>
+                        {styleShortExpanded
+                          ? t(locale, "viewerProfile.showLess")
+                          : t(locale, "viewerProfile.showMore")}
+                      </button>
+                    )}
                   </div>
-                ) : sortedAvailableStyles.length === 0 ? (
-                  <div className="no-profiles">{t(locale, "sidebar.noStyles")}</div>
-                ) : (
-                  <ul className="profile-selector-list">
-                    {(() => {
-                      const hasUnsavedCurrent = !!reflectionStyle.trim() && !styleId;
-                      const items: Array<{ id: string; label: string; locale?: string }> = [];
-                      if (hasUnsavedCurrent) {
-                        items.push({
-                          id: "__current__",
-                          label: styleLabel || t(locale, "viewerProfile.reflectionStyleHeading"),
-                          locale,
-                        });
-                      }
-                      for (const s of sortedAvailableStyles) {
-                        const fallback =
-                          s.label ||
-                          (s.reflectionStyleShort
-                            ? truncateAtWord(s.reflectionStyleShort, 72)
-                            : t(locale, "sidebar.untitledStyle"));
-                        items.push({ id: s.id, label: fallback, locale: s.locale });
-                      }
-
-                      return items.map((item) => {
-                        const isCurrentUnsaved = item.id === "__current__";
-                        const isActive = isCurrentUnsaved
-                          ? !styleId && !!reflectionStyle.trim()
-                          : item.id === styleId;
-                        const isExpanded = isActive && styleExpanded;
-                        const badge =
-                          item.locale && normalizeArtifactLocale(item.locale) !== locale
-                            ? normalizeArtifactLocale(item.locale).toUpperCase()
-                            : null;
-
-                        return (
-                          <li key={item.id}>
-                            <button
-                              className={`profile-selector-item ${isActive ? "active" : ""}`}
-                              onClick={() => {
-                                if (isActive || isCurrentUnsaved) {
-                                  setStyleExpanded((v) => !v);
-                                  return;
-                                }
-                                setStyleExpanded(false);
-                                handleLoadStyle(item.id);
-                              }}
-                              disabled={isLoadingStyles}
-                              data-expanded={isExpanded ? "true" : "false"}
-                            >
-                              <div className="profile-selector-label-row">
-                                <div className="profile-selector-label">{item.label}</div>
-                                {badge && (
-                                  <span className="profile-locale-badge" aria-label={badge}>
-                                    {badge}
-                                  </span>
-                                )}
-                              </div>
-                              <span
-                                className="profile-selector-chevron"
-                                aria-hidden="true"
-                                data-visible={isActive ? "true" : "false"}
-                              >
-                                ▸
-                              </span>
-                            </button>
-                            {isExpanded && (
-                              <div className="profile-selector-details">
-                                {reflectionStyleShort?.trim() && (
-                                  <div className="profile-selector-summary">
-                                    {reflectionStyleShort}
-                                  </div>
-                                )}
-                                {reflectionStyle?.trim() && (
-                                  <div className="profile-selector-full">{reflectionStyle}</div>
-                                )}
-                              </div>
-                            )}
-                          </li>
-                        );
-                      });
-                    })()}
-                  </ul>
                 )}
               </div>
-            </div>
-
             </div>
 
             <div className="viewer-artifact-group">
@@ -2493,99 +2543,88 @@ function App() {
                   </button>
                 </div>
               </div>
-
-            <div className="profile-loader-section">
-              <div className="profile-list">
-                {isLoadingStates ? (
-                  <div className="loading-profiles">
-                    {renderTextWithAnimatedEllipsis(t(locale, "sidebar.loadingStates"))}
+              <div className="artifact-picklist-section">
+                <select
+                  className="artifact-select"
+                  value={
+                    stateId || (!!initialState.trim() && !stateId ? "__current__" : "")
+                  }
+                  onChange={(e) => {
+                    const v = e.target.value;
+                    if (!v) {
+                      setStateId(null);
+                      setInitialState("");
+                      setInitialStateShort("");
+                      setStateLabel(null);
+                      resetExperienceAfterViewerChange();
+                      return;
+                    }
+                    if (v === "__current__") return;
+                    handleLoadState(v);
+                  }}
+                  disabled={isLoadingStates}
+                  aria-label={t(locale, "sidebar.selectState")}
+                >
+                  <option value="">
+                    {isLoadingStates
+                      ? t(locale, "sidebar.loadingStates")
+                      : sortedAvailableStates.length === 0 && !(!!initialState.trim() && !stateId)
+                        ? t(locale, "sidebar.noStates")
+                        : t(locale, "sidebar.selectState")}
+                  </option>
+                  {!!initialState.trim() &&
+                    !stateId &&
+                    !isLoadingStates && (
+                      <option value="__current__">
+                        {stateLabel || t(locale, "viewerProfile.initialStateHeading")}
+                      </option>
+                    )}
+                  {!isLoadingStates &&
+                    sortedAvailableStates.map((s) => {
+                      const label =
+                        s.label ||
+                        (s.initialStateShort
+                          ? truncateAtWord(s.initialStateShort, 72)
+                          : t(locale, "sidebar.untitledState"));
+                      const badge =
+                        s.locale && normalizeArtifactLocale(s.locale) !== locale
+                          ? ` (${normalizeArtifactLocale(s.locale).toUpperCase()})`
+                          : "";
+                      return (
+                        <option key={s.id} value={s.id}>
+                          {label + badge}
+                        </option>
+                      );
+                    })}
+                </select>
+                {(stateId || !!initialState.trim()) && (
+                  <div className="artifact-detail-block">
+                    <div
+                      ref={stateTextRef}
+                      className={`profile-selector-summary artifact-detail-text ${
+                        !stateShortExpanded ? "artifact-detail-text--clamped" : ""
+                      }`}
+                    >
+                      {initialStateShort?.trim() || initialState}
+                    </div>
+                    {(stateShortExpanded || stateHasOverflow) && (
+                      <button
+                        type="button"
+                        className="viewer-profile-toggle-ghost"
+                        onClick={() => setStateShortExpanded((v) => !v)}
+                        data-expanded={stateShortExpanded ? "true" : "false"}
+                      >
+                        <span className="viewer-profile-toggle-chevron" aria-hidden="true">
+                          ▸
+                        </span>
+                        {stateShortExpanded
+                          ? t(locale, "viewerProfile.showLess")
+                          : t(locale, "viewerProfile.showMore")}
+                      </button>
+                    )}
                   </div>
-                ) : sortedAvailableStates.length === 0 ? (
-                  <div className="no-profiles">{t(locale, "sidebar.noStates")}</div>
-                ) : (
-                  <ul className="profile-selector-list">
-                    {(() => {
-                      const hasUnsavedCurrent = !!initialState.trim() && !stateId;
-                      const items: Array<{ id: string; label: string; locale?: string }> = [];
-                      if (hasUnsavedCurrent) {
-                        items.push({
-                          id: "__current__",
-                          label: stateLabel || t(locale, "viewerProfile.initialStateHeading"),
-                          locale,
-                        });
-                      }
-                      for (const s of sortedAvailableStates) {
-                        const fallback =
-                          s.label ||
-                          (s.initialStateShort
-                            ? truncateAtWord(s.initialStateShort, 72)
-                            : t(locale, "sidebar.untitledState"));
-                        items.push({ id: s.id, label: fallback, locale: s.locale });
-                      }
-
-                      return items.map((item) => {
-                        const isCurrentUnsaved = item.id === "__current__";
-                        const isActive = isCurrentUnsaved
-                          ? !stateId && !!initialState.trim()
-                          : item.id === stateId;
-                        const isExpanded = isActive && stateExpanded;
-                        const badge =
-                          item.locale && normalizeArtifactLocale(item.locale) !== locale
-                            ? normalizeArtifactLocale(item.locale).toUpperCase()
-                            : null;
-
-                        return (
-                          <li key={item.id}>
-                            <button
-                              className={`profile-selector-item ${isActive ? "active" : ""}`}
-                              onClick={() => {
-                                if (isActive || isCurrentUnsaved) {
-                                  setStateExpanded((v) => !v);
-                                  return;
-                                }
-                                setStateExpanded(false);
-                                handleLoadState(item.id);
-                              }}
-                              disabled={isLoadingStates}
-                              data-expanded={isExpanded ? "true" : "false"}
-                            >
-                              <div className="profile-selector-label-row">
-                                <div className="profile-selector-label">{item.label}</div>
-                                {badge && (
-                                  <span className="profile-locale-badge" aria-label={badge}>
-                                    {badge}
-                                  </span>
-                                )}
-                              </div>
-                              <span
-                                className="profile-selector-chevron"
-                                aria-hidden="true"
-                                data-visible={isActive ? "true" : "false"}
-                              >
-                                ▸
-                              </span>
-                            </button>
-                            {isExpanded && (
-                              <div className="profile-selector-details">
-                                {initialStateShort?.trim() && (
-                                  <div className="profile-selector-summary">
-                                    {initialStateShort}
-                                  </div>
-                                )}
-                                {initialState?.trim() && (
-                                  <div className="profile-selector-full">{initialState}</div>
-                                )}
-                              </div>
-                            )}
-                          </li>
-                        );
-                      });
-                    })()}
-                  </ul>
                 )}
               </div>
-            </div>
-
             </div>
           </div>
             </>
@@ -2829,6 +2868,9 @@ function App() {
 
         <section className="viewer">
           <div className="viewer-gallery-selector">
+            <div className="viewer-artifact-group-title">
+              {t(locale, "gallery.heading")}
+            </div>
             <select
               className="gallery-select"
               value={selectedGallery?.id ?? ""}
