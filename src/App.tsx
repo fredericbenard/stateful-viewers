@@ -2102,7 +2102,9 @@ function App() {
           {!isSidebarCollapsed && (
             <>
           <div className="sidebar-section sidebar-section-models">
-            {(generationStatus || onboardingHint) && (
+            {(generationStatus ||
+              (onboardingHint &&
+                onboardingHint !== t(locale, "onboarding.nextStepSelectGallery"))) && (
               <p className="experience-panel-hint sidebar-guidance-keys" role="status" aria-live="polite">
                 {generationStatus ? (
                   <>
@@ -2586,28 +2588,6 @@ function App() {
 
             </div>
           </div>
-          <h2>{t(locale, "sidebar.galleries")}</h2>
-          <ul className="gallery-list">
-            {galleries.map((gallery) => (
-              <li key={gallery.id}>
-                <button
-                  className={`gallery-btn ${
-                    selectedGallery?.id === gallery.id ? "active" : ""
-                  }`}
-                  onClick={() => handleStartGallery(gallery.id)}
-                  disabled={walkThroughActive}
-                  title={
-                    walkThroughActive
-                      ? t(locale, "sidebar.stopWalkthroughToSwitchGalleries")
-                      : undefined
-                  }
-                >
-                  <span className="gallery-name">{gallery.name}</span>
-                  <span className="gallery-era">{gallery.era}</span>
-                </button>
-              </li>
-            ))}
-          </ul>
             </>
           )}
         </aside>
@@ -2848,17 +2828,37 @@ function App() {
         )}
 
         <section className="viewer">
+          <div className="viewer-gallery-selector">
+            <select
+              className="gallery-select"
+              value={selectedGallery?.id ?? ""}
+              onChange={(e) => {
+                const id = e.target.value || null;
+                if (id) handleStartGallery(id);
+                else setSelectedGalleryId(null);
+              }}
+              disabled={walkThroughActive}
+              title={
+                walkThroughActive
+                  ? t(locale, "sidebar.stopWalkthroughToSwitchGalleries")
+                  : undefined
+              }
+              aria-label={t(locale, "gallery.selectPlaceholder")}
+            >
+              <option value="">{t(locale, "gallery.selectPlaceholder")}</option>
+              {galleries.map((gallery) => (
+                <option key={gallery.id} value={gallery.id}>
+                  {gallery.name}
+                  {gallery.era ? ` — ${gallery.era}` : ""}
+                </option>
+              ))}
+            </select>
+          </div>
           {!selectedGallery ? (
             <div className="placeholder" />
           ) : (
             <>
               <div className="viewer-gallery-top">
-                <div className="viewer-gallery-meta">
-                  <h2 className="viewer-gallery-name">{selectedGallery.name}</h2>
-                  {selectedGallery.era && (
-                    <p className="viewer-gallery-subtitle">{selectedGallery.era}</p>
-                  )}
-                </div>
                 <div className="gallery-thumbnails">
                   <div className="gallery-thumbnails-row">
                     <div className="thumbnails-strip">

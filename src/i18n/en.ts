@@ -116,6 +116,9 @@ export const en = {
   trajectorySummary: {
     title: "Trajectory summary",
   },
+  gallery: {
+    selectPlaceholder: "Select a gallery…",
+  },
   image: {
     previous: "\u2190 Previous",
     thumbnailAlt: "Image {n}",
