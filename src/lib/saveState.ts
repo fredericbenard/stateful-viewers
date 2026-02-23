@@ -68,7 +68,7 @@ export async function saveGeneratedState(
 
   try {
     if (isHfSpace()) return id;
-    const res = await fetch("/api/save-state", {
+    await fetch("/api/save-state", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload, null, 2),

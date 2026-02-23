@@ -80,7 +80,7 @@ export async function saveGeneratedProfile(
   try {
     // On HF Spaces, avoid writing user artifacts to the shared ephemeral container disk.
     if (isHfSpace()) return id;
-    const res = await fetch("/api/save-profile", {
+    await fetch("/api/save-profile", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload, null, 2),

@@ -67,7 +67,7 @@ export async function saveGeneratedStyle(
 
   try {
     if (isHfSpace()) return id;
-    const res = await fetch("/api/save-style", {
+    await fetch("/api/save-style", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload, null, 2),
