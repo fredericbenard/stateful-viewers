@@ -73,7 +73,7 @@ Push this repo (or the branch you use) to the Space’s Git repo. Add the Space 
 - **API keys:** Users open the app → Settings → API Keys, and paste their OpenAI / Google / Anthropic keys. Keys are stored in the browser and sent with each request (passthrough); the server does not store them.
 - **Language (EN/FR):** The app detects the browser language and defaults to EN or FR. Users can switch language at any time via the footer toggle. Gallery names/sections/descriptions/captions are served in the selected locale, and newly generated content follows the active locale.
 - **Ollama:** Not available on HF (no local server). The app will show an option for Ollama but it will fail unless you run the app locally or elsewhere with Ollama.
-- **Save/load profiles:** On the free tier, data written by the server is ephemeral (lost on Space restart). Users can still save/load during a session; for long-term persistence you’d need HF paid persistent storage (write to `/data`) or an external store.
+- **Save/load artifacts (profiles/styles/states):** On HF, user-created artifacts are saved **in the browser (localStorage)** so they are not shared across users and survive Space restarts/deploys. They are still ephemeral in the sense that clearing site data (or switching browsers/devices) removes them. Public artifacts are served by the app as usual.
 - **Saved data includes locale metadata:** saved profiles and reflection sessions include `locale` fields (and per-reflection `generatedAt` / optional per-reflection `locale`). Trajectory summaries include `trajectorySummaryLocale` and `trajectorySummaryGeneratedAt`.
 
 ---
@@ -82,7 +82,7 @@ Push this repo (or the branch you use) to the Space’s Git repo. Add the Space 
 
 - **Cold start:** On the free tier the Space sleeps; the first load after idle can take 30–60 seconds.
 - **Timeouts:** LLM calls use a 90s client timeout and 85s server proxy timeout (`PROXY_TIMEOUT_MS`). You can set `PROXY_TIMEOUT_MS` in the Space’s **Settings → Variables and secrets** if needed.
-- **Persistence:** If you have HF persistent storage, set `DATA_DIR=/data` in the Space’s **Settings → Variables and secrets** so profiles/sessions are retained across restarts.
+- **Persistence:** The server supports `DATA_DIR=/data` for persistent storage, but by default the app avoids writing user artifacts/sessions to the server filesystem on HF (to prevent cross-user sharing). If you want server-side persistence on HF, implement per-user partitioning (cookie/header-based user id) and/or remove the HF no-write guard.
 - **Analytics (optional):** To enable Google Analytics on the deployed Space without committing it to the repo, set `GA_MEASUREMENT_ID` (public Variable) to your GA4 measurement ID (e.g. `G-XXXXXXXXXX`). If unset, no GA script is injected.
 - **Build issues:** Check the Space **Logs** tab. The server uses the `PORT` environment variable (Dockerfile sets `PORT=7860` for HF).
 
