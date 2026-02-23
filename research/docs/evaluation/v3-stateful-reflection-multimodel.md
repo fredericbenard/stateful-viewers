@@ -51,7 +51,7 @@ Because state is carried forward, a missing/unparseable state update can affect 
 STATE compliance below is computed using the same tolerant block parsing rules as the app (accepting `[STATE]`, `[STATE]:`, `State:`, same-line tags, etc.).
 
 
-| Condition | Model                                  | Run                          | STATE parsed | Missing STATE images  |
+| Condition | Model                                  | Run                          | STATE parsed | Missing STATE (image ids) |
 | --------- | -------------------------------------- | ---------------------------- | ------------ | --------------------- |
 | low       | `openai/gpt-5.2`                       | `2026-02-22T22-28-01-714315` | 5/5          |                       |
 | low       | `openai/gpt-4o`                        | `2026-02-22T21-39-37`        | 5/5          |                       |
@@ -67,7 +67,7 @@ STATE compliance below is computed using the same tolerant block parsing rules a
 | high      | `ollama/llava:7b`                      | `2026-02-22T22-33-25-992298` | 4/5          | de_la_roche_side_wall |
 
 
-**Interpretation note.** The two high-ambiguity runs above omitted a state update at image 2. The runner carried forward the prior state. This is not only a “state-metrics” issue; it can change later reflections and thus impact most criteria for images 3–5.
+**Interpretation note.** The two high-ambiguity runs above omitted a state update at image 2 (`de_la_roche_side_wall`). The runner carried forward the prior state. This is not only a “state-metrics” issue; it can change later reflections and thus impact most criteria for images 3–5.
 
 ---
 
@@ -214,7 +214,7 @@ Short excerpts from the *generator outputs* (not the judge rationales). Each sam
 #### `openai/gpt-5.2` — run `2026-02-22T22-28-01-714315`
 
 > **[REFLECTION] (excerpt)**: This one lands like standing too close to a convenience store window where the ads are shouting and the glass has already given up on being clean. I feel myself hunting for the “real” message—Bacardi, Sangria, the big blunt MONET sticker—and then the black scrawl cuts across it all like someone insisting their voice matters more than the product. The flowers at the bottom are what snag me, because they’re trying so hard to be simple and alive, and they’re framed by all this messy wanting: wanting to sell, wanting to mark, wanting to be seen. …
-> **[STATE] (excerpt)**: My dominant mood stays tender and subdued, but the practical unease thickens into a mild irritation at visual overload. Energy remains moderate and engaged, though my attention narrows more sharply to find a single storyline (commerce vs. …
+> **[STATE] (excerpt)**: My dominant mood stays tender and subdued, but the practical unease thickens into a mild irritation at visual overload. Energy remains moderate and engaged, though my attention narrows more sharply to find a single storyline—commerce vs. …
 
 #### `openai/gpt-4o` — run `2026-02-22T21-39-37`
 
@@ -228,7 +228,7 @@ Short excerpts from the *generator outputs* (not the judge rationales). Each sam
 
 #### `anthropic/claude-sonnet-4-5-20250929` — run `2026-02-22T21-53-03`
 
-> **[REFLECTION] (excerpt)**: The graffiti sprawl feels almost cheerful here, layered over what must be a corner store—Bacardi Breezer labels, a \"90 calories\" badge, the word \"MONET\" shouting through the tangle like a punchline I'm supposed to get. The flowers at the bottom ground it, bright and deliberate, as if someone wanted to soften all that scrawled chaos or maybe just claim a little patch of order. I can feel myself settling into the logic of it: this is street art meeting commerce, high and low colliding in a way that's meant to feel vibrant, maybe irreverent. …
+> **[REFLECTION] (excerpt)**: The graffiti sprawl feels almost cheerful here, layered over what must be a corner store—Bacardi Breezer labels, a "90 calories" badge, the word "MONET" shouting through the tangle like a punchline I'm supposed to get. The flowers at the bottom ground it, bright and deliberate, as if someone wanted to soften all that scrawled chaos or maybe just claim a little patch of order. I can feel myself settling into the logic of it: this is street art meeting commerce, high and low colliding in a way that's meant to feel vibrant, maybe irreverent. …
 > **[STATE] (excerpt)**: My mood shifts toward something lighter, almost buoyant, as the cautious steadiness blooms into mild relief—this image doesn't demand resolution, it offers it freely in its own noisy way. My engagement ticks up further, no longer tentative but genuinely present, my attention diffuse and easy as I take in the whole collage without needing to pin down every detail. …
 
 #### `gemini/gemini-3-pro-preview` — run `2026-02-22T22-26-45-934699`
