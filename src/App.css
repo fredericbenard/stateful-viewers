@@ -2424,6 +2424,10 @@
     max-width: 560px;
   }
 
+  .sidebar .sidebar-section:last-of-type {
+    margin-bottom: 0;
+  }
+
   .viewer {
     width: 100%;
   }
