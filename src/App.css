@@ -128,36 +128,33 @@
 }
 
 .viewer-unified-card {
-  border: 1px solid #2a2a2e;
-  background: #202023;
-  border-radius: 8px;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
 }
 
 .viewer-artifact-row {
   display: flex;
-  align-items: center;
+  flex-direction: column;
   gap: 0.6rem;
-  padding: 0.55rem 0.65rem;
+  padding: 0;
 }
 
-.viewer-artifact-row + .viewer-artifact-row {
-  border-top: 1px solid #2a2a2e;
+.viewer-artifact-row + .viewer-artifact-row,
+.artifact-detail-block + .viewer-artifact-row {
+  margin-top: 1.2rem;
 }
 
 .viewer-artifact-label {
-  flex: 0 0 auto;
-  min-width: 6.75rem;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 500;
-  text-transform: none;
-  letter-spacing: 0.02em;
-  color: #9b9ba1;
+  text-transform: uppercase;
+  letter-spacing: 0.035em;
+  color: #8e8e93;
 }
 
 .viewer-artifact-row .artifact-select {
-  flex: 1;
-  min-width: 0;
+  width: 100%;
 }
 
 .voice-settings-section {
@@ -187,7 +184,7 @@
   display: block;
   margin-top: 0.75rem;
   padding: 0;
-  margin-bottom: 1.25rem;
+  margin-bottom: 1.5rem;
   border: none;
   background: transparent;
   color: #8e8e93;
@@ -237,11 +234,11 @@
 }
 
 .sidebar-section-viewer .viewer-artifact-group-title {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 500;
-  text-transform: none;
-  letter-spacing: 0.02em;
-  color: #9b9ba1;
+  text-transform: uppercase;
+  letter-spacing: 0.035em;
+  color: #8e8e93;
 }
 
 .viewer-artifact-group-header {
@@ -272,9 +269,9 @@
 }
 
 .viewer-artifact-group-title {
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.035em;
   text-transform: uppercase;
   color: #8e8e93;
   margin-bottom: 0.2rem;
@@ -310,12 +307,12 @@
 }
 
 .viewer-unified-card .viewer-artifact-row {
-  padding-bottom: 0.4rem;
+  padding-bottom: 0;
 }
 
 .artifact-detail-block {
-  margin: 0;
-  padding: 0 0.65rem 0.4rem;
+  margin: 0.2rem 0 0;
+  padding: 0;
 }
 
 .artifact-detail-block .profile-selector-summary {
@@ -327,15 +324,11 @@
 }
 
 .artifact-detail-text--clamped {
-  display: -webkit-box;
-  line-clamp: 1;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+  display: none;
 }
 
 .artifact-detail-block .viewer-profile-toggle-ghost {
-  margin-top: 0.25rem;
+  margin-top: 0.15rem;
 }
 
 .viewer-config-block {
@@ -2002,8 +1995,7 @@
 }
 
 .experience-history {
-  /* Spacing is already handled by `.experience-panel > * + *` separator. */
-  margin-top: 0;
+  margin-top: 0.35rem;
 }
 
 .reflection-history h3 {

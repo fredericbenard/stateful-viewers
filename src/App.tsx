@@ -608,9 +608,6 @@ function App() {
   const styleTextRef = useRef<HTMLDivElement>(null);
   const stateTextRef = useRef<HTMLDivElement>(null);
   const activeThumbnailRef = useRef<HTMLButtonElement | null>(null);
-  const [profileHasOverflow, setProfileHasOverflow] = useState(false);
-  const [styleHasOverflow, setStyleHasOverflow] = useState(false);
-  const [stateHasOverflow, setStateHasOverflow] = useState(false);
 
   const galleryId = selectedGallery?.id ?? "";
   const currentIndex = currentIndexByGallery[galleryId] ?? 0;
@@ -1724,61 +1721,6 @@ function App() {
     });
   }, [profileId, profileShort]);
 
-  const checkOverflow = (el: HTMLDivElement | null, setter: (v: boolean) => void) => {
-    if (!el) return;
-    setter(el.scrollHeight > el.clientHeight);
-  };
-
-  useEffect(() => {
-    if (profileShortExpanded) return;
-    const el = profileTextRef.current;
-    const run = () => checkOverflow(profileTextRef.current, setProfileHasOverflow);
-    run();
-    const raf = requestAnimationFrame(() => run());
-    const afterTransition = setTimeout(run, 250);
-    if (!el) return () => { cancelAnimationFrame(raf); clearTimeout(afterTransition); };
-    const ro = new ResizeObserver(run);
-    ro.observe(el);
-    return () => {
-      cancelAnimationFrame(raf);
-      clearTimeout(afterTransition);
-      ro.disconnect();
-    };
-  }, [profileShortExpanded, profileShort, viewerProfile]);
-
-  useEffect(() => {
-    if (styleShortExpanded) return;
-    const el = styleTextRef.current;
-    const run = () => checkOverflow(styleTextRef.current, setStyleHasOverflow);
-    run();
-    const raf = requestAnimationFrame(() => run());
-    const afterTransition = setTimeout(run, 250);
-    if (!el) return () => { cancelAnimationFrame(raf); clearTimeout(afterTransition); };
-    const ro = new ResizeObserver(run);
-    ro.observe(el);
-    return () => {
-      cancelAnimationFrame(raf);
-      clearTimeout(afterTransition);
-      ro.disconnect();
-    };
-  }, [styleShortExpanded, reflectionStyleShort, reflectionStyle]);
-
-  useEffect(() => {
-    if (stateShortExpanded) return;
-    const el = stateTextRef.current;
-    const run = () => checkOverflow(stateTextRef.current, setStateHasOverflow);
-    run();
-    const raf = requestAnimationFrame(() => run());
-    const afterTransition = setTimeout(run, 250);
-    if (!el) return () => { cancelAnimationFrame(raf); clearTimeout(afterTransition); };
-    const ro = new ResizeObserver(run);
-    ro.observe(el);
-    return () => {
-      cancelAnimationFrame(raf);
-      clearTimeout(afterTransition);
-      ro.disconnect();
-    };
-  }, [stateShortExpanded, initialStateShort, initialState]);
 
   const handleStartGallery = (galleryId: string) => {
     setSelectedGalleryId(galleryId);
@@ -2329,7 +2271,6 @@ function App() {
             )}
           </div>
           <div className="sidebar-section sidebar-section-viewer">
-            <h2>{t(locale, "sidebar.viewer")}</h2>
             <div className="viewer-section-caption">
               <div>
                 {t(locale, "sidebar.viewerCaptionProfile", {
@@ -2413,29 +2354,27 @@ function App() {
               </div>
               {(profileId || !!viewerProfile.trim()) && (
                 <div className="artifact-detail-block">
-                  <div
-                    ref={profileTextRef}
-                    className={`profile-selector-summary artifact-detail-text ${
-                      !profileShortExpanded ? "artifact-detail-text--clamped" : ""
-                    }`}
-                  >
-                    {profileShort?.trim() || viewerProfile}
-                  </div>
-                  {(profileShortExpanded || profileHasOverflow) && (
-                    <button
-                      type="button"
-                      className="viewer-profile-toggle-ghost"
-                      onClick={() => setProfileShortExpanded((v) => !v)}
-                      data-expanded={profileShortExpanded ? "true" : "false"}
+                  {profileShortExpanded && (
+                    <div
+                      ref={profileTextRef}
+                      className="profile-selector-summary artifact-detail-text"
                     >
-                      <span className="viewer-profile-toggle-chevron" aria-hidden="true">
-                        ▸
-                      </span>
-                      {profileShortExpanded
-                        ? t(locale, "viewerProfile.less")
-                        : t(locale, "viewerProfile.more")}
-                    </button>
+                      {profileShort?.trim() || viewerProfile}
+                    </div>
                   )}
+                  <button
+                    type="button"
+                    className="viewer-profile-toggle-ghost"
+                    onClick={() => setProfileShortExpanded((v) => !v)}
+                    data-expanded={profileShortExpanded ? "true" : "false"}
+                  >
+                    <span className="viewer-profile-toggle-chevron" aria-hidden="true">
+                      ▸
+                    </span>
+                    {profileShortExpanded
+                      ? t(locale, "viewerProfile.less")
+                      : t(locale, "viewerProfile.more")}
+                  </button>
                 </div>
               )}
 
@@ -2509,29 +2448,27 @@ function App() {
               </div>
               {(styleId || !!reflectionStyle.trim()) && (
                 <div className="artifact-detail-block">
-                  <div
-                    ref={styleTextRef}
-                    className={`profile-selector-summary artifact-detail-text ${
-                      !styleShortExpanded ? "artifact-detail-text--clamped" : ""
-                    }`}
-                  >
-                    {reflectionStyleShort?.trim() || reflectionStyle}
-                  </div>
-                  {(styleShortExpanded || styleHasOverflow) && (
-                    <button
-                      type="button"
-                      className="viewer-profile-toggle-ghost"
-                      onClick={() => setStyleShortExpanded((v) => !v)}
-                      data-expanded={styleShortExpanded ? "true" : "false"}
+                  {styleShortExpanded && (
+                    <div
+                      ref={styleTextRef}
+                      className="profile-selector-summary artifact-detail-text"
                     >
-                      <span className="viewer-profile-toggle-chevron" aria-hidden="true">
-                        ▸
-                      </span>
-                      {styleShortExpanded
-                        ? t(locale, "viewerProfile.less")
-                        : t(locale, "viewerProfile.more")}
-                    </button>
+                      {reflectionStyleShort?.trim() || reflectionStyle}
+                    </div>
                   )}
+                  <button
+                    type="button"
+                    className="viewer-profile-toggle-ghost"
+                    onClick={() => setStyleShortExpanded((v) => !v)}
+                    data-expanded={styleShortExpanded ? "true" : "false"}
+                  >
+                    <span className="viewer-profile-toggle-chevron" aria-hidden="true">
+                      ▸
+                    </span>
+                    {styleShortExpanded
+                      ? t(locale, "viewerProfile.less")
+                      : t(locale, "viewerProfile.more")}
+                  </button>
                 </div>
               )}
 
@@ -2605,29 +2542,27 @@ function App() {
               </div>
               {(stateId || !!initialState.trim()) && (
                 <div className="artifact-detail-block">
-                  <div
-                    ref={stateTextRef}
-                    className={`profile-selector-summary artifact-detail-text ${
-                      !stateShortExpanded ? "artifact-detail-text--clamped" : ""
-                    }`}
-                  >
-                    {initialStateShort?.trim() || initialState}
-                  </div>
-                  {(stateShortExpanded || stateHasOverflow) && (
-                    <button
-                      type="button"
-                      className="viewer-profile-toggle-ghost"
-                      onClick={() => setStateShortExpanded((v) => !v)}
-                      data-expanded={stateShortExpanded ? "true" : "false"}
+                  {stateShortExpanded && (
+                    <div
+                      ref={stateTextRef}
+                      className="profile-selector-summary artifact-detail-text"
                     >
-                      <span className="viewer-profile-toggle-chevron" aria-hidden="true">
-                        ▸
-                      </span>
-                      {stateShortExpanded
-                        ? t(locale, "viewerProfile.less")
-                        : t(locale, "viewerProfile.more")}
-                    </button>
+                      {initialStateShort?.trim() || initialState}
+                    </div>
                   )}
+                  <button
+                    type="button"
+                    className="viewer-profile-toggle-ghost"
+                    onClick={() => setStateShortExpanded((v) => !v)}
+                    data-expanded={stateShortExpanded ? "true" : "false"}
+                  >
+                    <span className="viewer-profile-toggle-chevron" aria-hidden="true">
+                      ▸
+                    </span>
+                    {stateShortExpanded
+                      ? t(locale, "viewerProfile.less")
+                      : t(locale, "viewerProfile.more")}
+                  </button>
                 </div>
               )}
             </div>
