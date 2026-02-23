@@ -3155,6 +3155,8 @@ function App() {
                             )}
                           </select>
                         </label>
+                      </div>
+                      <div className="reflection-voice-toolbar-row reflection-voice-toolbar-row-3">
                         <button
                           type="button"
                           className="speak-btn"
@@ -3172,9 +3174,9 @@ function App() {
                           }}
                           disabled={!currentReflection}
                         >
-                        {isSpeaking
-                          ? t(locale, "reflection.stopListening")
-                          : t(locale, "reflection.listen")}
+                          {isSpeaking
+                            ? `■ ${t(locale, "reflection.stopListening")}`
+                            : `▶ ${t(locale, "reflection.listen")}`}
                         </button>
                       </div>
                     </div>
@@ -3357,15 +3359,14 @@ function App() {
           >
             <button
               type="button"
-              className={`sidebar-about-link ${locale === "en" ? "active" : ""}`}
+              className={locale === "en" ? "active" : ""}
               onClick={() => setLocale("en")}
             >
               EN
             </button>
-            <span aria-hidden="true">/</span>
             <button
               type="button"
-              className={`sidebar-about-link ${locale === "fr" ? "active" : ""}`}
+              className={locale === "fr" ? "active" : ""}
               onClick={() => setLocale("fr")}
             >
               FR
