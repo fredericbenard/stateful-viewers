@@ -81,7 +81,7 @@
   display: flex;
   align-items: flex-start;
   gap: 2.75rem;
-  padding: 2.5rem;
+  padding: 1rem 2rem 2.5rem;
   overflow-y: auto;
   overflow-x: hidden;
   /* Avoid left-edge shifts when scrollbars appear/disappear (e.g. on zoom). */
@@ -2419,7 +2419,7 @@
     flex-direction: column;
     align-items: stretch;
     gap: 1.5rem;
-    padding: 1.5rem 2rem;
+    padding: 1rem 2rem;
   }
 
   .sidebar {
