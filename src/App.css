@@ -317,13 +317,15 @@
 
 .artifact-detail-block {
   margin: 0;
-  padding: 0 0.65rem 0.55rem;
+  padding: 0 0.65rem 0.4rem;
 }
 
 .artifact-detail-block .profile-selector-summary {
   margin-bottom: 0;
   white-space: pre-wrap;
-  line-height: 1.7;
+  font-size: 0.73rem;
+  line-height: 1.55;
+  color: #7a7a80;
 }
 
 .artifact-detail-text--clamped {
