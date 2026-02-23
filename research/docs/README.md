@@ -26,6 +26,7 @@ Experiment results and analysis.
 |------|-------------|
 | `v2-eval-report.md` | Full evaluation report (2026-02-20): 5 experiments, 2×2 cross-model/cross-judge, scores and analysis |
 | `v2-update-summary.md` | Executive summary (2026-02-20): what the v2 update accomplished relative to the v1 critique |
+| `stateful-reflection-multimodel.md` | Multi-model evaluation report: cross-provider reflection quality comparisons, results and analysis |
 
 ## planning/
 

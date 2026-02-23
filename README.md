@@ -233,7 +233,7 @@ Each reflection:
 When you reflect on images with a profile that was successfully saved **and** the dev server is running, each reflection auto-saves the full session to `data/reflections/<profileId>_<galleryId>_<sessionStartedAt>.json`. One file per (profile, gallery) run is updated in place after every new reflection. The file embeds gallery metadata, profile, reflection style, initial internal state, all reflections so far, last internal state, and, if applicable, trajectory summary. (On Hugging Face Spaces, reflection-session autosave is disabled to avoid writing user data to a shared server filesystem.)
 
 **LLM provenance in exports**
-Exported data (markdown and JSON) tracks three separate LLM contexts:
+Exported data (markdown and JSON) tracks five separate LLM contexts:
 
 - `profileLlm` / `profileLlmModelLabel` -- which LLM generated the profile
 - `styleLlm` / `styleLlmModelLabel` -- which LLM generated the reflection style (if tracked)
@@ -265,6 +265,7 @@ The `research/` directory contains the evaluation pipeline used to develop and v
 - **Parametric variant generation** (`research/eval_pipeline/parametric.py`) -- the dimension pools and subset-sampling logic that the app's TypeScript parametric hints are ported from
 - **Experiments** for profile generation, style generation, initial state generation, and stateful reflection (with high/low ambiguity variants)
 - **Evaluation criteria** and **provenance tracking** for each experiment
+- **Evaluation reports** (methodology, results, analysis) in `research/docs/evaluation/`
 
 See `research/docs/README.md` for details.
 
@@ -311,7 +312,9 @@ Where affective computing often asks what emotion is present, Stateful Viewers a
 - `docs/` -- Architecture diagram (`architecture.png` / `architecture.drawio`) and deployment guide ([deploy-huggingface.md](docs/deploy-huggingface.md))
 - `data/profiles/public/` -- Pre-generated public profiles (EN + FR pairs)
 - `data/profiles/` -- User-generated profiles (gitignored)
+- `data/styles/public/` -- Pre-generated public reflection styles (EN + FR pairs)
 - `data/styles/` -- User-generated reflection styles (gitignored)
+- `data/states/public/` -- Pre-generated public initial states (EN + FR pairs)
 - `data/states/` -- User-generated initial states (gitignored)
 - `data/reflections/` -- Auto-saved reflection sessions (gitignored)
 - `research/` -- Evaluation pipeline, experiments, and parametric variant generation
