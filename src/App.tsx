@@ -2190,6 +2190,21 @@ function App() {
             : null
         : null;
 
+  const sortedModelOptions: { provider: VisionProvider; label: string }[] = [
+    { provider: "anthropic", label: "Claude Sonnet 4.6" },
+    { provider: "gemini", label: "Gemini 3 Pro (preview)" },
+    { provider: "openai", label: "GPT-5.2" },
+  ];
+  if (!isHfSpace()) {
+    sortedModelOptions.push({
+      provider: "ollama",
+      label: "LLaVA-1.6 7B, Llama 3.1 8B Instruct",
+    });
+  }
+  sortedModelOptions.sort((a, b) =>
+    a.label.localeCompare(b.label, undefined, { sensitivity: "base" })
+  );
+
   return (
     <div className={`app${overlayOpen ? " overlay-open" : ""}`}>
       <header className="header">
@@ -2214,48 +2229,18 @@ function App() {
           <div className="sidebar-section sidebar-section-models">
             <h2>{t(locale, "sidebar.models")}</h2>
             <div className="model-select">
-              {!isHfSpace() && (
-              <label className="model-option">
-                <input
-                  type="radio"
-                  name="provider"
-                  value="ollama"
-                  checked={visionProvider === "ollama"}
-                  onChange={() => handleProviderChange("ollama")}
-                />
-                <span>LLaVA-1.6 7B, Llama 3.1 8B Instruct</span>
-              </label>
-              )}
-              <label className="model-option">
-                <input
-                  type="radio"
-                  name="provider"
-                  value="openai"
-                  checked={visionProvider === "openai"}
-                  onChange={() => handleProviderChange("openai")}
-                />
-                <span>GPT-5.2</span>
-              </label>
-              <label className="model-option">
-                <input
-                  type="radio"
-                  name="provider"
-                  value="gemini"
-                  checked={visionProvider === "gemini"}
-                  onChange={() => handleProviderChange("gemini")}
-                />
-                <span>Gemini 3 Pro (preview)</span>
-              </label>
-              <label className="model-option">
-                <input
-                  type="radio"
-                  name="provider"
-                  value="anthropic"
-                  checked={visionProvider === "anthropic"}
-                  onChange={() => handleProviderChange("anthropic")}
-                />
-                <span>Claude Sonnet 4.6</span>
-              </label>
+              {sortedModelOptions.map((o) => (
+                <label key={o.provider} className="model-option">
+                  <input
+                    type="radio"
+                    name="provider"
+                    value={o.provider}
+                    checked={visionProvider === o.provider}
+                    onChange={() => handleProviderChange(o.provider)}
+                  />
+                  <span>{o.label}</span>
+                </label>
+              ))}
             </div>
             <button
               type="button"
