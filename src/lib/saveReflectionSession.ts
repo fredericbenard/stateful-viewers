@@ -6,6 +6,7 @@
 import type { Gallery } from "../data/galleries";
 import type { VisionProvider } from "../api/vision";
 import type { OutputLocale } from "../prompts";
+import { isHfSpace } from "./isHfSpace";
 
 const MODEL_LABELS: Record<
   VisionProvider,
@@ -93,6 +94,9 @@ export interface SaveReflectionSessionParams {
 export async function saveReflectionSession(
   params: SaveReflectionSessionParams
 ): Promise<boolean> {
+  // On Hugging Face Spaces free tier, the server filesystem is shared across users and ephemeral.
+  // We intentionally avoid writing user session data there.
+  if (isHfSpace()) return false;
   const labels = getModelLabels(params.provider);
   const payload: ReflectionSessionPayload = {
     profileId: params.profileId,

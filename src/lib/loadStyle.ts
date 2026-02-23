@@ -3,6 +3,8 @@
  */
 
 import type { SavedStylePayload } from "./saveStyle";
+import { getLocalArtifact, listLocalArtifacts } from "./localArtifactStore";
+import { LOCAL_STYLES_KEY } from "./saveStyle";
 
 export interface StyleSummary {
   id: string;
@@ -24,18 +26,35 @@ export interface LoadStyleResponse {
   style: SavedStylePayload;
 }
 
+function toSummary(s: SavedStylePayload): StyleSummary {
+  return {
+    id: s.id,
+    generatedAt: s.generatedAt,
+    locale: s.locale,
+    llm: s.llm,
+    llmModelLabel: s.llmModelLabel || s.modelLabel || s.llm,
+    modelLabel: s.modelLabel,
+    label: s.label,
+    reflectionStyleShort: s.reflectionStyleShort,
+  };
+}
+
 /**
  * List all styles.
  * Returns empty array if endpoint is not available (e.g. production build).
  */
 export async function listStyles(): Promise<StyleSummary[]> {
+  const local = listLocalArtifacts<SavedStylePayload>(LOCAL_STYLES_KEY).map(toSummary);
   try {
     const res = await fetch("/api/list-styles");
-    if (!res.ok) return [];
+    if (!res.ok) return local;
     const data: ListStylesResponse = await res.json();
-    return data.styles || [];
+    const map = new Map<string, StyleSummary>();
+    (data.styles || []).forEach((s) => map.set(s.id, s));
+    local.forEach((s) => map.set(s.id, s));
+    return Array.from(map.values());
   } catch {
-    return [];
+    return local;
   }
 }
 
@@ -44,6 +63,8 @@ export async function listStyles(): Promise<StyleSummary[]> {
  * Returns null if not found or endpoint is not available.
  */
 export async function loadStyle(id: string): Promise<SavedStylePayload | null> {
+  const local = getLocalArtifact<SavedStylePayload>(LOCAL_STYLES_KEY, id);
+  if (local) return local;
   try {
     const res = await fetch(`/api/load-style?id=${encodeURIComponent(id)}`);
     if (!res.ok) return null;

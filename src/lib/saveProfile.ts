@@ -4,6 +4,8 @@
 
 import type { VisionProvider } from "../api/vision";
 import type { OutputLocale } from "../prompts";
+import { isHfSpace } from "./isHfSpace";
+import { upsertLocalArtifact } from "./localArtifactStore";
 import { getModelLabels } from "./saveReflectionSession";
 
 export interface SavedProfilePayload {
@@ -45,6 +47,8 @@ export interface SaveProfileParams {
   provider: VisionProvider;
 }
 
+export const LOCAL_PROFILES_KEY = "stateful-viewers:artifacts:v1:profiles";
+
 /**
  * Builds the payload and POSTs to the dev server to save to data/profiles/<id>.json.
  * No-op if the endpoint is not available (e.g. production build).
@@ -70,15 +74,19 @@ export async function saveGeneratedProfile(
     rawProfile: params.profileRaw,
   };
 
+  // Always save locally so artifacts are per-browser (prevents cross-user sharing on HF).
+  upsertLocalArtifact<SavedProfilePayload>(LOCAL_PROFILES_KEY, payload);
+
   try {
+    // On HF Spaces, avoid writing user artifacts to the shared ephemeral container disk.
+    if (isHfSpace()) return id;
     const res = await fetch("/api/save-profile", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload, null, 2),
     });
-    if (!res.ok) return null;
     return id;
   } catch {
-    return null;
+    return id;
   }
 }

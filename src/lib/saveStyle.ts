@@ -4,6 +4,8 @@
 
 import type { VisionProvider } from "../api/vision";
 import type { OutputLocale } from "../prompts";
+import { isHfSpace } from "./isHfSpace";
+import { upsertLocalArtifact } from "./localArtifactStore";
 import { getModelLabels } from "./saveReflectionSession";
 
 export interface SavedStylePayload {
@@ -35,6 +37,8 @@ export interface SaveStyleParams {
   provider: VisionProvider;
 }
 
+export const LOCAL_STYLES_KEY = "stateful-viewers:artifacts:v1:styles";
+
 /**
  * Builds the payload and POSTs to the dev server to save to data/styles/<id>.json.
  * No-op if the endpoint is not available (e.g. production build).
@@ -58,16 +62,19 @@ export async function saveGeneratedStyle(
     rawReflectionStyle: params.styleRaw,
   };
 
+  // Always save locally so artifacts are per-browser.
+  upsertLocalArtifact<SavedStylePayload>(LOCAL_STYLES_KEY, payload);
+
   try {
+    if (isHfSpace()) return id;
     const res = await fetch("/api/save-style", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload, null, 2),
     });
-    if (!res.ok) return null;
     return id;
   } catch {
-    return null;
+    return id;
   }
 }
 

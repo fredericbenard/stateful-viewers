@@ -4,6 +4,8 @@
 
 import type { VisionProvider } from "../api/vision";
 import type { OutputLocale } from "../prompts";
+import { isHfSpace } from "./isHfSpace";
+import { upsertLocalArtifact } from "./localArtifactStore";
 import { getModelLabels } from "./saveReflectionSession";
 
 export interface SavedStatePayload {
@@ -36,6 +38,8 @@ export interface SaveStateParams {
   provider: VisionProvider;
 }
 
+export const LOCAL_STATES_KEY = "stateful-viewers:artifacts:v1:states";
+
 /**
  * Builds the payload and POSTs to the dev server to save to data/states/<id>.json.
  * No-op if the endpoint is not available (e.g. production build).
@@ -59,16 +63,19 @@ export async function saveGeneratedState(
     rawInitialState: params.initialStateRaw,
   };
 
+  // Always save locally so artifacts are per-browser.
+  upsertLocalArtifact<SavedStatePayload>(LOCAL_STATES_KEY, payload);
+
   try {
+    if (isHfSpace()) return id;
     const res = await fetch("/api/save-state", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload, null, 2),
     });
-    if (!res.ok) return null;
     return id;
   } catch {
-    return null;
+    return id;
   }
 }
 
