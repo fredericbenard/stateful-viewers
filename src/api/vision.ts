@@ -1,5 +1,5 @@
 /**
- * Unified vision API - routes to Ollama (LLaVA-1.6 7B), OpenAI (GPT-5.2), Gemini, or Anthropic (Claude Sonnet 4.5)
+ * Unified vision API - routes to Ollama (LLaVA-1.6 7B), OpenAI (GPT-5.2), Gemini, or Anthropic (Claude Sonnet 4.6)
  */
 
 import { reflectOnImage as reflectOllama } from "./ollama";

@@ -135,7 +135,7 @@ async function main() {
       "npx tsx scripts/generate-states.ts",
       "npx tsx scripts/generate-states.ts 2 --translate-fr",
       "npx tsx scripts/generate-states.ts 8 --llm openai --model gpt-5.2",
-      "npx tsx scripts/generate-states.ts 6 --llm anthropic --model claude-sonnet-4-5-20250929",
+      "npx tsx scripts/generate-states.ts 6 --llm anthropic --model claude-sonnet-4-6",
       "npx tsx scripts/generate-states.ts 6 --llm gemini --model gemini-3-pro-preview",
       "npx tsx scripts/generate-states.ts 2 --llm ollama --model llama3.1:8b-instruct-q5_K_M",
       "npx tsx scripts/generate-states.ts 4 --llm gemini --max-tokens 2048",

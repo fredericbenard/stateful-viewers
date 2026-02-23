@@ -6,7 +6,7 @@
  *
  * Run: npx tsx scripts/retrofit-labels.ts
  *      npx tsx scripts/retrofit-labels.ts --llm openai --model gpt-5.2
- *      npx tsx scripts/retrofit-labels.ts --llm anthropic --model claude-sonnet-4-5-20250929
+ *      npx tsx scripts/retrofit-labels.ts --llm anthropic --model claude-sonnet-4-6
  *      npx tsx scripts/retrofit-labels.ts --only-missing
  *      npx tsx scripts/retrofit-labels.ts --all
  *      npx tsx scripts/retrofit-labels.ts --styles
@@ -89,7 +89,7 @@ function parseCli(): {
         "  npx tsx scripts/retrofit-labels.ts --styles",
         "  npx tsx scripts/retrofit-labels.ts --states",
         "  npx tsx scripts/retrofit-labels.ts --llm openai --model gpt-5.2",
-        "  npx tsx scripts/retrofit-labels.ts --llm anthropic --model claude-sonnet-4-5-20250929",
+        "  npx tsx scripts/retrofit-labels.ts --llm anthropic --model claude-sonnet-4-6",
         "  npx tsx scripts/retrofit-labels.ts --llm gemini --model gemini-3-pro-preview",
         "  npx tsx scripts/retrofit-labels.ts --llm ollama --model llama3.1:8b-instruct-q5_K_M",
         "",
@@ -117,7 +117,7 @@ function parseCli(): {
     llmProvider === "openai"
       ? "gpt-5.2"
       : llmProvider === "anthropic"
-        ? "claude-sonnet-4-5-20250929"
+        ? "claude-sonnet-4-6"
         : llmProvider === "gemini"
           ? "gemini-3-pro-preview"
           : "llama3.1:8b-instruct-q5_K_M";

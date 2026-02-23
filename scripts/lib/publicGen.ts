@@ -102,7 +102,7 @@ export function parseGenerateCli(opts: {
     llmProvider === "openai"
       ? "gpt-5.2"
       : llmProvider === "anthropic"
-        ? "claude-sonnet-4-5-20250929"
+        ? "claude-sonnet-4-6"
         : llmProvider === "gemini"
           ? "gemini-3-pro-preview"
           : "llama3.1:8b-instruct-q5_K_M";

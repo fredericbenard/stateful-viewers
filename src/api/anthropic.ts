@@ -1,5 +1,5 @@
 /**
- * Anthropic API client for vision and text (Claude Sonnet 4.5)
+ * Anthropic API client for vision and text (Claude Sonnet 4.6)
  * Proxied through Vite; API key from user (BYOK) headers or server env
  */
 
@@ -15,7 +15,7 @@ import {
 } from "../lib/apiErrorMessages";
 
 const ANTHROPIC_BASE = "/api/anthropic";
-const MODEL = "claude-sonnet-4-5-20250929";
+const MODEL = "claude-sonnet-4-6";
 
 // System instruction imported from prompts.ts
 
@@ -25,7 +25,7 @@ export interface ReflectionResponse {
 }
 
 /**
- * Call Claude Sonnet 4.5 to reflect on an image
+ * Call Claude Sonnet 4.6 to reflect on an image
  */
 export async function reflectOnImageAnthropic(
   imageUrl: string,
@@ -118,7 +118,7 @@ export interface TextCompletionResponse {
 }
 
 /**
- * Call Claude Sonnet 4.5 for text-only generation (profile, reflection style)
+ * Call Claude Sonnet 4.6 for text-only generation (profile, reflection style)
  */
 export async function generateTextAnthropic(
   systemPrompt: string,

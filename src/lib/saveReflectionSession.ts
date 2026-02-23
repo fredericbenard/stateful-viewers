@@ -18,7 +18,7 @@ const MODEL_LABELS: Record<
   },
   openai: { vlm: "GPT-5.2", llm: "GPT-5.2" },
   gemini: { vlm: "Gemini 3 Pro (preview)", llm: "Gemini 3 Pro (preview)" },
-  anthropic: { vlm: "Claude Sonnet 4.5", llm: "Claude Sonnet 4.5" },
+  anthropic: { vlm: "Claude Sonnet 4.6", llm: "Claude Sonnet 4.6" },
 };
 
 export function getModelLabels(provider: VisionProvider): { vlm: string; llm: string } {

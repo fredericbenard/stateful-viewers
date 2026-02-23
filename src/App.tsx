@@ -2254,7 +2254,7 @@ function App() {
                   checked={visionProvider === "anthropic"}
                   onChange={() => handleProviderChange("anthropic")}
                 />
-                <span>Claude Sonnet 4.5</span>
+                <span>Claude Sonnet 4.6</span>
               </label>
             </div>
             <button
