@@ -3,6 +3,8 @@
   --accent-hover: #2563eb;
   --accent-muted: #2e6fd4;
   --accent-on-fill: #e8ecf4;
+  --sidebar-width: 240px;
+  --gallery-select-max-width: 18rem;
 }
 
 .app {
@@ -90,7 +92,7 @@
 
 .sidebar {
   flex-shrink: 0;
-  width: 280px;
+  width: var(--sidebar-width);
   transition: width 0.2s ease;
   overflow: hidden;
 }
@@ -1492,7 +1494,7 @@
 
 .gallery-select {
   width: 100%;
-  max-width: 22rem;
+  max-width: var(--gallery-select-max-width);
   padding: 0.45rem 0.6rem;
   background: #1a1a1a;
   border: 1px solid #2d2d30;
@@ -2462,7 +2464,7 @@
 
   /* In the stacked (top) sidebar layout, keep viewer picklists from stretching too wide. */
   .sidebar-section-viewer .artifact-select {
-    max-width: 280px; /* matches the left sidebar width on wide layouts */
+    max-width: var(--sidebar-width); /* matches the left sidebar width on wide layouts */
   }
 
   .viewer {
