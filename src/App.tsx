@@ -368,6 +368,15 @@ function App() {
   const [walkThroughActive, setWalkThroughActive] = useState(false);
   const [autoAdvance, setAutoAdvance] = useState(false);
   const [isHistoryCollapsed, setIsHistoryCollapsed] = useState(true);
+  const VIEWER_CONTROLS_STACKED_QUERY = "(max-width: 1200px)";
+  const [viewerControlsExpanded, setViewerControlsExpanded] = useState(() => {
+    if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
+      return true;
+    }
+    // Default to collapsed on small/medium screens,
+    // to keep the image + reflection content higher.
+    return !window.matchMedia(VIEWER_CONTROLS_STACKED_QUERY).matches;
+  });
   const { speak, stop, isSpeaking, voices, unlock: unlockSpeech, refreshVoices } = useSpeech();
   const [ttsRate] = useState(() => {
     try {
@@ -444,6 +453,27 @@ function App() {
       return "";
     }
   });
+
+  useEffect(() => {
+    if (typeof window === "undefined" || typeof window.matchMedia !== "function") return;
+    const mql = window.matchMedia(VIEWER_CONTROLS_STACKED_QUERY);
+
+    const handleChange = (e: MediaQueryListEvent) => {
+      setViewerControlsExpanded(!e.matches);
+    };
+
+    // Sync once in case the initial state ran before layout/viewport settled.
+    setViewerControlsExpanded(!mql.matches);
+
+    if (typeof mql.addEventListener === "function") {
+      mql.addEventListener("change", handleChange);
+      return () => mql.removeEventListener("change", handleChange);
+    }
+
+    // Safari < 14
+    mql.addListener(handleChange);
+    return () => mql.removeListener(handleChange);
+  }, []);
   const [profileShort, setProfileShort] = useState(() => {
     try {
       return localStorage.getItem(STORAGE_KEYS.profileShort) || "";
@@ -2204,6 +2234,9 @@ function App() {
     a.label.localeCompare(b.label, undefined, { sensitivity: "base" })
   );
 
+  const viewerCaptionModelValue =
+    sortedModelOptions.find((o) => o.provider === visionProvider)?.label ?? visionProvider;
+
   return (
     <div className={`app${overlayOpen ? " overlay-open" : ""}`}>
       <header className="header">
@@ -2224,7 +2257,10 @@ function App() {
       </header>
 
       <main className="main">
-        <aside className="sidebar">
+        <aside
+          className="sidebar"
+          data-settings-expanded={viewerControlsExpanded ? "true" : "false"}
+        >
           <div className="sidebar-section sidebar-section-models">
             <h2>{t(locale, "sidebar.models")}</h2>
             <div className="model-select">
@@ -2255,87 +2291,106 @@ function App() {
             )}
           </div>
           <div className="sidebar-section sidebar-section-viewer">
-            <div className="viewer-section-caption">
-              <div>
-                {t(locale, "sidebar.viewerCaptionProfile", {
-                  value: viewerCaptionProfileValue,
-                })}
-              </div>
-              <div>
-                {t(locale, "sidebar.viewerCaptionStyle", {
-                  value: viewerCaptionStyleValue,
-                })}
-              </div>
-              <div>
-                {t(locale, "sidebar.viewerCaptionState", {
-                  value: viewerCaptionStateValue,
-                })}
-              </div>
-            </div>
-            <div className="viewer-unified-card">
-              <div className="viewer-artifact-row">
-                <div className="viewer-artifact-label">
-                  {t(locale, "viewerProfile.profileHeading")}
+            <div className="viewer-controls-compact-row">
+              <div className="viewer-section-caption">
+                <div>
+                  {t(locale, "sidebar.viewerCaptionModel", {
+                    value: viewerCaptionModelValue,
+                  })}
                 </div>
-                <select
-                  className="artifact-select"
-                  value={
-                    profileId || (!!viewerProfile.trim() && !profileId ? "__current__" : "")
-                  }
-                  onChange={(e) => {
-                    const v = e.target.value;
-                    if (!v) {
-                      setProfileId(null);
-                      setViewerProfile("");
-                      setProfileShort("");
-                      setProfileLabel(null);
-                      resetExperienceAfterViewerChange();
-                      return;
-                    }
-                    if (v === "__current__") return;
-                    if (v === "__create__") {
-                      if (!isGeneratingUi) handleGenerateProfile();
-                      return;
-                    }
-                    handleLoadProfile(v);
-                  }}
-                  disabled={isLoadingProfiles}
-                  aria-label={t(locale, "sidebar.selectProfile")}
-                >
-                  <option value="">
-                    {isGeneratingProfile
-                      ? t(locale, "sidebar.generating")
-                      : isLoadingProfiles
-                        ? t(locale, "sidebar.loadingProfiles")
-                        : sortedAvailableProfiles.length === 0 &&
-                            !(!!viewerProfile.trim() && !profileId)
-                          ? t(locale, "sidebar.noProfiles")
-                          : t(locale, "sidebar.selectProfile")}
-                  </option>
-                  {!!viewerProfile.trim() &&
-                    !profileId &&
-                    !isLoadingProfiles && (
-                      <option value="__current__">
-                        {profileLabel || t(locale, "viewerProfile.profileHeading")}
-                      </option>
-                    )}
-                  {!isLoadingProfiles &&
-                    sortedAvailableProfiles.map((p) => {
-                      const badge =
-                        p.locale && normalizeArtifactLocale(p.locale) !== locale
-                          ? ` (${normalizeArtifactLocale(p.locale).toUpperCase()})`
-                          : "";
-                      return (
-                        <option key={p.id} value={p.id}>
-                          {(p.label || t(locale, "sidebar.untitledProfile")) + badge}
-                        </option>
-                      );
-                    })}
-                  {!isLoadingProfiles && (
-                    <option value="__create__">{t(locale, "sidebar.createNew")}</option>
-                  )}
-                </select>
+                <div>
+                  {t(locale, "sidebar.viewerCaptionProfile", {
+                    value: viewerCaptionProfileValue,
+                  })}
+                </div>
+                <div>
+                  {t(locale, "sidebar.viewerCaptionStyle", {
+                    value: viewerCaptionStyleValue,
+                  })}
+                </div>
+                <div>
+                  {t(locale, "sidebar.viewerCaptionState", {
+                    value: viewerCaptionStateValue,
+                  })}
+                </div>
               </div>
+              <button
+                type="button"
+                className="viewer-controls-toggle"
+                onClick={() => setViewerControlsExpanded((v) => !v)}
+                aria-expanded={viewerControlsExpanded}
+                aria-controls="viewer-controls-body"
+              >
+                {viewerControlsExpanded
+                  ? t(locale, "sidebar.hideViewerControls")
+                  : t(locale, "sidebar.showViewerControls")}
+              </button>
+            </div>
+            <div className="viewer-controls-body" id="viewer-controls-body">
+              <div className="viewer-unified-card">
+                <div className="viewer-artifact-row">
+                  <div className="viewer-artifact-label">
+                    {t(locale, "viewerProfile.profileHeading")}
+                  </div>
+                  <select
+                    className="artifact-select"
+                    value={
+                      profileId || (!!viewerProfile.trim() && !profileId ? "__current__" : "")
+                    }
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      if (!v) {
+                        setProfileId(null);
+                        setViewerProfile("");
+                        setProfileShort("");
+                        setProfileLabel(null);
+                        resetExperienceAfterViewerChange();
+                        return;
+                      }
+                      if (v === "__current__") return;
+                      if (v === "__create__") {
+                        if (!isGeneratingUi) handleGenerateProfile();
+                        return;
+                      }
+                      handleLoadProfile(v);
+                    }}
+                    disabled={isLoadingProfiles}
+                    aria-label={t(locale, "sidebar.selectProfile")}
+                  >
+                    <option value="">
+                      {isGeneratingProfile
+                        ? t(locale, "sidebar.generating")
+                        : isLoadingProfiles
+                          ? t(locale, "sidebar.loadingProfiles")
+                          : sortedAvailableProfiles.length === 0 &&
+                              !(!!viewerProfile.trim() && !profileId)
+                            ? t(locale, "sidebar.noProfiles")
+                            : t(locale, "sidebar.selectProfile")}
+                    </option>
+                    {!!viewerProfile.trim() &&
+                      !profileId &&
+                      !isLoadingProfiles && (
+                        <option value="__current__">
+                          {profileLabel || t(locale, "viewerProfile.profileHeading")}
+                        </option>
+                      )}
+                    {!isLoadingProfiles &&
+                      sortedAvailableProfiles.map((p) => {
+                        const badge =
+                          p.locale && normalizeArtifactLocale(p.locale) !== locale
+                            ? ` (${normalizeArtifactLocale(p.locale).toUpperCase()})`
+                            : "";
+                        return (
+                          <option key={p.id} value={p.id}>
+                            {(p.label || t(locale, "sidebar.untitledProfile")) + badge}
+                          </option>
+                        );
+                      })}
+                    {!isLoadingProfiles && (
+                      <option value="__create__">{t(locale, "sidebar.createNew")}</option>
+                    )}
+                  </select>
+                </div>
               {(profileId || !!viewerProfile.trim()) && (
                 <div className="artifact-detail-block">
                   {profileShortExpanded && (
@@ -2549,6 +2604,7 @@ function App() {
                   </button>
                 </div>
               )}
+              </div>
             </div>
           </div>
         </aside>
