@@ -90,7 +90,7 @@
 
 .sidebar {
   flex-shrink: 0;
-  width: 300px;
+  width: 280px;
   transition: width 0.2s ease;
   overflow: hidden;
 }
@@ -1492,7 +1492,7 @@
 
 .gallery-select {
   width: 100%;
-  max-width: 28rem;
+  max-width: 22rem;
   padding: 0.45rem 0.6rem;
   background: #1a1a1a;
   border: 1px solid #2d2d30;
@@ -2134,7 +2134,7 @@
   align-items: center;
   gap: 0.4rem;
   min-width: 0;
-  flex: 1 1 0;
+  flex: 0 1 auto;
 }
 
 .reflection-voice-select-label span {
@@ -2146,8 +2146,10 @@
 }
 
 .reflection-voice-select {
-  flex: 1 1 8rem;
+  flex: 0 1 auto;
   min-width: 0;
+  width: 18rem;
+  max-width: 100%;
   padding: 0.28rem 0.5rem;
   background: #1a1a1a;
   border: 1px solid #2d2d30;
@@ -2398,6 +2400,21 @@
     align-items: stretch;
   }
 
+  .gallery-select {
+    max-width: none;
+  }
+
+  .reflection-voice-select-label {
+    flex: 1 1 0;
+    width: 100%;
+  }
+
+  .reflection-voice-select {
+    flex: 1 1 auto;
+    width: 100%;
+    max-width: none;
+  }
+
   .viewer-center-pane {
     flex: 1;
     min-height: 0;
@@ -2441,6 +2458,11 @@
   .sidebar-section-viewer {
     flex: 1;
     min-width: 200px;
+  }
+
+  /* In the stacked (top) sidebar layout, keep viewer picklists from stretching too wide. */
+  .sidebar-section-viewer .artifact-select {
+    max-width: 280px; /* matches the left sidebar width on wide layouts */
   }
 
   .viewer {

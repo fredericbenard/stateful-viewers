@@ -2126,8 +2126,7 @@ function App() {
 
   useEffect(() => {
     if (!galleryId) return;
-    const galleryReflections = reflectionsByGallery[galleryId] ?? [];
-    setIsHistoryCollapsed(galleryReflections.length > 1);
+    setIsHistoryCollapsed(true);
   }, [galleryId]);
 
   useEffect(() => {
