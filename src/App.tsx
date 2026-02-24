@@ -233,6 +233,7 @@ const STORAGE_KEYS = {
   viewerProfile: "stateful-viewers:viewerProfile",
   reflectionStyle: "stateful-viewers:reflectionStyle",
   initialState: "stateful-viewers:initialState",
+  settingsExpanded: "stateful-viewers:settingsExpanded",
   profileShort: "stateful-viewers:profileShort",
   reflectionStyleShort: "stateful-viewers:reflectionStyleShort",
   initialStateShort: "stateful-viewers:initialStateShort",
@@ -369,12 +370,46 @@ function App() {
   const [autoAdvance, setAutoAdvance] = useState(false);
   const [isHistoryCollapsed, setIsHistoryCollapsed] = useState(true);
   const VIEWER_CONTROLS_STACKED_QUERY = "(max-width: 1200px)";
+  const [isFreshInstall] = useState(() => {
+    try {
+      const likelyExistingKeys = [
+        STORAGE_KEYS.locale,
+        STORAGE_KEYS.viewerProfile,
+        STORAGE_KEYS.reflectionStyle,
+        STORAGE_KEYS.initialState,
+        STORAGE_KEYS.selectedGalleryId,
+        STORAGE_KEYS.visionProvider,
+        STORAGE_KEYS.reflectionsByGallery,
+      ];
+      return likelyExistingKeys.every((k) => !localStorage.getItem(k));
+    } catch (e) {
+      console.warn("Failed to detect fresh install:", e);
+      return false;
+    }
+  });
+  const [settingsPrefLocked, setSettingsPrefLocked] = useState(() => {
+    try {
+      return localStorage.getItem(STORAGE_KEYS.settingsExpanded) !== null;
+    } catch (e) {
+      console.warn("Failed to restore settingsPrefLocked from localStorage:", e);
+      return false;
+    }
+  });
   const [viewerControlsExpanded, setViewerControlsExpanded] = useState(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.settingsExpanded);
+      if (saved !== null) return saved === "true";
+    } catch (e) {
+      console.warn("Failed to restore settingsExpanded from localStorage:", e);
+    }
+
+    // Fresh install: default to expanded regardless of screen size.
+    if (isFreshInstall) return true;
+
+    // Existing users without an explicit preference: keep the responsive default.
     if (typeof window === "undefined" || typeof window.matchMedia !== "function") {
       return true;
     }
-    // Default to collapsed on small/medium screens,
-    // to keep the image + reflection content higher.
     return !window.matchMedia(VIEWER_CONTROLS_STACKED_QUERY).matches;
   });
   const { speak, stop, isSpeaking, voices, unlock: unlockSpeech, refreshVoices } = useSpeech();
@@ -455,7 +490,9 @@ function App() {
   });
 
   useEffect(() => {
+    if (settingsPrefLocked || isFreshInstall) return;
     if (typeof window === "undefined" || typeof window.matchMedia !== "function") return;
+
     const mql = window.matchMedia(VIEWER_CONTROLS_STACKED_QUERY);
 
     const handleChange = (e: MediaQueryListEvent) => {
@@ -473,7 +510,7 @@ function App() {
     // Safari < 14
     mql.addListener(handleChange);
     return () => mql.removeListener(handleChange);
-  }, []);
+  }, [settingsPrefLocked, isFreshInstall]);
   const [profileShort, setProfileShort] = useState(() => {
     try {
       return localStorage.getItem(STORAGE_KEYS.profileShort) || "";
@@ -2188,7 +2225,7 @@ function App() {
 
   const activeHint =
     generationStatus ||
-    (onboardingHint && onboardingHint !== t(locale, "onboarding.nextStepSelectGallery"))
+    onboardingHint
       ? (generationStatus ? (
           <>
             {t(locale, `status.${generationStatus}`)}
@@ -2227,7 +2264,7 @@ function App() {
   if (!isHfSpace()) {
     sortedModelOptions.push({
       provider: "ollama",
-      label: "LLaVA-1.6 7B, Llama 3.1 8B Instruct",
+      label: "LLaVA-1.6 7B, Llama 3.1 8B",
     });
   }
   sortedModelOptions.sort((a, b) =>
@@ -2317,7 +2354,16 @@ function App() {
               <button
                 type="button"
                 className="viewer-controls-toggle"
-                onClick={() => setViewerControlsExpanded((v) => !v)}
+                onClick={() => {
+                  const next = !viewerControlsExpanded;
+                  setViewerControlsExpanded(next);
+                  setSettingsPrefLocked(true);
+                  try {
+                    localStorage.setItem(STORAGE_KEYS.settingsExpanded, String(next));
+                  } catch (e) {
+                    console.warn("Failed to persist settingsExpanded:", e);
+                  }
+                }}
                 aria-expanded={viewerControlsExpanded}
                 aria-controls="viewer-controls-body"
               >
