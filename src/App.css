@@ -90,7 +90,7 @@
 
 .sidebar {
   flex-shrink: 0;
-  width: 336px;
+  width: 300px;
   transition: width 0.2s ease;
   overflow: hidden;
 }
