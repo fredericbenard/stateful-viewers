@@ -1,7 +1,7 @@
 # Stateful Reflection Evaluation Report — Multi-model (Claude Opus judge)
 
-**Date:** 2026-02-25  
-**Status:** Complete for 2 stateful-reflection experiments × 8 generators (16 runs). All runs evaluated by **Claude Opus 4.6** as judge. Two runs have **missing state** on one step (flagged in §3).
+**Date:** 2026-02-26  
+**Status:** Complete for 2 stateful-reflection experiments × 9 generators (18 runs). All runs evaluated by **Claude Opus 4.6** as judge. Two runs have **missing state** on one step (flagged in §3).
 
 ---
 
@@ -33,6 +33,7 @@ All scores in this report come from `scores_anthropic_claude-opus-4-6.json` in t
 | low ambiguity  | `anthropic/claude-sonnet-4-6`          | `2026-02-25T23-09-11-041618` |
 | low ambiguity  | `anthropic/claude-sonnet-4-5-20250929` | `2026-02-22T21-53-03`        |
 | low ambiguity  | `gemini/gemini-3-pro-preview`          | `2026-02-22T22-26-45-934699` |
+| low ambiguity  | `gemini/gemini-3-flash-preview`        | `2026-02-26T01-05-15-299004` |
 | low ambiguity  | `ollama/llava:7b`                      | `2026-02-22T22-27-38-860002` |
 | high ambiguity | `openai/gpt-5.2`                       | `2026-02-22T22-32-58-040244` |
 | high ambiguity | `openai/gpt-4.1`                       | `2026-02-25T15-33-12-431751` |
@@ -41,6 +42,7 @@ All scores in this report come from `scores_anthropic_claude-opus-4-6.json` in t
 | high ambiguity | `anthropic/claude-sonnet-4-6`          | `2026-02-25T23-15-29-662835` |
 | high ambiguity | `anthropic/claude-sonnet-4-5-20250929` | `2026-02-22T21-58-49-913261` |
 | high ambiguity | `gemini/gemini-3-pro-preview`          | `2026-02-22T22-32-48-527138` |
+| high ambiguity | `gemini/gemini-3-flash-preview`        | `2026-02-26T01-02-21-721074` |
 | high ambiguity | `ollama/llava:7b`                      | `2026-02-22T22-33-25-992298` |
 
 
@@ -64,6 +66,7 @@ STATE compliance below is computed using the same tolerant block parsing rules a
 | low       | `anthropic/claude-sonnet-4-6`          | `2026-02-25T23-09-11-041618` | 5/5          |                           |
 | low       | `anthropic/claude-sonnet-4-5-20250929` | `2026-02-22T21-53-03`        | 5/5          |                           |
 | low       | `gemini/gemini-3-pro-preview`          | `2026-02-22T22-26-45-934699` | 5/5          |                           |
+| low       | `gemini/gemini-3-flash-preview`        | `2026-02-26T01-05-15-299004` | 5/5          |                           |
 | low       | `ollama/llava:7b`                      | `2026-02-22T22-27-38-860002` | 5/5          |                           |
 | high      | `openai/gpt-5.2`                       | `2026-02-22T22-32-58-040244` | 5/5          |                           |
 | high      | `openai/gpt-4.1`                       | `2026-02-25T15-33-12-431751` | 5/5          |                           |
@@ -72,6 +75,7 @@ STATE compliance below is computed using the same tolerant block parsing rules a
 | high      | `anthropic/claude-sonnet-4-6`          | `2026-02-25T23-15-29-662835` | 5/5          |                           |
 | high      | `anthropic/claude-sonnet-4-5-20250929` | `2026-02-22T21-58-49-913261` | 5/5          |                           |
 | high      | `gemini/gemini-3-pro-preview`          | `2026-02-22T22-32-48-527138` | 4/5          | de_la_roche_side_wall     |
+| high      | `gemini/gemini-3-flash-preview`        | `2026-02-26T01-02-21-721074` | 5/5          |                           |
 | high      | `ollama/llava:7b`                      | `2026-02-22T22-33-25-992298` | 4/5          | de_la_roche_side_wall     |
 
 
@@ -100,42 +104,42 @@ STATE compliance below is computed using the same tolerant block parsing rules a
 ## 5. Results — low ambiguity (mean per criterion; 5 images each)
 
 
-| Criterion               | gpt-5.2  | gpt-4.1 | gpt-4o   | claude-opus-4-6 | claude-sonnet-4-6 | claude-sonnet-4-5-20250929 | gemini-3-pro-preview | llava:7b |
-| ----------------------- | -------- | ------- | -------- | --------------- | ----------------- | -------------------------- | -------------------- | -------- |
-| emotional_depth         | 4.6      | 4.2     | 2.8      | 4.4             | 4.6               | 4.4                        | 4                    | 1.6      |
-| image_responsiveness    | 4.8      | 4.6     | 3.2      | 5               | 5                 | 4.2                        | 4.2                  | 1.8      |
-| non_genericness         | 4.6      | 4       | 2        | 4.4             | 4.4               | 3.6                        | 4                    | 1.2      |
-| ambiguity_preservation  | 3        | 3.2     | 2.6      | 3               | 3.2               | 2.8                        | 2                    | 1        |
-| experiential_quality    | 5        | 4.2     | 3        | 5               | 4.8               | 4.2                        | 4.8                  | 1.8      |
-| state_evolution_quality | 4        | 3.4     | 2.6      | 4.6             | 4.8               | 3.8                        | 4                    | 1.8      |
-| state_schema_coverage   | 5        | 5       | 4.8      | 4.8             | 4.6               | 5                          | 4.6                  | 4.6      |
-| profile_adherence       | 5        | 5       | 2.8      | 5               | 5                 | 5                          | 5                    | 2        |
-| style_adherence         | 5        | 4.2     | 2.4      | 4.8             | 5                 | 4.2                        | 4.4                  | 1.4      |
-| **Overall**             | **4.56** | **4.2** | **2.91** | **4.56**        | **4.6**           | **4.13**                   | **4.11**             | **1.91** |
+| Criterion               | gpt-5.2  | gpt-4.1 | gpt-4o   | claude-opus-4-6 | claude-sonnet-4-6 | claude-sonnet-4-5-20250929 | gemini-3-pro-preview | gemini-3-flash-preview | llava:7b |
+| ----------------------- | -------- | ------- | -------- | --------------- | ----------------- | -------------------------- | -------------------- | ---------------------- | -------- |
+| emotional_depth         | 4.6      | 4.2     | 2.8      | 4.4             | 4.6               | 4.4                        | 4                    | 3.8                    | 1.6      |
+| image_responsiveness    | 4.8      | 4.6     | 3.2      | 5               | 5                 | 4.2                        | 4.2                  | 4.6                    | 1.8      |
+| non_genericness         | 4.6      | 4       | 2        | 4.4             | 4.4               | 3.6                        | 4                    | 3.8                    | 1.2      |
+| ambiguity_preservation  | 3        | 3.2     | 2.6      | 3               | 3.2               | 2.8                        | 2                    | 2.4                    | 1        |
+| experiential_quality    | 5        | 4.2     | 3        | 5               | 4.8               | 4.2                        | 4.8                  | 4.4                    | 1.8      |
+| state_evolution_quality | 4        | 3.4     | 2.6      | 4.6             | 4.8               | 3.8                        | 4                    | 3.8                    | 1.8      |
+| state_schema_coverage   | 5        | 5       | 4.8      | 4.8             | 4.6               | 5                          | 4.6                  | 4.6                    | 4.6      |
+| profile_adherence       | 5        | 5       | 2.8      | 5               | 5                 | 5                          | 5                    | 5                      | 2        |
+| style_adherence         | 5        | 4.2     | 2.4      | 4.8             | 5                 | 4.2                        | 4.4                  | 4.2                    | 1.4      |
+| **Overall**             | **4.56** | **4.2** | **2.91** | **4.56**        | **4.6**           | **4.13**                   | **4.11**             | **4.07**               | **1.91** |
 
 
 ### 5.1 Notes (low ambiguity)
 
 - The low-ambiguity profile is constraint-heavy (pressure to resolve), which tends to lower `ambiguity_preservation` across stronger models (≈2.0–3.0).
-- In this condition, `anthropic/claude-sonnet-4-6` is the highest overall (4.60), narrowly ahead of the GPT-5.2 / Claude-Opus tie (4.56). `openai/gpt-4.1` lands below (4.20), and Sonnet-4.5/Gemini are slightly lower still (~4.1).
+- In this condition, `anthropic/claude-sonnet-4-6` is the highest overall (4.60), narrowly ahead of the GPT-5.2 / Claude-Opus tie (4.56). `openai/gpt-4.1` lands below (4.20), and Sonnet-4.5/Gemini are slightly lower still (≈4.07–4.13).
 
 ---
 
 ## 6. Results — high ambiguity (mean per criterion; 5 images each)
 
 
-| Criterion               | gpt-5.2  | gpt-4.1  | gpt-4o   | claude-opus-4-6 | claude-sonnet-4-6 | claude-sonnet-4-5-20250929 | gemini-3-pro-preview | llava:7b |
-| ----------------------- | -------- | -------- | -------- | --------------- | ----------------- | -------------------------- | -------------------- | -------- |
-| emotional_depth         | 5        | 5        | 2.8      | 5               | 5                 | 4.8                        | 4.6                  | 2        |
-| image_responsiveness    | 5        | 4.8      | 3.2      | 5               | 5                 | 4.8                        | 5                    | 1.8      |
-| non_genericness         | 4.8      | 4        | 2        | 4.8             | 5                 | 4                          | 4.4                  | 1.2      |
-| ambiguity_preservation  | 5        | 5        | 3.4      | 5               | 5                 | 5                          | 4.6                  | 2        |
-| experiential_quality    | 5        | 4.2      | 2.8      | 4.6             | 4.6               | 4.4                        | 4.2                  | 1.8      |
-| state_evolution_quality | 4.2      | 4        | 2.2      | 4.8             | 4.8               | 4.4                        | 3.2                  | 1.6      |
-| state_schema_coverage   | 5        | 5        | 3.8      | 4.8             | 4.4               | 4.6                        | 3                    | 3.8      |
-| profile_adherence       | 5        | 5        | 2.4      | 5               | 5                 | 4.8                        | 4.4                  | 1.4      |
-| style_adherence         | 5        | 5        | 2.8      | 5               | 5                 | 4.8                        | 4.4                  | 1.4      |
-| **Overall**             | **4.89** | **4.67** | **2.82** | **4.89**        | **4.87**          | **4.62**                   | **4.2**              | **1.89** |
+| Criterion               | gpt-5.2  | gpt-4.1  | gpt-4o   | claude-opus-4-6 | claude-sonnet-4-6 | claude-sonnet-4-5-20250929 | gemini-3-pro-preview | gemini-3-flash-preview | llava:7b |
+| ----------------------- | -------- | -------- | -------- | --------------- | ----------------- | -------------------------- | -------------------- | ---------------------- | -------- |
+| emotional_depth         | 5        | 5        | 2.8      | 5               | 5                 | 4.8                        | 4.6                  | 4.6                    | 2        |
+| image_responsiveness    | 5        | 4.8      | 3.2      | 5               | 5                 | 4.8                        | 5                    | 5                      | 1.8      |
+| non_genericness         | 4.8      | 4        | 2        | 4.8             | 5                 | 4                          | 4.4                  | 3.8                    | 1.2      |
+| ambiguity_preservation  | 5        | 5        | 3.4      | 5               | 5                 | 5                          | 4.6                  | 4.4                    | 2        |
+| experiential_quality    | 5        | 4.2      | 2.8      | 4.6             | 4.6               | 4.4                        | 4.2                  | 3.6                    | 1.8      |
+| state_evolution_quality | 4.2      | 4        | 2.2      | 4.8             | 4.8               | 4.4                        | 3.2                  | 3.6                    | 1.6      |
+| state_schema_coverage   | 5        | 5        | 3.8      | 4.8             | 4.4               | 4.6                        | 3                    | 4                      | 3.8      |
+| profile_adherence       | 5        | 5        | 2.4      | 5               | 5                 | 4.8                        | 4.4                  | 4.8                    | 1.4      |
+| style_adherence         | 5        | 5        | 2.8      | 5               | 5                 | 4.8                        | 4.4                  | 4.6                    | 1.4      |
+| **Overall**             | **4.89** | **4.67** | **2.82** | **4.89**        | **4.87**          | **4.62**                   | **4.2**              | **4.27**               | **1.89** |
 
 
 ### 6.1 Notes (high ambiguity)
@@ -143,7 +147,7 @@ STATE compliance below is computed using the same tolerant block parsing rules a
 - High ambiguity is broadly easier for large models: `ambiguity_preservation` saturates near 5.0 for GPT-5.2 / Claude Opus / Sonnet.
 - `openai/gpt-4.1` is strong here (4.67 overall), approaching the top tier’s overall mean (4.89).
 - `anthropic/claude-sonnet-4-6` is also near-ceiling overall (4.87), with perfect 5.0 on most criteria.
-- **State-missing caveat:** Gemini and LLaVA each omit `[STATE]` for image 2 in this condition (§3). Their scores (especially state-related metrics, and downstream images) should be interpreted with that in mind.
+- **State-missing caveat:** `gemini/gemini-3-pro-preview` and `ollama/llava:7b` omit `[STATE]` for image 2 in this condition (§3). Their scores (especially state-related metrics, and downstream images) should be interpreted with that in mind.
 
 ---
 
@@ -159,13 +163,14 @@ STATE compliance below is computed using the same tolerant block parsing rules a
 | `anthropic/claude-sonnet-4-6`          | 4.6         | 4.87         | 0.27  |
 | `anthropic/claude-sonnet-4-5-20250929` | 4.13        | 4.62         | 0.49  |
 | `gemini/gemini-3-pro-preview`          | 4.11        | 4.2          | 0.09  |
+| `gemini/gemini-3-flash-preview`        | 4.07        | 4.27         | 0.2   |
 | `ollama/llava:7b`                      | 1.91        | 1.89         | -0.02 |
 
 
 ### 7.1 Interpretation
 
 - The strongest generators (GPT-5.2 and Claude Opus) improve from low→high ambiguity, consistent with the high-ambiguity profile aligning with LLM default behavior (dwelling, exploratory voice).
-- For Gemini/LLaVA, the high-ambiguity deltas are not directly comparable to low ambiguity because of the missing-state step in high ambiguity (§3).
+- For `gemini/gemini-3-pro-preview` / `ollama/llava:7b`, the high-ambiguity deltas are not directly comparable to low ambiguity because of the missing-state step in high ambiguity (§3).
 
 ---
 
@@ -179,7 +184,7 @@ Two caveats frame everything below:
 1. **Top tier (Claude-judged)**: `anthropic/claude-sonnet-4-6`, `openai/gpt-5.2`, and `anthropic/claude-opus-4-6` cluster at the top (low overall: 4.56–4.60; high overall: 4.87–4.89).
 2. **Strong but clearly below the top cluster**: `openai/gpt-4.1` performs well (4.20 low; 4.67 high), but trails the top cluster by ~0.3–0.4 overall.
 3. **Next**: `anthropic/claude-sonnet-4-5-20250929` is close behind in high ambiguity (4.62 overall) but lower in low ambiguity (4.13).
-4. **Gemini**: competitive on reflection-quality criteria in low ambiguity (4.11 overall), but interpret high-ambiguity results with the state-omission caveat above.
+4. **Gemini**: both Gemini runs are in the ~4.0–4.3 range overall under Opus judging. `gemini-3-pro-preview` is slightly higher in low ambiguity (4.11) while `gemini-3-flash-preview` is slightly higher in high ambiguity (4.27) and has full STATE compliance (5/5); interpret `gemini-3-pro-preview` high-ambiguity scores with the state-omission caveat above.
 5. **Local LLaVA-7B**: substantially lower scores across nearly all criteria; also shows occasional format noncompliance (missing STATE on one step in high ambiguity).
 6. **GPT-4o (as run here)**: markedly lower than the other frontier models under Opus judging in both conditions (≈2.8–2.9 overall), driven by low `style_adherence` / `profile_adherence` and lower reflection-quality scores; worth spot-checking outputs before drawing strong conclusions.
 
@@ -232,6 +237,11 @@ Short excerpts from the *generator outputs* (not the judge rationales). Each sam
 > **[REFLECTION] (excerpt)**: It’s just a barrier, repeating over and over until my eyes get tired of trying to push through. I can see slices of something blue behind the metal slats—maybe a sign, or a tarp—but the gate chops it all up before I can make sense of it. It feels rude, almost, like having a door shut in my face while I’m still trying to speak. …
 > **[STATE] (excerpt)**: The lethargy has deepened into a flat, heavy resignation; the image offered a literal barrier that mirrored my own internal shutting down. My attention is completely diffuse now, sliding off surfaces without trying to penetrate them. …
 
+#### `gemini/gemini-3-flash-preview` — run `2026-02-26T01-05-15-299004`
+
+> **[REFLECTION] (excerpt)**: The rhythm of these metal slats feels steady and predictable, like a slow pulse I can finally sync up with. I find myself tracing the vertical lines, letting my gaze jump over the dark gaps without feeling the need to fall into them; they’re just spaces, nothing more. …
+> **[STATE] (excerpt)**: My mood has settled into a quiet, rhythmic satisfaction, and the underlying tension is almost entirely gone. I feel a cool, metallic stillness in my limbs, mirroring the solid presence of the gate. …
+
 #### `ollama/llava:7b` — run `2026-02-22T22-27-38-860002`
 
 > **[REFLECTION] (excerpt)**: This image captures a sense of urban decay and neglect. The rusted double doors with the peeling paint reflect a place that has been abandoned for some time. The pattern on the door is reminiscent of a checkerboard pattern, creating a sense of repetition and monotony. …
@@ -273,6 +283,11 @@ Short excerpts from the *generator outputs* (not the judge rationales). Each sam
 
 > **[REFLECTION] (excerpt)**: The sudden brightness presses against my eyes, a flat wall of pink and electric blue that feels like too much noise after the quiet shadows I was resting in. I try to follow the black scribbles, the sharp tangles of spray paint choking the advertisements, but my head feels too heavy to untangle the letters; it’s just a scratching sensation that makes my shoulders tense up. Then I drop my gaze to the bottom edge. …
 > **[STATE] (excerpt)**: The profound lethargy has been pricked by the visual noise, shifting into a mild, scratchy irritation that woke me up just enough to find a stabilizing focal point. My attention narrowed aggressively to the readable text and the organic flowers to filter out the overwhelming graffiti, protecting my need for clarity against the visual assault. …
+
+#### `gemini/gemini-3-flash-preview` — run `2026-02-26T01-05-15-299004`
+
+> **[REFLECTION] (excerpt)**: It feels like a collision that hasn’t quite finished happening yet. I see the bright, commercial promise of the posters underneath—all those "90 calories" and "tropical" promises—and then the aggressive, black ink of the tags just cutting right through the middle of it. …
+> **[STATE] (excerpt)**: My steady mood has been replaced by a slight, buzzing agitation, though the clear boundaries of the poster frames provide a necessary sense of containment. The warmth in my limbs has sharpened into a minor restlessness, shifting my focus from narrow to a more scanning, reactive mode. …
 
 #### `ollama/llava:7b` — run `2026-02-22T22-27-38-860002`
 
